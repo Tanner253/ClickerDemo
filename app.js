@@ -70,8 +70,8 @@ goldBar.addEventListener('click', () => {
   clickCount++;
   totalClicks++;
   coinCount += coinPerClick;
+  spawnClickFeedback('+1');
   updateStats();
-  const totalClicks = clickCount;
   maybeTriggerGoldRush();
 });
 
@@ -99,7 +99,32 @@ function buyUpgrade(type) {
   upg.owned++;
   upg.cost = Math.floor(upg.cost * upg.multiplier);
   updateStats();
-  renderUpgrades();
+  function spawnClickFeedback(text) {
+  const feedback = document.createElement('div');
+  feedback.textContent = text;
+  feedback.style.position = 'absolute';
+  feedback.style.left = `${Math.random() * 100 + 40}px`;
+  feedback.style.top = `${Math.random() * 40 + 80}px`;
+  feedback.style.fontSize = '1em';
+  feedback.style.fontWeight = 'bold';
+  feedback.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+  feedback.style.opacity = '1';
+  feedback.style.transition = 'all 1s ease-out';
+  feedback.style.pointerEvents = 'none';
+  feedback.style.zIndex = '999';
+  document.body.appendChild(feedback);
+
+  setTimeout(() => {
+    feedback.style.transform = 'translateY(-20px)';
+    feedback.style.opacity = '0';
+  }, 10);
+
+  setTimeout(() => {
+    document.body.removeChild(feedback);
+  }, 1000);
+}
+
+renderUpgrades();
 }
 
 function updateStats() {
@@ -122,6 +147,38 @@ function maybeTriggerGoldRush() {
 }
 
 function startGoldRush() {
+  showGoldRushBanner();
+  goldRushActive = true;
+  coinPerClick = 5;
+  let countdown = 5;
+  const banner = document.createElement('div');
+  banner.id = 'gold-rush-banner';
+  banner.textContent = `GOLD RUSH! x5 for ${countdown}s`;
+  Object.assign(banner.style, {
+    position: 'fixed',
+    top: '20px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    backgroundColor: 'gold',
+    color: 'black',
+    padding: '10px 20px',
+    borderRadius: '8px',
+    fontSize: '1.2em',
+    fontWeight: 'bold',
+    zIndex: '1000'
+  });
+  document.body.appendChild(banner);
+
+  const interval = setInterval(() => {
+    countdown--;
+    banner.textContent = `GOLD RUSH! x5 for ${countdown}s`;
+    if (countdown <= 0) {
+      clearInterval(interval);
+      goldRushActive = false;
+      coinPerClick = 1;
+      banner.remove();
+    }
+  }, 1000);
   goldRushActive = true;
   coinPerClick = 5;
   setTimeout(() => {
@@ -131,7 +188,6 @@ function startGoldRush() {
 }
 
 setInterval(() => {
-  let totalCps = 0;
   let totalCps = 0;
   upgrades.forEach(upg => {
     totalCps += upg.owned * upg.cps;
