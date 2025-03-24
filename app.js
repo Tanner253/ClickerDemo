@@ -1,6 +1,5 @@
 // Game state
 let clickCount = 0;
-let totalClicks = 0;
 let coinCount = 0;
 let coinPerClick = 1;
 let goldRushActive = false;
@@ -68,11 +67,13 @@ const goldBar = document.getElementById('gold-bar');
 // Click handler
 goldBar.addEventListener('click', () => {
   clickCount++;
-  totalClicks++;
   coinCount += coinPerClick;
   updateStats();
   const totalClicks = clickCount;
-  maybeTriggerGoldRush();
+  if (totalClicks - lastGoldRushTrigger >= 100 && !goldRushActive) {
+    lastGoldRushTrigger = totalClicks;
+    startGoldRush();
+  }
 });
 
 function renderUpgrades() {
@@ -114,13 +115,6 @@ function updateStats() {
   cpsDisplay.textContent = totalCps.toFixed(1);
 }
 
-function maybeTriggerGoldRush() {
-  if (!goldRushActive && totalClicks - lastGoldRushTrigger >= 100) {
-    lastGoldRushTrigger = totalClicks;
-    startGoldRush();
-  }
-}
-
 function startGoldRush() {
   goldRushActive = true;
   coinPerClick = 5;
@@ -132,14 +126,11 @@ function startGoldRush() {
 
 setInterval(() => {
   let totalCps = 0;
-  let totalCps = 0;
   upgrades.forEach(upg => {
     totalCps += upg.owned * upg.cps;
   });
   const multiplier = goldRushActive ? 5 : 1;
   coinCount += totalCps * multiplier;
-  totalClicks += totalCps;
-  maybeTriggerGoldRush();
   updateStats();
 }, 1000);
 
