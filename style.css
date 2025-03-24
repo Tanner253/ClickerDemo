@@ -1,0 +1,116 @@
+body {
+    background-color: #0d0d0d;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 40px;
+    max-width: 1200px;
+    margin: auto;
+  }
+  
+  .left-panel, .right-panel {
+    flex: 1;
+  }
+  
+  #gold-bar {
+    width: 200px;
+    height: 120px;
+    background: linear-gradient(to top left, #FFD700, #FFA500);
+    border-radius: 12px;
+    box-shadow: 0 0 20px #FFD700;
+    margin: 20px auto;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    transition: transform 0.1s ease;
+    user-select: none;
+  }
+  
+  #gold-bar:active {
+    transform: scale(0.95);
+  }
+  
+  .stat {
+    margin: 10px;
+    font-size: 1.2em;
+  }
+  
+  .upgrade-button {
+    background: #bdbdbd;
+    color: black;
+    border: 2px solid gold;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 1em;
+    border-radius: 8px;
+    width: 340px;
+    height: 100px;
+    position: relative;
+    text-align: center;
+    user-select: none;
+  }
+  
+  .upgrade-button img {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    filter: brightness(5);
+  }
+  
+  .upgrade-button .title {
+    font-weight: bold;
+    font-size: 1em;
+    margin-top: 25px;
+  }
+  
+  .upgrade-button .owned {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 0.75em;
+    color: gold;
+  }
+  
+  .upgrade-button .cps {
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    font-size: 0.75em;
+    color: black;
+  }
+  
+  .upgrade-button .cost {
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 0.75em;
+    color: black;
+  }
+  
+  footer {
+    margin-top: 40px;
+    border-top: 2px solid gold;
+    padding-top: 20px;
+    font-size: 0.9em;
+    color: #ccc;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  footer h3 {
+    color: gold;
+  }
+  

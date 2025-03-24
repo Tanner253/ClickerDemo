@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gold Bar Clicker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="left-panel">
+      <h1>Gold Bar Clicker MVP</h1>
+      <div id="gold-bar">Click Me</div>
+      <div class="stat">Total Clicks: <span id="click-count">0</span></div>
+      <div class="stat">Gold Bars Collected: <span id="coin-count">0</span></div>
+      <div class="stat">Gold Bars Per Second: <span id="cps">0</span></div>
+    </div>
+    <div class="right-panel" id="upgrade-buttons">
+      <!-- Upgrade buttons dynamically injected here -->
+    </div>
+  </div>
+
+  <footer>
+    <h3>How to Play</h3>
+    <p>
+      Click the gold bar to earn gold bars.<br>
+      Purchase upgrades to generate more gold bars per second (CPS).<br>
+      Upgrades include: Auto Clicker, Miner, Machining, Drill, and Gold Lab.<br>
+      Every 100 clicks triggers a GOLD RUSH that multiplies all earnings by 5x for 5 seconds.<br>
+      Spend wisely and optimize for growth!
+    </p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
