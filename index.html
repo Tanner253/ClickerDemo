@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gold Bar Clicker - Ultimate</title>
+  <title>Gold Bar Clicker - Final</title>
   <style>
     :root {
       --gold-light: #FFD700;
@@ -21,7 +21,6 @@
       padding-top: 100px;
       margin: 0;
       user-select: none;
-      overflow-x: hidden;
     }
     
     /* Gold Rush Progress Header */
@@ -89,10 +88,6 @@
       animation: pulse 0.3s ease;
     }
     
-    .gold-bar.golden-click {
-      animation: golden-pulse 0.5s ease;
-    }
-    
     .stat {
       margin: 10px;
       font-size: 1.2em;
@@ -110,23 +105,16 @@
     }
     
     .stat-cps {
-      background: white;
+      background: linear-gradient(to top left, var(--gold-light), var(--gold-dark));
       color: black;
       padding: 12px 16px;
       border-radius: 10px;
       width: 320px;
       margin: 10px auto;
-      border: 2px solid #e0e0e0;
-      box-shadow: 0 0 10px rgba(255,255,255,0.3);
+      border: 2px solid #FF8C00;
+      box-shadow: 0 0 10px var(--gold-light);
       font-weight: bold;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .stat-cps.hyperdrive {
-      animation: hyperdrive 1s linear infinite;
-      background-size: 200% 100%;
+      transition: background 0.3s ease;
     }
     
     .upgrade-btn {
@@ -150,12 +138,12 @@
     }
     
     .upgrade-btn img {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  width: 24px;
-  filter: brightness(0) invert(0); /* Changed from invert(1) to invert(0) */
-}
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      width: 24px;
+      filter: brightness(0) invert(1);
+    }
     
     .upgrade-owned {
       position: absolute;
@@ -205,20 +193,9 @@
       100% { transform: scale(1); }
     }
     
-    @keyframes golden-pulse {
-      0% { transform: scale(1); box-shadow: 0 0 20px var(--gold-light); }
-      50% { transform: scale(1.05); box-shadow: 0 0 50px var(--gold-light); }
-      100% { transform: scale(1); box-shadow: 0 0 20px var(--gold-light); }
-    }
-    
     @keyframes wave {
       0%, 100% { transform: translateX(-50%) scale(1); }
       50% { transform: translateX(-50%) scale(1.2); }
-    }
-    
-    @keyframes hyperdrive {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
     }
     
     /* Gold Rush Banner */
@@ -293,45 +270,6 @@
       text-shadow: 0 0 3px black;
     }
     
-    /* Golden Clicks Button */
-    .golden-clicks-btn {
-      background: linear-gradient(to bottom, var(--gold-light), var(--gold-dark));
-      color: black;
-      border: none;
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 1em;
-      cursor: pointer;
-      border-radius: 8px;
-      font-weight: bold;
-      box-shadow: 0 0 10px var(--gold-light);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .golden-clicks-btn:active {
-      transform: scale(0.95);
-    }
-    
-    .golden-clicks-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    
-    .golden-clicks-cooldown {
-      height: 5px;
-      background: rgba(255,255,255,0.3);
-      border-radius: 3px;
-      margin-top: 5px;
-      overflow: hidden;
-    }
-    
-    .golden-clicks-progress {
-      height: 100%;
-      background: linear-gradient(to right, #FFD700, #FFA500);
-      width: 0%;
-      transition: width 0.1s linear;
-    }
-    
     /* Tooltip */
     .tooltip {
       position: absolute;
@@ -346,115 +284,6 @@
       opacity: 0;
       transition: opacity 0.2s;
     }
-    
-    /* Achievements */
-    .achievements-container {
-      position: fixed;
-      top: 40px;
-      right: 20px;
-      width: 300px;
-      background: rgba(0,0,0,0.7);
-      border: 1px solid var(--gold-light);
-      border-radius: 10px;
-      padding: 10px;
-      z-index: 1000;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-    
-    .achievement {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-      padding: 5px;
-      background: rgba(255,215,0,0.1);
-      border-radius: 5px;
-    }
-    
-    .achievement.unlocked {
-      background: rgba(255,215,0,0.3);
-    }
-    
-    .achievement-icon {
-      width: 30px;
-      height: 30px;
-      margin-right: 10px;
-      background: var(--gold-light);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-    
-    .achievement-info {
-      flex: 1;
-      text-align: left;
-    }
-    
-    .achievement-name {
-      font-weight: bold;
-      color: var(--gold-light);
-    }
-    
-    .achievement-desc {
-      font-size: 0.8em;
-      color: #ccc;
-    }
-    
-    .achievement-progress {
-      height: 5px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 3px;
-      margin-top: 3px;
-    }
-    
-    .achievement-progress-fill {
-      height: 100%;
-      background: var(--gold-light);
-      border-radius: 3px;
-      width: 0%;
-    }
-    
-    /* Prestige */
-    .prestige-btn {
-      background: linear-gradient(to bottom, #8A2BE2, #4B0082);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      margin: 20px auto;
-      font-size: 1.1em;
-      cursor: pointer;
-      border-radius: 8px;
-      font-weight: bold;
-      box-shadow: 0 0 15px #8A2BE2;
-      display: block;
-      transition: transform 0.2s;
-    }
-    
-    .prestige-btn:active {
-      transform: scale(0.95);
-    }
-    
-    .prestige-multiplier {
-      font-size: 0.9em;
-      color: #8A2BE2;
-      margin-top: 5px;
-    }
-    
-    #prestige-btn:hover::after {
-  content: "Prestige resets your progress but gives permanent 50% bonus to all earnings. Requires 1,000,000 gold.";
-  position: absolute;
-  background: rgba(0,0,0,0.8);
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  width: 200px;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 100%;
-  z-index: 100;
-}
   </style>
 </head>
 <body>
@@ -462,17 +291,6 @@
   <div class="gold-rush-header">
     <div class="gold-rush-fill" id="gold-rush-fill"></div>
     <div class="gold-rush-text" id="gold-rush-text">Gold Rush: 0/100</div>
-  </div>
-
-  <!-- Achievements Button -->
-  <button id="achievements-btn" class="golden-clicks-btn" style="position: fixed; top: 40px; left: 20px;">
-    Achievements
-  </button>
-
-  <!-- Achievements Panel -->
-  <div id="achievements-container" class="achievements-container" style="display: none;">
-    <h3 style="color: var(--gold-light); margin-top: 0;">Achievements</h3>
-    <div id="achievements-list"></div>
   </div>
 
   <div class="container">
@@ -487,20 +305,9 @@
       <div id="cps-container" class="stat stat-cps">
         <strong>Clicks Per Second:</strong> <span id="cps">0</span>
       </div>
-      
-      <!-- Golden Clicks Button -->
-      <button id="golden-clicks-btn" class="golden-clicks-btn">
-        Golden Clicks (10s)
-        <div class="golden-clicks-cooldown">
-          <div class="golden-clicks-progress" id="golden-clicks-progress"></div>
-        </div>
-      </button>
-      
-      <!-- Prestige Button -->
-      <button id="prestige-btn" class="prestige-btn">
-        Prestige (Get 1,000,000 Gold)
-        <div class="prestige-multiplier">Current Multiplier: <span id="prestige-multiplier">1x</span></div>
-      </button>
+      <div class="stat" style="display:none;">
+        Total Clicks: <span id="click-count">0</span>
+      </div>
     </div>
     
     <div class="right-panel">
@@ -547,17 +354,14 @@
   </div>
 
   <footer>
-    <button id="reset-btn" style="position: fixed; top: 40px; left: 20px; background: #ff4444; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
-        Reset Game
-      </button>
     <h3 style="color: gold;">How to Play</h3>
     <p>
       Click the gold bar to earn gold bars.<br>
       Purchase upgrades to generate more clicks per second (CPS).<br>
       Gold Rush triggers at increasing intervals (starts at 100 clicks, then 110, etc.)<br>
-      Use Golden Clicks for 10 seconds of 2x earnings (5 minute cooldown).<br>
-      Prestige at 1,000,000 gold for permanent bonuses.<br>
-      Unlock achievements for special rewards!
+      During Gold Rush all earnings are multiplied by 5x for 5 seconds.<br>
+      Hold down mouse for continuous clicking (with delay).<br>
+      Shift-click upgrades to buy as many as you can afford.
     </p>
   </footer>
 
@@ -575,13 +379,7 @@
         lastAutoClickTime: 0,
         lastManualClickTime: 0,
         lastClicks: [],
-        goldRushThreshold: 100,
-        goldenClicksActive: false,
-        goldenClicksCooldown: 0,
-        lastGoldenClickTime: 0,
-        prestigeLevel: 0,
-        prestigeMultiplier: 1,
-        goldenClickMultiplier: 1
+        goldRushThreshold: 100
       },
       upgrades: {
         auto: { count: 0, cost: 10, cps: 0.1, costMultiplier: 1.5, name: "Auto Clicker" },
@@ -590,20 +388,10 @@
         drill: { count: 0, cost: 5000, cps: 50, costMultiplier: 1.8, name: "Drill" },
         lab: { count: 0, cost: 20000, cps: 200, costMultiplier: 1.9, name: "Gold Lab" }
       },
-      achievements: {
-        firstClick: { name: "First Click", desc: "Click the gold bar for the first time", unlocked: false, reward: 10 },
-        hundredClicks: { name: "100 Clicks", desc: "Reach 100 total clicks", unlocked: false, target: 100, reward: 50 },
-        thousandClicks: { name: "1,000 Clicks", desc: "Reach 1,000 total clicks", unlocked: false, target: 1000, reward: 200 },
-        firstUpgrade: { name: "First Upgrade", desc: "Purchase your first upgrade", unlocked: false, reward: 100 },
-        goldRush: { name: "Gold Rush!", desc: "Trigger your first Gold Rush", unlocked: false, reward: 500 },
-        goldenClick: { name: "Golden Touch", desc: "Use Golden Clicks for the first time", unlocked: false, reward: 1000 },
-        prestige: { name: "Prestige", desc: "Prestige for the first time", unlocked: false, reward: 5000 }
-      },
       elements: {},
       intervals: {},
       goldRushTimeout: null,
-      holdClickInterval: null,
-      goldenClickInterval: null
+      holdClickInterval: null
     };
 
     // DOM References
@@ -616,13 +404,6 @@
         clickCount: document.getElementById('click-count'),
         goldRushFill: document.getElementById('gold-rush-fill'),
         goldRushText: document.getElementById('gold-rush-text'),
-        goldenClicksBtn: document.getElementById('golden-clicks-btn'),
-        goldenClicksProgress: document.getElementById('golden-clicks-progress'),
-        prestigeBtn: document.getElementById('prestige-btn'),
-        prestigeMultiplier: document.getElementById('prestige-multiplier'),
-        achievementsBtn: document.getElementById('achievements-btn'),
-        achievementsContainer: document.getElementById('achievements-container'),
-        achievementsList: document.getElementById('achievements-list'),
         
         // Upgrade buttons
         auto: {
@@ -665,21 +446,9 @@
       // Stats update loop
       game.intervals.statsUpdate = setInterval(updateStats, 250);
       
-      // Golden clicks cooldown loop
-      game.intervals.goldenClickCooldown = setInterval(updateGoldenClickCooldown, 100);
-      
       // Start animation frame loop
       requestAnimationFrame(gameLoop);
-      
-      // Initialize achievements
-      initAchievements();
     }
-    document.getElementById('reset-btn').addEventListener('click', () => {
-  if (confirm('Are you sure you want to reset ALL progress?')) {
-    localStorage.removeItem('goldBarClickerSave');
-    location.reload();
-  }
-});
 
     // Main game loop
     function gameLoop() {
@@ -709,15 +478,6 @@
       game.elements.drill.btn.addEventListener('click', (e) => e.shiftKey && buyMax('drill'));
       game.elements.lab.btn.addEventListener('click', (e) => e.shiftKey && buyMax('lab'));
       
-      // Golden clicks
-      game.elements.goldenClicksBtn.addEventListener('click', activateGoldenClicks);
-      
-      // Prestige
-      game.elements.prestigeBtn.addEventListener('click', prestige);
-      
-      // Achievements
-      game.elements.achievementsBtn.addEventListener('click', toggleAchievements);
-      
       // Tooltips for upgrades
       setupTooltips();
     }
@@ -731,9 +491,7 @@
       
       const isShift = e.shiftKey;
       const baseClickAmount = isShift ? 10 : 1;
-      let multiplier = game.stats.goldRushActive ? 5 : 1;
-      multiplier *= game.stats.goldenClicksActive ? game.stats.goldenClickMultiplier : 1;
-      multiplier *= game.stats.prestigeMultiplier;
+      const multiplier = game.stats.goldRushActive ? 5 : 1;
       const clickValue = baseClickAmount * multiplier;
       
       game.stats.totalClicks += baseClickAmount;
@@ -761,9 +519,6 @@
         startGoldRush();
       }
       
-      // Check achievements
-      checkAchievements();
-      
       // Save game state after each click
       saveGame();
     }
@@ -784,36 +539,47 @@
 
     // Auto-clicker Logic (now runs once per second)
     function autoClickLoop() {
-  const now = Date.now();
-  let multiplier = game.stats.goldRushActive ? 5 : 1;
-  multiplier *= game.stats.goldenClicksActive ? game.stats.goldenClickMultiplier : 1;
-  multiplier *= game.stats.prestigeMultiplier;
-
-  // Process each upgrade type separately
-  Object.entries(game.upgrades).forEach(([type, upgrade]) => {
-    if (upgrade.count > 0) {
-      const earned = upgrade.count * upgrade.cps * multiplier;
+      const now = Date.now();
+      const multiplier = game.stats.goldRushActive ? 5 : 1;
       
-      if (earned > 0) {
-        game.stats.coinCount += earned;
-        game.stats.autoClicks += upgrade.count * upgrade.cps;
-        game.stats.totalClicks += upgrade.count * upgrade.cps;
-        
-        // Record clicks for CPS calculation
-        game.stats.lastClicks.push({
-          time: now,
-          amount: upgrade.count * upgrade.cps
-        });
-        
-        spawnAutoClickFeedback(earned, type);
+      // Process each upgrade type separately to show individual feedback
+      Object.entries(game.upgrades).forEach(([type, upgrade]) => {
+        if (upgrade.count > 0) {
+          const earned = upgrade.count * upgrade.cps * multiplier;
+          
+          if (earned > 0) {
+            game.stats.coinCount += earned;
+            game.stats.autoClicks += upgrade.count * upgrade.cps;
+            game.stats.totalClicks += upgrade.count * upgrade.cps;
+            
+            // Record auto-clicks for CPS calculation
+            game.stats.lastClicks.push({
+              time: now,
+              amount: upgrade.count * upgrade.cps
+            });
+            
+            if (!game.stats.goldRushActive) {
+              game.stats.clicksSinceLastGoldRush += upgrade.count * upgrade.cps;
+            }
+            
+            // Visual feedback for each upgrade type
+            spawnAutoClickFeedback(earned, type);
+          }
+        }
+      });
+      
+      // Visual feedback for auto-clicks
+      game.elements.goldBar.classList.add('auto-click');
+      setTimeout(() => {
+        game.elements.goldBar.classList.remove('auto-click');
+      }, 300);
+      
+      // Save game state periodically
+      if (now - game.stats.lastAutoClickTime > 5000) {
+        saveGame();
+        game.stats.lastAutoClickTime = now;
       }
     }
-  });
-  
-  // Visual feedback
-  game.elements.goldBar.classList.add('auto-click');
-  setTimeout(() => game.elements.goldBar.classList.remove('auto-click'), 300);
-}
 
     // Upgrade System
     function buyUpgrade(type) {
@@ -826,12 +592,6 @@
         
         updateUpgradeDisplay(type);
         updateStats();
-        
-        // Check for first upgrade achievement
-        if (!game.achievements.firstUpgrade.unlocked) {
-          unlockAchievement('firstUpgrade');
-        }
-        
         saveGame();
       }
     }
@@ -856,51 +616,7 @@
         
         updateUpgradeDisplay(type);
         updateStats();
-        
-        // Check for first upgrade achievement
-        if (!game.achievements.firstUpgrade.unlocked) {
-          unlockAchievement('firstUpgrade');
-        }
-        
         saveGame();
-      }
-    }
-
-    // Golden Clicks System
-    function activateGoldenClicks() {
-      if (game.stats.goldenClicksActive || Date.now() - game.stats.lastGoldenClickTime < 300000) return;
-      
-      game.stats.goldenClicksActive = true;
-      game.stats.goldenClickMultiplier = 2;
-      game.stats.lastGoldenClickTime = Date.now();
-      game.elements.goldenClicksBtn.disabled = true;
-      
-      // Visual effect
-      game.elements.goldBar.classList.add('golden-click');
-      
-      // Check achievement
-      if (!game.achievements.goldenClick.unlocked) {
-        unlockAchievement('goldenClick');
-      }
-      
-      // End after 10 seconds
-      setTimeout(() => {
-        game.stats.goldenClicksActive = false;
-        game.elements.goldBar.classList.remove('golden-click');
-      }, 10000);
-    }
-    
-    function updateGoldenClickCooldown() {
-      const now = Date.now();
-      const cooldownRemaining = 300000 - (now - game.stats.lastGoldenClickTime);
-      
-      if (cooldownRemaining > 0) {
-        const percentage = (1 - (cooldownRemaining / 300000)) * 100;
-        game.elements.goldenClicksProgress.style.width = `${percentage}%`;
-        game.elements.goldenClicksBtn.disabled = true;
-      } else {
-        game.elements.goldenClicksProgress.style.width = '100%';
-        game.elements.goldenClicksBtn.disabled = false;
       }
     }
 
@@ -930,11 +646,6 @@
       createConfetti();
       createGoldRushBanner();
       
-      // Check achievement
-      if (!game.achievements.goldRush.unlocked) {
-        unlockAchievement('goldRush');
-      }
-      
       // Set timeout to end Gold Rush
       setTimeout(() => {
         game.stats.goldRushActive = false;
@@ -947,111 +658,6 @@
           setTimeout(() => el.remove(), 500);
         });
       }, 5000);
-    }
-
-    // Prestige System
-    function prestige() {
-      if (game.stats.coinCount < 1000000) return;
-      
-      game.stats.prestigeLevel++;
-      game.stats.prestigeMultiplier += 0.5; // Each prestige gives +50% bonus
-      
-      // Reset game state but keep prestige benefits
-      game.stats.coinCount = 0;
-      game.stats.totalClicks = 0;
-      game.stats.manualClicks = 0;
-      game.stats.autoClicks = 0;
-      game.stats.clicksSinceLastGoldRush = 0;
-      game.stats.goldRushThreshold = 100;
-      
-      // Reset upgrades
-      game.upgrades.auto.count = 0;
-      game.upgrades.auto.cost = 10;
-      game.upgrades.miner.count = 0;
-      game.upgrades.miner.cost = 100;
-      game.upgrades.machine.count = 0;
-      game.upgrades.machine.cost = 1000;
-      game.upgrades.drill.count = 0;
-      game.upgrades.drill.cost = 5000;
-      game.upgrades.lab.count = 0;
-      game.upgrades.lab.cost = 20000;
-      
-      // Check achievement
-      if (!game.achievements.prestige.unlocked) {
-        unlockAchievement('prestige');
-      }
-      
-      updateStats();
-      Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
-      saveGame();
-    }
-
-    // Achievements System
-    function initAchievements() {
-      game.elements.achievementsList.innerHTML = '';
-      
-      Object.entries(game.achievements).forEach(([key, achievement]) => {
-        const achievementEl = document.createElement('div');
-        achievementEl.className = `achievement ${achievement.unlocked ? 'unlocked' : ''}`;
-        achievementEl.id = `achievement-${key}`;
-        
-        achievementEl.innerHTML = `
-          <div class="achievement-icon">${achievement.unlocked ? '✓' : '?'}</div>
-          <div class="achievement-info">
-            <div class="achievement-name">${achievement.name}</div>
-            <div class="achievement-desc">${achievement.desc}</div>
-            ${achievement.target ? `
-              <div class="achievement-progress">
-                <div class="achievement-progress-fill" style="width: ${Math.min(100, (game.stats.totalClicks / achievement.target) * 100)}%"></div>
-              </div>
-            ` : ''}
-          </div>
-        `;
-        
-        game.elements.achievementsList.appendChild(achievementEl);
-      });
-    }
-    
-    function checkAchievements() {
-      // First click
-      if (game.stats.totalClicks >= 1 && !game.achievements.firstClick.unlocked) {
-        unlockAchievement('firstClick');
-      }
-      
-      // Click milestones
-      if (game.stats.totalClicks >= 100 && !game.achievements.hundredClicks.unlocked) {
-        unlockAchievement('hundredClicks');
-      }
-      
-      if (game.stats.totalClicks >= 1000 && !game.achievements.thousandClicks.unlocked) {
-        unlockAchievement('thousandClicks');
-      }
-    }
-    
-    function unlockAchievement(key) {
-      const achievement = game.achievements[key];
-      if (achievement.unlocked) return;
-      
-      achievement.unlocked = true;
-      game.stats.coinCount += achievement.reward;
-      
-      // Update achievement display
-      const achievementEl = document.getElementById(`achievement-${key}`);
-      if (achievementEl) {
-        achievementEl.classList.add('unlocked');
-        achievementEl.querySelector('.achievement-icon').textContent = '✓';
-      }
-      
-      // Show notification
-      spawnClickFeedback(`Achievement: ${achievement.name} +${achievement.reward}`, 
-        window.innerWidth / 2, window.innerHeight / 2);
-      
-      saveGame();
-    }
-    
-    function toggleAchievements() {
-      game.elements.achievementsContainer.style.display = 
-        game.elements.achievementsContainer.style.display === 'none' ? 'block' : 'none';
     }
 
     // Visual Effects
@@ -1134,7 +740,7 @@
     function calculateTotalCPS() {
       return Object.values(game.upgrades).reduce((total, upgrade) => {
         return total + (upgrade.count * upgrade.cps);
-      }, 0) * game.stats.prestigeMultiplier;
+      }, 0);
     }
     
     function calculateActualCPS() {
@@ -1143,9 +749,7 @@
       game.stats.lastClicks = game.stats.lastClicks.filter(click => now - click.time < 1000);
       
       // Sum all clicks in the last second
-      return game.stats.lastClicks.reduce((total, click) => total + click.amount, 0) * 
-             (game.stats.goldenClicksActive ? game.stats.goldenClickMultiplier : 1) *
-             game.stats.prestigeMultiplier;
+      return game.stats.lastClicks.reduce((total, click) => total + click.amount, 0);
     }
     
     function updateStats() {
@@ -1156,44 +760,25 @@
       game.elements.clickCount.textContent = game.stats.totalClicks;
       game.elements.coinCount.textContent = game.stats.coinCount.toFixed(1);
       game.elements.cpsDisplay.textContent = cps.toFixed(1);
-      game.elements.prestigeMultiplier.textContent = game.stats.prestigeMultiplier.toFixed(1) + 'x';
       
-      // Update CPS meter color and style
-      updateCPSMeter(cps);
+      // Update CPS meter color
+      updateCPSMeterColor(cps);
       
       // Update upgrade buttons state
       updateUpgradeButtons();
-      
-      // Update prestige button
-      game.elements.prestigeBtn.disabled = game.stats.coinCount < 1000000;
     }
     
-    function updateCPSMeter(cps) {
-      const cpsContainer = game.elements.cpsContainer;
-      
-      // Hyperdrive mode (rainbow) at 150+ CPS
-      if (cps >= 150) {
-        cpsContainer.classList.add('hyperdrive');
-        cpsContainer.style.background = 'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet, red)';
-        cpsContainer.style.backgroundSize = '200% 100%';
-        return;
-      } else {
-        cpsContainer.classList.remove('hyperdrive');
-      }
-      
-      // Smooth color progression from white to rainbow
+    function updateCPSMeterColor(cps) {
       let bgColor;
-      if (cps >= 125) bgColor = 'linear-gradient(to right, violet, red)';
-      else if (cps >= 100) bgColor = 'linear-gradient(to right, indigo, violet)';
-      else if (cps >= 75) bgColor = 'linear-gradient(to right, blue, indigo)';
-      else if (cps >= 50) bgColor = 'linear-gradient(to right, green, blue)';
-      else if (cps >= 25) bgColor = 'linear-gradient(to right, yellow, green)';
-      else if (cps >= 10) bgColor = 'linear-gradient(to right, orange, yellow)';
-      else if (cps >= 5) bgColor = 'linear-gradient(to right, red, orange)';
-      else if (cps >= 1) bgColor = 'linear-gradient(to right, #f0f0f0, red)';
-      else bgColor = 'white';
       
-      cpsContainer.style.background = bgColor;
+      if (cps > 100) bgColor = 'linear-gradient(to right, #ff0000, #cc0000)';
+      else if (cps > 75) bgColor = 'linear-gradient(to right, #ff6600, #ff3300)';
+      else if (cps > 50) bgColor = 'linear-gradient(to right, #ffcc00, #ff9900)';
+      else if (cps > 25) bgColor = 'linear-gradient(to right, #ccff66, #ffff66)';
+      else if (cps > 10) bgColor = 'linear-gradient(to right, #e0ffe0, #c8ffc8)';
+      else bgColor = 'linear-gradient(to top left, var(--gold-light), var(--gold-dark))';
+      
+      game.elements.cpsContainer.style.background = bgColor;
     }
     
     function updateUpgradeDisplay(type) {
@@ -1250,11 +835,7 @@
           coinCount: game.stats.coinCount,
           clicksSinceLastGoldRush: game.stats.clicksSinceLastGoldRush,
           goldRushThreshold: game.stats.goldRushThreshold,
-          startTime: game.stats.startTime,
-          goldenClicksActive: game.stats.goldenClicksActive,
-          lastGoldenClickTime: game.stats.lastGoldenClickTime,
-          prestigeLevel: game.stats.prestigeLevel,
-          prestigeMultiplier: game.stats.prestigeMultiplier
+          startTime: game.stats.startTime
         },
         upgrades: {
           auto: { count: game.upgrades.auto.count, cost: game.upgrades.auto.cost },
@@ -1262,8 +843,7 @@
           machine: { count: game.upgrades.machine.count, cost: game.upgrades.machine.cost },
           drill: { count: game.upgrades.drill.count, cost: game.upgrades.drill.cost },
           lab: { count: game.upgrades.lab.count, cost: game.upgrades.lab.cost }
-        },
-        achievements: game.achievements
+        }
       };
       
       localStorage.setItem('goldBarClickerSave', JSON.stringify(saveData));
@@ -1283,10 +863,6 @@
         game.stats.coinCount = parsed.stats.coinCount || 0;
         game.stats.clicksSinceLastGoldRush = parsed.stats.clicksSinceLastGoldRush || 0;
         game.stats.goldRushThreshold = parsed.stats.goldRushThreshold || 100;
-        game.stats.goldenClicksActive = parsed.stats.goldenClicksActive || false;
-        game.stats.lastGoldenClickTime = parsed.stats.lastGoldenClickTime || 0;
-        game.stats.prestigeLevel = parsed.stats.prestigeLevel || 0;
-        game.stats.prestigeMultiplier = parsed.stats.prestigeMultiplier || 1;
         
         // Load upgrades
         game.upgrades.auto.count = parsed.upgrades.auto.count || 0;
@@ -1304,19 +880,9 @@
         game.upgrades.lab.count = parsed.upgrades.lab.count || 0;
         game.upgrades.lab.cost = parsed.upgrades.lab.cost || 20000;
         
-        // Load achievements
-        if (parsed.achievements) {
-          Object.keys(parsed.achievements).forEach(key => {
-            if (game.achievements[key]) {
-              game.achievements[key].unlocked = parsed.achievements[key].unlocked || false;
-            }
-          });
-        }
-        
         // Update displays
         updateStats();
         Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
-        initAchievements();
       } catch (e) {
         console.error('Failed to load save:', e);
       }
