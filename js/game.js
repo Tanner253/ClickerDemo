@@ -174,11 +174,15 @@ function setupEventListeners() {
   game.elements.hamburgerBtn.addEventListener('click', toggleUpgradesSidebar);
   game.elements.closeUpgradesBtn.addEventListener('click', toggleUpgradesSidebar);
 
-  // Close sidebar when clicking outside
+  // Close sidebar when clicking outside, but not when clicking gold bar in desktop mode
   document.addEventListener('click', (e) => {
+    const isMobile = window.innerWidth <= 768;
+    const isGoldBar = game.elements.goldBar.contains(e.target);
+    
     if (game.elements.upgradesSidebar.classList.contains('open') &&
         !game.elements.upgradesSidebar.contains(e.target) &&
-        !game.elements.hamburgerBtn.contains(e.target)) {
+        !game.elements.hamburgerBtn.contains(e.target) &&
+        !(isGoldBar && !isMobile)) { // Don't close if clicking gold bar on desktop
       toggleUpgradesSidebar();
     }
   });
