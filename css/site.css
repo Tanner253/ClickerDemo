@@ -67,6 +67,8 @@ body::after {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  animation: none;
+  transform: none;
 }
 
 .container {
@@ -104,6 +106,7 @@ body::after {
   z-index: 100;
   border-bottom: 2px solid var(--gold-light);
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  overflow: hidden;
 }
 
 .gold-rush-fill {
@@ -112,6 +115,27 @@ body::after {
   width: 0%;
   transition: width 0.2s ease;
   box-shadow: 0 0 10px var(--gold-glow);
+  position: relative;
+}
+
+.gold-rush-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .gold-rush-text {
@@ -124,6 +148,7 @@ body::after {
   text-shadow: 0 0 3px black;
   width: 100%;
   text-align: center;
+  z-index: 1;
 }
 
 /* Gold Bar Button */
@@ -546,10 +571,11 @@ footer p {
   animation: bannerPop 0.5s ease forwards;
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   background: rgba(0, 0, 0, 0.3);
-  padding: 10px 20px;
+  padding: 20px 40px;
   border-radius: 15px;
-  border: 2px solid rgba(255, 215, 0, 0.5);
-  color: #ff0000;
+  border: 3px solid rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+  backdrop-filter: blur(5px);
 }
 
 @keyframes bannerPop {
@@ -562,7 +588,7 @@ footer p {
   display: inline-block;
   animation: rainbowText 2s linear infinite;
   margin: 0 2px;
-  color: #ff0000;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 /* Preset initial colors for each letter to avoid white flash */
@@ -580,13 +606,11 @@ footer p {
 .gold-rush-banner span:nth-child(12) { color: #ff0088; animation-delay: 1.1s; }
 
 @keyframes rainbowText {
-  0% { color: #ff0000; }
-  16.67% { color: #ff8800; }
-  33.33% { color: #ffff00; }
-  50% { color: #00ff00; }
-  66.67% { color: #0088ff; }
-  83.33% { color: #8800ff; }
-  100% { color: #ff0000; }
+  0% { color: #ff0000; transform: scale(1); }
+  25% { color: #ffff00; transform: scale(1.1); }
+  50% { color: #00ff00; transform: scale(1); }
+  75% { color: #0088ff; transform: scale(1.1); }
+  100% { color: #ff0000; transform: scale(1); }
 }
 
 /* Click Feedback */
@@ -940,4 +964,21 @@ footer p {
 
 .tooltip.bs-tooltip-end .tooltip-arrow::before {
   border-right-color: var(--gold-light) !important;
+}
+
+/* Screen Shake Effect */
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0); }
+  10%, 30%, 50%, 70%, 90% { transform: translate(-2px, -2px); }
+  20%, 40%, 60%, 80% { transform: translate(2px, 2px); }
+}
+
+body.gold-rush-active {
+  animation: screenShake 0.5s ease-in-out;
+}
+
+/* Ensure the app wrapper doesn't shake */
+.app-wrapper {
+  animation: none;
+  transform: none;
 } 

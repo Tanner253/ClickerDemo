@@ -41,6 +41,7 @@ function cacheElements() {
     clickCount: document.getElementById('click-count'),
     goldRushFill: document.getElementById('gold-rush-fill'),
     goldRushText: document.getElementById('gold-rush-text'),
+    powerMeterFill: document.getElementById('power-meter-fill'),
     
     // Upgrade buttons
     auto: {
@@ -93,7 +94,6 @@ function cacheElements() {
       count: document.getElementById('singularity-count'),
       cost: document.getElementById('singularity-cost')
     },
-    powerMeterFill: document.getElementById('power-meter-fill'),
     hamburgerBtn: document.getElementById('hamburger-btn'),
     upgradesSidebar: document.getElementById('upgrades-sidebar'),
     closeUpgradesBtn: document.getElementById('close-upgrades'),
@@ -355,6 +355,13 @@ function autoClickLoop() {
   
   // Update stats display
   updateStats();
+  
+  // Check for Gold Rush in auto-clicker as well
+  if (game.stats.clicksSinceLastGoldRush >= game.stats.goldRushThreshold && 
+      !game.stats.goldRushActive && 
+      !game.goldRushTimeout) {
+    startGoldRush();
+  }
 }
 
 function spawnAutoClickFeedback(amount, type) {
@@ -424,15 +431,19 @@ function buyMax(type) {
 function updateGoldRushProgress() {
   const progress = Math.min(game.stats.clicksSinceLastGoldRush, game.stats.goldRushThreshold);
   const percentage = (progress / game.stats.goldRushThreshold) * 100;
-  game.elements.goldRushFill.style.width = `${percentage}%`;
   
   if (game.stats.goldRushActive) {
     // Count down during Gold Rush
     const remaining = game.goldRushTimeout ? 
       Math.ceil((game.goldRushTimeout - Date.now()) / 1000) : 0;
     game.elements.goldRushText.textContent = `GOLD RUSH! ${remaining}s`;
+    
+    // Shrink the fill bar during Gold Rush
+    const shrinkPercentage = (remaining / 5) * 100; // 5 seconds total
+    game.elements.goldRushFill.style.width = `${shrinkPercentage}%`;
   } else {
     game.elements.goldRushText.textContent = `Gold Rush: ${Math.floor(progress)}/${game.stats.goldRushThreshold}`;
+    game.elements.goldRushFill.style.width = `${percentage}%`;
   }
 }
 
@@ -443,8 +454,12 @@ function startGoldRush() {
   // Increase threshold for next Gold Rush by 10%
   game.stats.goldRushThreshold = Math.floor(game.stats.goldRushThreshold * 1.4);
   
+  // Create visual effects
   createConfetti();
   createGoldRushBanner();
+  
+  // Add screen shake effect
+  document.body.classList.add('gold-rush-active');
   
   // Set timeout to end Gold Rush
   setTimeout(() => {
@@ -453,6 +468,7 @@ function startGoldRush() {
     game.goldRushTimeout = null;
     
     // Remove visual effects
+    document.body.classList.remove('gold-rush-active');
     document.querySelectorAll('.confetti-container, .gold-rush-banner').forEach(el => {
       el.style.opacity = '0';
       setTimeout(() => el.remove(), 500);
@@ -460,13 +476,12 @@ function startGoldRush() {
   }, 5000);
 }
 
-// Visual Effects
 function createConfetti() {
   const container = document.createElement('div');
   container.className = 'confetti-container';
   
-  // Create 150 pieces of confetti with varied colors and shapes
-  for (let i = 0; i < 150; i++) {
+  // Create 200 pieces of confetti with varied colors and shapes
+  for (let i = 0; i < 200; i++) {
     const confetti = document.createElement('div');
     confetti.className = 'confetti';
     
@@ -568,8 +583,10 @@ function updateStats() {
   // Calculate actual CPS from recent clicks
   const cps = calculateActualCPS();
   
-  // Update displays
-  game.elements.coinCount.textContent = formatNumber(game.stats.coinCount);
+  // Update displays if elements exist
+  if (game.elements.coinCount) {
+    game.elements.coinCount.textContent = formatNumber(game.stats.coinCount);
+  }
   
   // Update power meter and CPS display
   updatePowerMeter(cps);
@@ -583,17 +600,21 @@ function updatePowerMeter(cps) {
   const maxCPS = 200;
   const percentage = Math.min((cps / maxCPS) * 100, 100);
   
-  // Update height
-  game.elements.powerMeterFill.style.height = `${percentage}%`;
+  // Update height if element exists
+  if (game.elements.powerMeterFill) {
+    game.elements.powerMeterFill.style.height = `${percentage}%`;
+    
+    // Add/remove high-power class based on CPS
+    if (cps > maxCPS * 0.7) { // Over 70% of max
+      game.elements.powerMeterFill.classList.add('high-power');
+    } else {
+      game.elements.powerMeterFill.classList.remove('high-power');
+    }
+  }
   
-  // Update CPS text
-  game.elements.cpsDisplay.textContent = `${cps.toFixed(1)} CPS`;
-  
-  // Add/remove high-power class based on CPS
-  if (cps > maxCPS * 0.7) { // Over 70% of max
-    game.elements.powerMeterFill.classList.add('high-power');
-  } else {
-    game.elements.powerMeterFill.classList.remove('high-power');
+  // Update CPS text if element exists
+  if (game.elements.cpsDisplay) {
+    game.elements.cpsDisplay.textContent = `${cps.toFixed(1)} CPS`;
   }
 }
 
