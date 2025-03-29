@@ -17,7 +17,9 @@ const game = {
     goldRushCount: 0,
     peakPower: 0,
     upgradeProduction: {},
-    currentPowerMultiplier: 1
+    currentPowerMultiplier: 1,
+    prestigeLevel: 0,
+    prestigeMultiplier: 1.0
   },
   upgrades: {
     auto: { count: 0, cost: 10, cps: 0.1, costMultiplier: 1.3, name: "Auto Clicker" },
@@ -291,7 +293,9 @@ function setupEventListeners() {
       goldRushCount: 0,
       peakPower: 0,
       upgradeProduction: {},
-      currentPowerMultiplier: 1
+      currentPowerMultiplier: 1,
+      prestigeLevel: 0,
+      prestigeMultiplier: 1.0
     };
 
     // Reset upgrades to initial values
@@ -347,6 +351,40 @@ function setupEventListeners() {
     initPowerMonitor();
     updateAnalytics();
   });
+
+  // Prestige button
+  const prestigeBtn = document.getElementById('prestige-btn');
+  if (prestigeBtn) {
+    // Create tooltip
+    const tooltip = document.createElement('div');
+    tooltip.className = 'prestige-tooltip';
+    tooltip.innerHTML = `
+      <div class="prestige-tooltip-title">Prestige System</div>
+      <div class="prestige-tooltip-stats">
+        Current Level: <span id="prestige-level">0</span><br>
+        Current Multiplier: <span id="prestige-multiplier">1.0</span>x<br>
+        Cost: <span id="prestige-cost">1,000,000</span> gold bars
+      </div>
+      <div class="prestige-tooltip-tip">
+        Prestige to reset your game but keep a permanent multiplier!
+      </div>
+    `;
+    prestigeBtn.appendChild(tooltip);
+    
+    // Add click handler
+    prestigeBtn.addEventListener('click', prestige);
+    
+    // Update tooltip periodically
+    setInterval(() => {
+      const cost = calculatePrestigeCost();
+      document.getElementById('prestige-level').textContent = game.stats.prestigeLevel;
+      document.getElementById('prestige-multiplier').textContent = game.stats.prestigeMultiplier.toFixed(1);
+      document.getElementById('prestige-cost').textContent = formatNumber(cost);
+      
+      // Enable/disable button based on affordability
+      prestigeBtn.disabled = game.stats.coinCount < cost;
+    }, 100);
+  }
 }
 
 // Click Handling
@@ -359,8 +397,8 @@ function handleClick(e) {
   const isShift = e.shiftKey;
   const baseClickAmount = isShift ? 10 : 1;
   const multiplier = game.stats.goldRushActive ? 5 : 1;
-  // Apply power multiplier to click value
-  const clickValue = baseClickAmount * multiplier * game.stats.currentPowerMultiplier;
+  // Apply both power and prestige multipliers
+  const clickValue = baseClickAmount * multiplier * game.stats.currentPowerMultiplier * game.stats.prestigeMultiplier;
   
   game.stats.totalClicks += baseClickAmount;
   game.stats.manualClicks += baseClickAmount;
@@ -1147,6 +1185,86 @@ function updateAnalytics() {
     
     upgradeAnalytics.appendChild(row);
   });
+}
+
+// Add prestige cost calculation function
+function calculatePrestigeCost() {
+  const baseCost = 1000000; // 1 million
+  const multiplier = 1 + (game.stats.prestigeLevel * 0.5); // Each prestige increases cost by 50%
+  return Math.floor(baseCost * multiplier);
+}
+
+// Add prestige function
+function prestige() {
+  const cost = calculatePrestigeCost();
+  if (game.stats.coinCount >= cost) {
+    // Increase prestige level and multiplier
+    game.stats.prestigeLevel++;
+    game.stats.prestigeMultiplier = 1 + (game.stats.prestigeLevel * 0.5);
+    
+    // Save prestige stats before reset
+    const prestigeStats = {
+      prestigeLevel: game.stats.prestigeLevel,
+      prestigeMultiplier: game.stats.prestigeMultiplier
+    };
+    
+    // Reset all other stats
+    game.stats = {
+      ...prestigeStats,
+      totalClicks: 0,
+      manualClicks: 0,
+      autoClicks: 0,
+      coinCount: 0,
+      clicksSinceLastGoldRush: 0,
+      goldRushActive: false,
+      startTime: performance.now(),
+      lastAutoClickTime: 0,
+      lastManualClickTime: 0,
+      lastClicks: [],
+      goldRushThreshold: 100,
+      totalGoldEarned: 0,
+      totalGoldSpent: 0,
+      goldRushCount: 0,
+      peakPower: 0,
+      upgradeProduction: {}
+    };
+    
+    // Reset upgrades
+    Object.keys(game.upgrades).forEach(type => {
+      game.upgrades[type].count = 0;
+      game.upgrades[type].cost = game.upgrades[type].cost;
+    });
+    
+    // Initialize upgrade production tracking
+    Object.keys(game.upgrades).forEach(type => {
+      game.stats.upgradeProduction[type] = 0;
+    });
+    
+    // Update displays
+    updateStats();
+    Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
+    
+    // Save game
+    saveGame();
+    
+    // Show prestige animation
+    showPrestigeAnimation();
+  }
+}
+
+// Add prestige animation function
+function showPrestigeAnimation() {
+  // Create prestige effect
+  const effect = document.createElement('div');
+  effect.className = 'prestige-effect';
+  effect.innerHTML = `
+    <div class="prestige-text">PRESTIGE ${game.stats.prestigeLevel}</div>
+    <div class="prestige-multiplier">${game.stats.prestigeMultiplier.toFixed(1)}x MULTIPLIER</div>
+  `;
+  document.body.appendChild(effect);
+  
+  // Remove effect after animation
+  setTimeout(() => effect.remove(), 3000);
 }
 
 // Initialize the game when DOM is loaded
