@@ -200,7 +200,7 @@ body::after {
 /* Power Meter */
 .power-meter {
   position: fixed;
-  left: 20px;
+  left: 60px;
   top: 50%;
   transform: translateY(-50%);
   width: 40px;
@@ -213,54 +213,91 @@ body::after {
   overflow: hidden;
 }
 
-.power-meter-fill {
+.power-meter::before {
+  content: '';
   position: absolute;
-  bottom: 0;
   left: 0;
+  top: 10%;
   width: 100%;
-  height: 0%;
-  background: linear-gradient(to top, #ff4e00, #ff9a00, #ffd700);
-  transition: height 0.3s ease-out;
-  box-shadow: 0 0 20px rgba(255, 78, 0, 0.6);
-}
-
-.power-meter-cps {
-  position: absolute;
-  bottom: -45px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: var(--gold-light);
-  font-weight: bold;
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-  white-space: nowrap;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 5px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--gold-light);
-}
-
-.power-meter-marks {
-  position: absolute;
-  right: 45px;
-  top: 0;
-  height: 100%;
+  height: 80%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 10px 0;
-  color: var(--gold-light);
-  font-size: 0.8em;
+  pointer-events: none;
 }
 
-.power-meter-marks span::after {
+.power-meter::after {
   content: '';
   position: absolute;
-  left: 10px;
+  left: 8px;
+  top: 10%;
+  width: calc(100% - 16px);
+  height: 80%;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent calc(20% - 1px),
+    var(--gold-light) calc(20% - 1px),
+    var(--gold-light) 20%
+  );
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.power-meter-fill {
+  position: absolute;
+  bottom: 0;
+  left: 2px;
+  width: calc(100% - 4px);
+  height: 0%;
+  background: linear-gradient(to top, var(--gold-light), #ff9a00, #ff4e00);
+  transition: height 0.3s ease-out;
+  box-shadow: 0 0 20px rgba(255, 78, 0, 0.6);
+  border-radius: 16px;
+}
+
+.power-meter-label {
+  position: absolute;
+  left: -85px;
   top: 50%;
-  width: 10px;
-  height: 2px;
-  background: var(--gold-light);
   transform: translateY(-50%);
+  color: var(--gold-light);
+  font-size: 1.2em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5),
+               0 0 20px rgba(255, 215, 0, 0.3);
+  white-space: nowrap;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .power-meter {
+    left: 50px;
+    width: 35px;
+    height: 300px;
+  }
+
+  .power-meter-fill {
+    left: 2px;
+    width: calc(100% - 4px);
+    border-radius: 14px;
+  }
+
+  .power-meter-label {
+    left: -75px;
+    font-size: 1em;
+    letter-spacing: 1px;
+  }
+}
+
+/* Remove all old power meter styles */
+.power-meter-marks,
+.power-meter-marks span,
+.power-meter-marks::before,
+.power-meter-cps {
+  display: none !important;
 }
 
 /* Hamburger Menu */
@@ -425,28 +462,6 @@ footer p {
   font-size: 0.9em;
   line-height: 1.4;
   padding: 0 20px;
-}
-
-/* Mobile Adjustments */
-@media (max-width: 768px) {
-  .power-meter {
-    left: 10px;
-    height: 300px;
-  }
-
-  .gold-bar {
-    width: 480px;
-    height: 288px;
-  }
-
-  .upgrades-sidebar {
-    width: 100%;
-    right: -100%;
-  }
-
-  footer p {
-    font-size: 0.8em;
-  }
 }
 
 /* Confetti Animation */
@@ -657,14 +672,155 @@ footer p {
   font-size: 0.9em;
 }
 
-/* Power Meter Marks */
-.power-meter-marks span {
-  display: block;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9em;
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  padding: 2px 5px;
+/* Settings Button */
+.settings-btn {
+  position: fixed;
+  top: 40px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  color: var(--bg-primary);
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
+  border: 2px solid rgba(255, 215, 0, 0.8);
+}
+
+.settings-btn:hover {
+  transform: rotate(90deg);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
+}
+
+.settings-btn i {
+  font-size: 1.5em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal Styling */
+.modal-content {
+  background: var(--bg-primary);
+  color: var(--text-light);
+  border: 2px solid var(--gold-light);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.modal-backdrop.show {
+  opacity: 0.8;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--gold-light);
+  background: linear-gradient(to right, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+}
+
+.modal-footer {
+  border-top: 1px solid var(--gold-light);
+  background: linear-gradient(to right, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+}
+
+.modal-title {
+  color: var(--gold-light);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.btn-close {
+  color: var(--text-light);
+  filter: invert(1) brightness(200%);
+  opacity: 0.8;
+}
+
+.btn-close:hover {
+  opacity: 1;
+}
+
+.settings-section {
+  padding: 1.5rem;
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  margin: 5px 0;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.settings-section h6 {
+  color: var(--gold-light);
+  margin-bottom: 1rem;
+  font-size: 1.1em;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+/* Danger button styling */
+.btn-danger {
+  background: linear-gradient(45deg, #dc3545, #b02a37);
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+  background: linear-gradient(45deg, #c82333, #a52834);
+}
+
+/* Secondary button styling */
+.btn-secondary {
+  background: linear-gradient(45deg, #6c757d, #5a6268);
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.4);
+  background: linear-gradient(45deg, #5a6268, #4e555b);
+}
+
+/* Reset Toast */
+.reset-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translate(-50%, -20px);
+  background: var(--dark-bg);
+  border: 2px solid var(--gold);
+  border-radius: 8px;
+  padding: 12px 24px;
+  z-index: 2000;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.reset-toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-color);
+}
+
+.reset-toast i {
+  color: #28a745;
+  font-size: 1.2em;
+}
+
+@media (max-width: 768px) {
+  .settings-btn {
+    top: 40px;
+    left: 20px;
+    width: 36px;
+    height: 36px;
+  }
+  
+  .settings-btn i {
+    font-size: 1.2em;
+  }
+  
+  .reset-toast {
+    width: 90%;
+    max-width: 300px;
+  }
 } 

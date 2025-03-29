@@ -37,6 +37,13 @@ function cacheElements() {
     goldRushFill: document.getElementById('gold-rush-fill'),
     goldRushText: document.getElementById('gold-rush-text'),
     
+    // Settings elements
+    settingsBtn: document.getElementById('settings-btn'),
+    settingsModal: new bootstrap.Modal(document.getElementById('settingsModal')),
+    resetConfirmModal: new bootstrap.Modal(document.getElementById('resetConfirmModal')),
+    resetGameBtn: document.getElementById('resetGameBtn'),
+    confirmResetBtn: document.getElementById('confirmResetBtn'),
+    
     // Upgrade buttons
     auto: {
       btn: document.getElementById('buy-auto'),
@@ -107,6 +114,21 @@ function gameLoop() {
 
 // Event Listeners
 function setupEventListeners() {
+  // Settings button listeners
+  game.elements.settingsBtn.addEventListener('click', () => {
+    game.elements.settingsModal.show();
+  });
+  
+  game.elements.resetGameBtn.addEventListener('click', () => {
+    game.elements.settingsModal.hide();
+    game.elements.resetConfirmModal.show();
+  });
+  
+  game.elements.confirmResetBtn.addEventListener('click', () => {
+    resetGame();
+    game.elements.resetConfirmModal.hide();
+  });
+
   // Gold bar click - attach to the container instead of the image
   const goldBar = game.elements.goldBar;
   goldBar.addEventListener('click', handleClick);
@@ -470,10 +492,10 @@ function calculateMaxPotentialCPS() {
   // If in Gold Rush, multiply by 5
   const multiplier = game.stats.goldRushActive ? 5 : 1;
   
-  // Dynamic scaling factor that grows with CPS
-  // This ensures the meter never completely fills
-  // The higher your CPS, the more room there is to grow
-  const scalingFactor = Math.max(2, Math.log10(currentPotential + 1) * 1.5);
+  // Much more aggressive scaling factor that grows exponentially with CPS
+  // This ensures the meter stays low until you get really close to your potential
+  const baseScaling = Math.max(4, Math.pow(Math.log10(currentPotential + 1), 2) * 2);
+  const scalingFactor = baseScaling * (1 + Math.log10(currentPotential + 1));
   
   return currentPotential * multiplier * scalingFactor;
 }
@@ -492,24 +514,6 @@ function updateStats() {
   updateUpgradeButtons();
 }
 
-function updatePowerMeterMarks(maxCPS) {
-  const marksContainer = document.querySelector('.power-meter-marks');
-  if (!marksContainer) return;
-  
-  // Clear existing marks
-  marksContainer.innerHTML = '';
-  
-  // Create logarithmically spaced marks for better distribution
-  const steps = 6;
-  for (let i = steps - 1; i >= 0; i--) {
-    const mark = document.createElement('span');
-    // Use a log scale for more evenly distributed marks
-    const value = maxCPS * Math.pow(i / (steps - 1), 2);
-    mark.textContent = `${formatNumber(value)} CPS`;
-    marksContainer.appendChild(mark);
-  }
-}
-
 function updatePowerMeter(cps) {
   // Calculate dynamic maximum CPS based on current potential
   const maxPotentialCPS = calculateMaxPotentialCPS();
@@ -517,31 +521,16 @@ function updatePowerMeter(cps) {
   // Use the larger of maxPotentialCPS or current CPS
   const maxCPS = Math.max(maxPotentialCPS, cps);
   
-  // Update the marks with new max CPS
-  updatePowerMeterMarks(maxCPS);
-  
   // Calculate height percentage using a log scale for smoother progression
-  const percentage = Math.min((Math.log10(cps + 1) / Math.log10(maxCPS + 1)) * 100, 100);
+  const logBase = 10;
+  const percentage = Math.min(
+    (Math.log(cps + 1) / Math.log(logBase)) / 
+    (Math.log(maxCPS + 1) / Math.log(logBase)) * 100,
+    100
+  );
   
   // Update height
   game.elements.powerMeterFill.style.height = `${percentage}%`;
-  
-  // Format current and max CPS for display
-  const currentCPSFormatted = formatNumber(cps);
-  const maxCPSFormatted = formatNumber(maxCPS);
-  
-  // Create styled CPS display
-  const cpsHTML = `
-    <div class="cps-display">
-      <span class="current-cps">${currentCPSFormatted}</span>
-      <span class="cps-separator">/</span>
-      <span class="max-cps">${maxCPSFormatted}</span>
-      <span class="cps-label">CPS</span>
-    </div>
-  `;
-  
-  // Update CPS text
-  game.elements.cpsDisplay.innerHTML = cpsHTML;
   
   // Add/remove high-power class based on relative CPS
   if (percentage > 70) {
@@ -712,6 +701,86 @@ function handleResize() {
     // On mobile, always close
     closeSidebar();
   }
+}
+
+function resetGame() {
+  // Reset all game stats
+  game.stats = {
+    totalClicks: 0,
+    manualClicks: 0,
+    autoClicks: 0,
+    coinCount: 0,
+    clicksSinceLastGoldRush: 0,
+    goldRushActive: false,
+    startTime: performance.now(),
+    lastAutoClickTime: 0,
+    lastManualClickTime: 0,
+    lastClicks: [],
+    goldRushThreshold: 100
+  };
+  
+  // Reset all upgrades
+  Object.keys(game.upgrades).forEach(type => {
+    game.upgrades[type].count = 0;
+    game.upgrades[type].cost = game.upgrades[type].cost;
+  });
+  
+  // Reset costs to initial values
+  game.upgrades.auto.cost = 10;
+  game.upgrades.miner.cost = 100;
+  game.upgrades.machine.cost = 1000;
+  game.upgrades.drill.cost = 5000;
+  game.upgrades.lab.cost = 20000;
+  
+  // Clear any active intervals/timeouts
+  if (game.goldRushTimeout) {
+    clearTimeout(game.goldRushTimeout);
+    game.goldRushTimeout = null;
+  }
+  
+  if (game.holdClickInterval) {
+    clearInterval(game.holdClickInterval);
+    game.holdClickInterval = null;
+  }
+  
+  // Remove any visual effects
+  document.querySelectorAll('.confetti-container, .gold-rush-banner').forEach(el => el.remove());
+  
+  // Update all displays
+  updateStats();
+  Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
+  
+  // Clear local storage
+  localStorage.removeItem('goldBarClickerSave');
+  
+  // Show feedback toast
+  showResetFeedback();
+}
+
+function showResetFeedback() {
+  const toast = document.createElement('div');
+  toast.className = 'reset-toast';
+  toast.innerHTML = `
+    <div class="reset-toast-content">
+      <i class="fas fa-check-circle"></i>
+      <span>Game progress has been reset!</span>
+    </div>
+  `;
+  
+  document.body.appendChild(toast);
+  
+  // Trigger animation
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+  });
+  
+  // Remove after animation
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-20px)';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
 }
 
 // Initialize the game when DOM is loaded
