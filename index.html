@@ -13,23 +13,32 @@
     <div class="gold-rush-text" id="gold-rush-text">Gold Rush: 0/100</div>
   </div>
 
-  <div class="container">
-    <div class="left-panel">
-      <h1>Gold Bar Clicker</h1>
-      
-      <div id="gold-bar" class="gold-bar">Click Me</div>
-      
-      <div class="stat stat-gold">
-        <strong>Gold Bars:</strong> <span id="coin-count">0</span>
-      </div>
-      <div id="cps-container" class="stat stat-cps">
-        <strong>Clicks Per Second:</strong> <span id="cps">0</span>
-      </div>
-      <div class="stat" style="display:none;">
-        Total Clicks: <span id="click-count">0</span>
-      </div>
+  <!-- Power Meter -->
+  <div class="power-meter">
+    <div class="power-meter-fill" id="power-meter-fill"></div>
+    <div class="power-meter-marks">
+      <span>200 CPS</span>
+      <span>150 CPS</span>
+      <span>100 CPS</span>
+      <span>50 CPS</span>
+      <span>10 CPS</span>
+      <span>0 CPS</span>
     </div>
-    
+  </div>
+
+  <!-- Hamburger Menu Button -->
+  <button class="hamburger-btn" id="hamburger-btn">
+    <div class="hamburger-line"></div>
+    <div class="hamburger-line"></div>
+    <div class="hamburger-line"></div>
+  </button>
+
+  <!-- Upgrades Sidebar -->
+  <div class="upgrades-sidebar" id="upgrades-sidebar">
+    <div class="upgrades-header">
+      <h2>Upgrades</h2>
+      <button class="close-btn" id="close-upgrades">&times;</button>
+    </div>
     <div class="right-panel">
       <button id="buy-auto" class="upgrade-btn">
         <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Auto Clicker">
@@ -70,6 +79,27 @@
         <div class="upgrade-cps">200 CPS</div>
         <div class="upgrade-cost">Cost: <span id="lab-cost">20000</span></div>
       </button>
+    </div>
+  </div>
+
+  <!-- Main Game Container -->
+  <div class="container">
+    <div class="game-content">
+      <h1>Gold Bar Clicker</h1>
+      
+      <div id="gold-bar" class="gold-bar">Click Me</div>
+      
+      <div class="stats-container">
+        <div class="stat stat-gold">
+          <strong>Gold Bars:</strong> <span id="coin-count">0</span>
+        </div>
+        <div id="cps-container" class="stat stat-cps">
+          <strong>Clicks Per Second:</strong> <span id="cps">0</span>
+        </div>
+        <div class="stat" style="display:none;">
+          Total Clicks: <span id="click-count">0</span>
+        </div>
+      </div>
     </div>
   </div>
 

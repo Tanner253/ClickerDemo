@@ -62,7 +62,12 @@ function cacheElements() {
       btn: document.getElementById('buy-lab'),
       count: document.getElementById('lab-count'),
       cost: document.getElementById('lab-cost')
-    }
+    },
+    powerMeterFill: document.getElementById('power-meter-fill'),
+    hamburgerBtn: document.getElementById('hamburger-btn'),
+    upgradesSidebar: document.getElementById('upgrades-sidebar'),
+    closeUpgradesBtn: document.getElementById('close-upgrades'),
+    container: document.querySelector('.container')
   };
 }
 
@@ -70,6 +75,18 @@ function cacheElements() {
 function initGame() {
   cacheElements();
   setupEventListeners();
+  
+  // Set initial sidebar state based on screen size and saved preference
+  if (window.innerWidth > 768) {
+    const wasOpen = localStorage.getItem('sidebarOpen');
+    if (wasOpen === null || wasOpen === 'true') {
+      openSidebar();
+    }
+  }
+  
+  // Add resize listener for responsive behavior
+  window.addEventListener('resize', handleResize);
+  
   loadGame();
   
   // Main game loop (runs every second for auto-clickers)
@@ -112,6 +129,24 @@ function setupEventListeners() {
   
   // Tooltips for upgrades
   setupTooltips();
+
+  // Hamburger menu controls
+  game.elements.hamburgerBtn.addEventListener('click', toggleUpgradesSidebar);
+  game.elements.closeUpgradesBtn.addEventListener('click', toggleUpgradesSidebar);
+
+  // Close sidebar when clicking outside
+  document.addEventListener('click', (e) => {
+    if (game.elements.upgradesSidebar.classList.contains('open') &&
+        !game.elements.upgradesSidebar.contains(e.target) &&
+        !game.elements.hamburgerBtn.contains(e.target)) {
+      toggleUpgradesSidebar();
+    }
+  });
+
+  // Prevent clicks inside sidebar from closing it
+  game.elements.upgradesSidebar.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
 }
 
 // Click Handling
@@ -313,7 +348,7 @@ function createConfetti() {
   // Remove after animation completes
   setTimeout(() => {
     container.style.opacity = '0';
-    setTimeout(() => container.remove(), 500);
+    setTimeout(() => container.remove(), 5000);
   }, 5000);
 }
 
@@ -360,10 +395,15 @@ function spawnAutoClickFeedback(amount, type) {
   
   document.body.appendChild(feedback);
   
-  setTimeout(() => {
+  // Set initial opacity to 0 and force reflow
+  feedback.style.opacity = '0';
+  feedback.offsetHeight;
+  
+  // Animate
+  requestAnimationFrame(() => {
     feedback.style.transform = 'translateY(-40px)';
-    feedback.style.opacity = '0';
-  }, 10);
+    feedback.style.opacity = game.elements.upgradesSidebar.classList.contains('open') ? '1' : '0';
+  });
   
   setTimeout(() => feedback.remove(), 1500);
 }
@@ -398,6 +438,9 @@ function updateStats() {
   
   // Update upgrade buttons state
   updateUpgradeButtons();
+  
+  // Update power meter
+  updatePowerMeter(cps);
 }
 
 function updateCPSMeterColor(cps) {
@@ -517,6 +560,69 @@ function loadGame() {
     Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
   } catch (e) {
     console.error('Failed to load save:', e);
+  }
+}
+
+// Add this function to update the power meter
+function updatePowerMeter(cps) {
+  // Calculate height percentage (max CPS is 200)
+  const maxCPS = 200;
+  const percentage = Math.min((cps / maxCPS) * 100, 100);
+  
+  // Update height
+  game.elements.powerMeterFill.style.height = `${percentage}%`;
+  
+  // Add/remove high-power class based on CPS
+  if (cps > maxCPS * 0.7) { // Over 70% of max
+    game.elements.powerMeterFill.classList.add('high-power');
+  } else {
+    game.elements.powerMeterFill.classList.remove('high-power');
+  }
+}
+
+// Add new function for toggling the upgrades sidebar
+function toggleUpgradesSidebar() {
+  if (game.elements.upgradesSidebar.classList.contains('open')) {
+    closeSidebar();
+  } else {
+    openSidebar();
+  }
+}
+
+// Split toggle into open/close functions
+function openSidebar() {
+  game.elements.upgradesSidebar.classList.add('open');
+  game.elements.container.classList.add('sidebar-open');
+  game.elements.hamburgerBtn.classList.add('hidden');
+  localStorage.setItem('sidebarOpen', 'true');
+  
+  // Animate hamburger
+  const lines = game.elements.hamburgerBtn.querySelectorAll('.hamburger-line');
+  lines.forEach(line => line.style.width = '70%');
+}
+
+function closeSidebar() {
+  game.elements.upgradesSidebar.classList.remove('open');
+  game.elements.container.classList.remove('sidebar-open');
+  game.elements.hamburgerBtn.classList.remove('hidden');
+  localStorage.setItem('sidebarOpen', 'false');
+  
+  // Animate hamburger
+  const lines = game.elements.hamburgerBtn.querySelectorAll('.hamburger-line');
+  lines.forEach(line => line.style.width = '100%');
+}
+
+// Update handleResize function
+function handleResize() {
+  if (window.innerWidth > 768) {
+    // On desktop, restore the last state or default to open
+    const wasOpen = localStorage.getItem('sidebarOpen');
+    if (wasOpen === null || wasOpen === 'true') {
+      openSidebar();
+    }
+  } else {
+    // On mobile, always close
+    closeSidebar();
   }
 }
 
