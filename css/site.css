@@ -1,9 +1,12 @@
 :root {
   --gold-light: #FFD700;
   --gold-dark: #FFA500;
-  --bg-overlay: rgba(32, 32, 32, 0.92);
-  --text-light: white;
-  --stat-bg: rgba(255, 255, 255, 0.1);
+  --bg-primary: #3a3a3a;
+  --bg-overlay: rgba(58, 58, 58, 0.75);
+  --text-light: #FFFFFF;
+  --stat-bg: rgba(255, 255, 255, 0.15);
+  --gold-glow: #FFD700;
+  --button-bg: #f0f0f0;
 }
 
 @keyframes slideBackground {
@@ -11,36 +14,41 @@
     background-position: 0 0;
   }
   to {
-    background-position: 200% 200%;
+    background-position: 400% 400%;
   }
 }
 
 body {
-  background-color: #1a1a1a;
+  background-color: var(--bg-primary);
   color: var(--text-light);
   font-family: Arial, sans-serif;
   text-align: center;
-  padding-top: 100px;
   margin: 0;
   user-select: none;
   min-height: 100vh;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0;
 }
 
 body::before {
   content: '';
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
   background-image: url('../assets/3d-gold-coin-rain-png.webp');
-  background-size: 800px 800px;
+  background-size: 1000px 1000px;
   background-repeat: repeat;
-  opacity: 0.25;
-  animation: slideBackground 30s linear infinite;
+  opacity: 0.7;
+  animation: slideBackground 120s linear infinite;
   z-index: -2;
-  transform: rotate(15deg);
+  transform: rotate(15deg) scale(1.2);
+  filter: brightness(1.3) contrast(1.2);
 }
 
 body::after {
@@ -50,27 +58,29 @@ body::after {
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--bg-overlay);
+  background: rgba(58, 58, 58, 0.6);
   z-index: -1;
 }
 
 /* Gold Rush Progress Header */
 .gold-rush-header {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 30px;
-  background: var(--stat-bg);
+  background: rgba(0, 0, 0, 0.3);
   z-index: 100;
-  border-bottom: 1px solid var(--gold-light);
+  border-bottom: 2px solid var(--gold-light);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
 .gold-rush-fill {
   height: 100%;
-  background: linear-gradient(to right, #4d3319, #FFD700);
+  background: linear-gradient(to right, var(--gold-dark), var(--gold-light));
   width: 0%;
   transition: width 0.2s ease;
+  box-shadow: 0 0 10px var(--gold-glow);
 }
 
 .gold-rush-text {
@@ -87,19 +97,32 @@ body::after {
 .container {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   gap: 40px;
   width: 100%;
   max-width: 1000px;
   margin: auto;
+  padding: 20px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .gold-bar {
   width: 200px;
   height: 120px;
-  background: linear-gradient(to top left, var(--gold-light), var(--gold-dark));
+  background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700);
   border-radius: 12px;
-  box-shadow: 0 0 20px var(--gold-light);
+  box-shadow: 
+    0 0 25px var(--gold-glow),
+    inset 0 0 15px rgba(255, 255, 255, 0.5);
   margin: 20px auto;
   cursor: pointer;
   display: flex;
@@ -107,8 +130,17 @@ body::after {
   justify-content: center;
   font-size: 1.5em;
   font-weight: bold;
-  transition: transform 0.1s ease;
+  transition: all 0.2s ease;
   position: relative;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.gold-bar:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 0 35px var(--gold-glow),
+    inset 0 0 20px rgba(255, 255, 255, 0.6);
 }
 
 .gold-bar:active {
@@ -125,27 +157,28 @@ body::after {
 }
 
 .stat-gold {
-  background-color: var(--stat-bg);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
   color: var(--gold-light);
   padding: 12px 16px;
   border-radius: 10px;
   width: 320px;
   margin: 10px auto;
-  border: 1px solid var(--gold-light);
-  box-shadow: 0 0 10px #444;
+  border: 2px solid var(--gold-light);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  backdrop-filter: blur(5px);
 }
 
 .stat-cps {
-  background: linear-gradient(to top left, var(--gold-light), var(--gold-dark));
-  color: black;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  color: #000;
   padding: 12px 16px;
   border-radius: 10px;
   width: 320px;
   margin: 10px auto;
   border: 2px solid #FF8C00;
-  box-shadow: 0 0 10px var(--gold-light);
+  box-shadow: 0 0 20px var(--gold-glow);
   font-weight: bold;
-  transition: background 0.3s ease;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .upgrade-btn {
@@ -153,15 +186,26 @@ body::after {
   height: 100px;
   position: relative;
   text-align: center;
-  background: #bdbdbd;
-  color: black;
+  background: var(--button-bg);
+  color: #000;
   border: 2px solid var(--gold-light);
   padding: 10px 20px;
   margin: 10px;
   font-size: 1em;
   cursor: pointer;
   border-radius: 8px;
-  transition: transform 0.1s ease;
+  transition: all 0.2s ease;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.upgrade-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.15),
+    0 0 15px rgba(255, 215, 0, 0.3);
+  background: #ffffff;
 }
 
 .upgrade-btn:active {
@@ -208,14 +252,15 @@ body::after {
 }
 
 footer {
-  margin-top: 40px;
+  margin-top: 20px;
   border-top: 2px solid var(--gold-light);
-  padding-top: 20px;
+  padding: 10px 20px;
   font-size: 0.9em;
   color: #ccc;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
 }
 
 /* Animations */
