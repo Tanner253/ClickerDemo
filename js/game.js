@@ -11,7 +11,13 @@ const game = {
     lastAutoClickTime: 0,
     lastManualClickTime: 0,
     lastClicks: [],
-    goldRushThreshold: 100
+    goldRushThreshold: 100,
+    totalGoldEarned: 0,
+    totalGoldSpent: 0,
+    goldRushCount: 0,
+    peakPower: 0,
+    upgradeProduction: {},
+    currentPowerMultiplier: 1
   },
   upgrades: {
     auto: { count: 0, cost: 10, cps: 0.1, costMultiplier: 1.3, name: "Auto Clicker" },
@@ -30,6 +36,11 @@ const game = {
   goldRushTimeout: null,
   holdClickInterval: null
 };
+
+// Initialize upgrade production tracking
+Object.keys(game.upgrades).forEach(type => {
+  game.stats.upgradeProduction[type] = 0;
+});
 
 // DOM References
 function cacheElements() {
@@ -99,11 +110,54 @@ function cacheElements() {
     closeUpgradesBtn: document.getElementById('close-upgrades'),
     container: document.querySelector('.container')
   };
+
+  // Ensure power meter starts at 0%
+  if (game.elements.powerMeterFill) {
+    game.elements.powerMeterFill.style.height = '0%';
+  }
+}
+
+function initializePowerMeter() {
+  const container = document.querySelector('.power-meter');
+  if (!container) return;
+  
+  // Create tooltip
+  const tooltip = document.createElement('div');
+  tooltip.className = 'power-meter-tooltip';
+  tooltip.innerHTML = `
+    <strong>Power Multiplier</strong><br>
+    Click faster to increase your power level!<br><br>
+    Power multiplies ALL click values:<br>
+    • Regular clicks<br>
+    • Shift-clicks (10x)<br>
+    • Gold Rush bonus (5x)<br><br>
+    <em>Current: <span id="current-multiplier">1.00</span>x</em>
+  `;
+  
+  container.parentElement.appendChild(tooltip);
+}
+
+// Add this function before initGame
+function updateSessionDuration() {
+  const sessionDurationElement = document.getElementById('session-duration');
+  if (!sessionDurationElement) return;
+  
+  const now = Date.now();
+  const startTime = game.stats.startTime || now;
+  const duration = Math.floor((now - startTime) / 1000);
+  
+  const hours = Math.floor(duration / 3600);
+  const minutes = Math.floor((duration % 3600) / 60);
+  const seconds = duration % 60;
+  
+  sessionDurationElement.textContent = 
+    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
 // Initialize Game
 function initGame() {
   cacheElements();
+  initializePowerMeter();
   setupEventListeners();
   
   // Set initial sidebar state based on screen size and saved preference
@@ -127,11 +181,22 @@ function initGame() {
   
   // Update stats display
   updateStats();
+  
+  // Initialize session start time if not already set
+  if (!game.stats.startTime) {
+    game.stats.startTime = Date.now();
+  }
+  
+  // Start session duration timer
+  setInterval(updateSessionDuration, 1000);
 }
 
 // Main game loop (for visual updates only)
 function gameLoop() {
   updateGoldRushProgress();
+  if (document.getElementById('analyticsModal').classList.contains('show')) {
+    updateAnalytics();
+  }
   requestAnimationFrame(gameLoop);
 }
 
@@ -220,13 +285,32 @@ function setupEventListeners() {
       lastAutoClickTime: 0,
       lastManualClickTime: 0,
       lastClicks: [],
-      goldRushThreshold: 100
+      goldRushThreshold: 100,
+      totalGoldEarned: 0,
+      totalGoldSpent: 0,
+      goldRushCount: 0,
+      peakPower: 0,
+      upgradeProduction: {},
+      currentPowerMultiplier: 1
     };
 
-    // Reset upgrades
+    // Reset upgrades to initial values
+    game.upgrades = {
+      auto: { count: 0, cost: 10, cps: 0.1, costMultiplier: 1.3, name: "Auto Clicker" },
+      pickaxe: { count: 0, cost: 50, cps: 0.5, costMultiplier: 1.35, name: "Pickaxe" },
+      miner: { count: 0, cost: 100, cps: 1, costMultiplier: 1.4, name: "Miner" },
+      excavator: { count: 0, cost: 500, cps: 5, costMultiplier: 1.45, name: "Excavator" },
+      machine: { count: 0, cost: 1000, cps: 10, costMultiplier: 1.5, name: "Machining" },
+      drill: { count: 0, cost: 5000, cps: 50, costMultiplier: 1.6, name: "Drill" },
+      refinery: { count: 0, cost: 10000, cps: 100, costMultiplier: 1.65, name: "Refinery" },
+      lab: { count: 0, cost: 20000, cps: 200, costMultiplier: 1.7, name: "Gold Lab" },
+      quantum: { count: 0, cost: 50000, cps: 500, costMultiplier: 1.75, name: "Quantum Miner" },
+      singularity: { count: 0, cost: 100000, cps: 1000, costMultiplier: 1.8, name: "Singularity" }
+    };
+
+    // Initialize upgrade production tracking
     Object.keys(game.upgrades).forEach(type => {
-      game.upgrades[type].count = 0;
-      game.upgrades[type].cost = game.upgrades[type].cost;
+      game.stats.upgradeProduction[type] = 0;
     });
 
     // Clear saved game
@@ -255,6 +339,14 @@ function setupEventListeners() {
     document.body.style.overflow = '';
     document.body.style.paddingRight = '';
   });
+
+  // Analytics button click handler
+  document.getElementById('analytics-btn').addEventListener('click', () => {
+    const analyticsModal = new bootstrap.Modal(document.getElementById('analyticsModal'));
+    analyticsModal.show();
+    initPowerMonitor();
+    updateAnalytics();
+  });
 }
 
 // Click Handling
@@ -267,15 +359,17 @@ function handleClick(e) {
   const isShift = e.shiftKey;
   const baseClickAmount = isShift ? 10 : 1;
   const multiplier = game.stats.goldRushActive ? 5 : 1;
-  const clickValue = baseClickAmount * multiplier;
+  // Apply power multiplier to click value
+  const clickValue = baseClickAmount * multiplier * game.stats.currentPowerMultiplier;
   
   game.stats.totalClicks += baseClickAmount;
   game.stats.manualClicks += baseClickAmount;
   
-  // Record click for CPS calculation
+  // Record all manual clicks for power meter, but only as single clicks
   game.stats.lastClicks.push({
     time: now,
-    amount: baseClickAmount
+    amount: 1, // Always count as 1 for power meter
+    isManual: true
   });
   
   if (!game.stats.goldRushActive) {
@@ -283,6 +377,7 @@ function handleClick(e) {
   }
   
   game.stats.coinCount += clickValue;
+  game.stats.totalGoldEarned += clickValue;
   
   spawnClickFeedback(clickValue, e.clientX, e.clientY);
   updateStats();
@@ -328,11 +423,14 @@ function autoClickLoop() {
         game.stats.coinCount += earned;
         game.stats.autoClicks += upgrade.count * upgrade.cps;
         game.stats.totalClicks += upgrade.count * upgrade.cps;
+        game.stats.totalGoldEarned += earned;
+        game.stats.upgradeProduction[type] += earned;
         
-        // Record auto-clicks for CPS calculation
+        // Record auto-clicks for CPS calculation (but not power meter)
         game.stats.lastClicks.push({
           time: now,
-          amount: upgrade.count * upgrade.cps
+          amount: upgrade.count * upgrade.cps,
+          isManual: false
         });
         
         if (!game.stats.goldRushActive) {
@@ -397,12 +495,14 @@ function buyUpgrade(type) {
   const upgrade = game.upgrades[type];
   
   if (game.stats.coinCount >= upgrade.cost) {
+    game.stats.totalGoldSpent += upgrade.cost;
     game.stats.coinCount -= upgrade.cost;
     upgrade.count++;
     upgrade.cost = Math.floor(upgrade.cost * upgrade.costMultiplier);
     
     updateUpgradeDisplay(type);
     updateStats();
+    updateAnalytics();
     saveGame();
   }
 }
@@ -452,6 +552,7 @@ function updateGoldRushProgress() {
 }
 
 function startGoldRush() {
+  game.stats.goldRushCount++;
   game.stats.goldRushActive = true;
   game.goldRushTimeout = Date.now() + 5000; // 5 seconds from now
   
@@ -600,20 +701,43 @@ function updateStats() {
 }
 
 function updatePowerMeter(cps) {
-  // Calculate height percentage (max CPS is 200)
-  const maxCPS = 200;
-  const percentage = Math.min((cps / maxCPS) * 100, 100);
+  // Calculate manual CPS from recent clicks only
+  const now = Date.now();
+  const recentManualClicks = game.stats.lastClicks
+    .filter(click => {
+      // Only count clicks from the last second AND only manual clicks
+      return now - click.time <= 1000 && click.isManual === true;
+    })
+    .reduce((total, click) => total + click.amount, 0);
   
-  // Update height if element exists
+  // Calculate height percentage based on manual CPS only (max CPS is 10 for manual clicks)
+  const maxManualCPS = 10;
+  const percentage = Math.min((recentManualClicks / maxManualCPS) * 100, 100);
+  
+  // Calculate power multiplier based on percentage (1x to 2x)
+  game.stats.currentPowerMultiplier = 1 + (percentage / 100);
+  
+  // Update height if element exists - ensure it starts at 0
   if (game.elements.powerMeterFill) {
+    // Set initial height to 0 if not already set
+    if (!game.elements.powerMeterFill.style.height) {
+      game.elements.powerMeterFill.style.height = '0%';
+    }
+    
     game.elements.powerMeterFill.style.height = `${percentage}%`;
     
-    // Add/remove high-power class based on CPS
-    if (cps > maxCPS * 0.7) { // Over 70% of max
+    // Add/remove high-power class based on manual CPS
+    if (recentManualClicks > maxManualCPS * 0.7) { // Over 70% of max
       game.elements.powerMeterFill.classList.add('high-power');
     } else {
       game.elements.powerMeterFill.classList.remove('high-power');
     }
+  }
+  
+  // Update multiplier display
+  const multiplierDisplay = document.getElementById('current-multiplier');
+  if (multiplierDisplay) {
+    multiplierDisplay.textContent = game.stats.currentPowerMultiplier.toFixed(2);
   }
   
   // Update CPS text if element exists
@@ -624,6 +748,11 @@ function updatePowerMeter(cps) {
 
 // Add number formatting function
 function formatNumber(num) {
+  // Handle undefined, null, or NaN values
+  if (num === undefined || num === null || isNaN(num)) {
+    return '0.0';
+  }
+  
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1) + 'M';
   } else if (num >= 1000) {
@@ -694,7 +823,13 @@ function saveGame() {
       coinCount: game.stats.coinCount,
       clicksSinceLastGoldRush: game.stats.clicksSinceLastGoldRush,
       goldRushThreshold: game.stats.goldRushThreshold,
-      startTime: game.stats.startTime
+      startTime: game.stats.startTime,
+      totalGoldEarned: game.stats.totalGoldEarned,
+      totalGoldSpent: game.stats.totalGoldSpent,
+      goldRushCount: game.stats.goldRushCount,
+      peakPower: game.stats.peakPower,
+      upgradeProduction: game.stats.upgradeProduction,
+      currentPowerMultiplier: game.stats.currentPowerMultiplier
     },
     upgrades: {
       auto: { count: game.upgrades.auto.count, cost: game.upgrades.auto.cost },
@@ -727,6 +862,12 @@ function loadGame() {
     game.stats.coinCount = parsed.stats.coinCount || 0;
     game.stats.clicksSinceLastGoldRush = parsed.stats.clicksSinceLastGoldRush || 0;
     game.stats.goldRushThreshold = parsed.stats.goldRushThreshold || 100;
+    game.stats.totalGoldEarned = parsed.stats.totalGoldEarned || 0;
+    game.stats.totalGoldSpent = parsed.stats.totalGoldSpent || 0;
+    game.stats.goldRushCount = parsed.stats.goldRushCount || 0;
+    game.stats.peakPower = parsed.stats.peakPower || 0;
+    game.stats.upgradeProduction = parsed.stats.upgradeProduction || {};
+    game.stats.currentPowerMultiplier = parsed.stats.currentPowerMultiplier || 1;
     
     // Load upgrades
     game.upgrades.auto.count = parsed.upgrades.auto.count || 0;
@@ -813,6 +954,200 @@ function handleResize() {
   }
 }
 
+// Power Monitor
+let powerMonitor = null;
+let powerData = Array(600).fill(0); // Store 10 minutes of data (600 seconds)
+let powerDataIndex = 0;
+let lastPowerUpdate = 0;
+let animationFrameId = null;
+
+function initPowerMonitor() {
+  const canvas = document.getElementById('powerMonitor');
+  if (!canvas) return;
+  
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width;
+  const height = canvas.height;
+  
+  function animate() {
+    if (!document.getElementById('analyticsModal').classList.contains('show')) {
+      requestAnimationFrame(animate);
+      return;
+    }
+    
+    // Semi-transparent background for trail effect
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.fillRect(0, 0, width, height);
+    
+    // Get current power level from power meter
+    const powerMeterFill = document.getElementById('power-meter-fill');
+    const powerPercentage = powerMeterFill ? 
+      parseFloat(powerMeterFill.style.height) || 0 : 0;
+    
+    // Update power data array every second
+    const now = Date.now();
+    if (now - lastPowerUpdate >= 1000) {
+      powerData[powerDataIndex] = powerPercentage;
+      powerDataIndex = (powerDataIndex + 1) % 600; // Wrap around after 10 minutes
+      lastPowerUpdate = now;
+    }
+    
+    // Draw grid with more lines for better readability
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    
+    // Vertical grid lines (every minute)
+    for (let x = 0; x < width; x += (width / 10)) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
+      ctx.stroke();
+      
+      // Add time labels (every minute)
+      const minutes = Math.floor((x / width) * 10);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.font = '10px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${minutes}m`, x, height - 5);
+    }
+    
+    // Horizontal grid lines (every 20% power)
+    for (let y = 0; y <= height; y += (height / 5)) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
+      
+      // Add power level labels
+      const powerLevel = 100 - Math.floor((y / height) * 100);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.font = '10px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText(`${powerLevel}%`, 5, y + 4);
+    }
+    
+    // Draw power line with gradient effect
+    ctx.beginPath();
+    const gradient = ctx.createLinearGradient(0, 0, width, 0);
+    const hue = 120 * (1 - powerPercentage/100); // Green to Red
+    gradient.addColorStop(0, `hsl(${hue}, 100%, 50%)`);
+    gradient.addColorStop(1, `hsl(${hue + 20}, 100%, 50%)`);
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = 2;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+    
+    // Draw the line with smooth curves
+    let firstPoint = true;
+    for (let i = 0; i < powerData.length; i++) {
+      const x = (i / powerData.length) * width;
+      const y = height - (powerData[i] / 100) * height;
+      
+      if (firstPoint) {
+        ctx.moveTo(x, y);
+        firstPoint = false;
+      } else {
+        // Use quadratic curves for smoother lines
+        const prevX = ((i - 1) / powerData.length) * width;
+        const prevY = height - (powerData[i - 1] / 100) * height;
+        const xc = (x + prevX) / 2;
+        const yc = (y + prevY) / 2;
+        ctx.quadraticCurveTo(prevX, prevY, xc, yc);
+      }
+    }
+    
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    
+    // Calculate min and max power levels
+    const minPower = Math.min(...powerData);
+    const maxPower = Math.max(...powerData);
+    
+    // Add power level indicators
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'right';
+    ctx.fillText(`Current: ${powerPercentage.toFixed(1)}%`, width - 10, 20);
+    ctx.fillText(`Peak: ${maxPower.toFixed(1)}%`, width - 10, 40);
+    ctx.fillText(`Low: ${minPower.toFixed(1)}%`, width - 10, 60);
+    
+    // Add time range indicator
+    ctx.textAlign = 'left';
+    ctx.fillText('Last 10 minutes', 10, 20);
+    
+    requestAnimationFrame(animate);
+  }
+  
+  animate();
+}
+
+function updateAnalytics() {
+  // Update gold metrics
+  document.getElementById('total-gold-earned').textContent = formatNumber(game.stats.totalGoldEarned || 0);
+  document.getElementById('total-gold-spent').textContent = formatNumber(game.stats.totalGoldSpent || 0);
+  document.getElementById('net-worth').textContent = formatNumber(game.stats.coinCount || 0);
+  document.getElementById('gold-rush-count').textContent = game.stats.goldRushCount || 0;
+  
+  // Calculate current CPS from both manual clicks and auto-clickers
+  const currentCPS = calculateActualCPS();
+  const autoCPS = calculateTotalCPS();
+  
+  // Calculate average manual CPS from recent clicks
+  const now = Date.now();
+  const recentManualClicks = game.stats.lastClicks
+    .filter(click => now - click.time <= 60000) // Last minute of clicks
+    .reduce((total, click) => total + click.amount, 0);
+  const averageManualCPS = recentManualClicks / 60; // Convert to per second
+  
+  // Calculate projected daily earnings
+  const secondsPerDay = 86400; // 24 * 60 * 60
+  const projectedDailyFromAuto = autoCPS * secondsPerDay;
+  const projectedDailyFromManual = averageManualCPS * secondsPerDay;
+  const totalProjectedDaily = projectedDailyFromAuto + projectedDailyFromManual;
+  
+  // Update production rates
+  document.getElementById('current-cps').textContent = `${formatNumber(currentCPS)} /s`;
+  document.getElementById('gold-per-minute').textContent = `${formatNumber(currentCPS * 60)} /min`;
+  document.getElementById('gold-per-hour').textContent = `${formatNumber(currentCPS * 3600)} /hr`;
+  document.getElementById('gold-per-day').textContent = `${formatNumber(totalProjectedDaily)} /day`;
+  
+  // Update session stats
+  const sessionDuration = Math.floor((performance.now() - game.stats.startTime) / 1000);
+  const hours = Math.floor(sessionDuration / 3600);
+  const minutes = Math.floor((sessionDuration % 3600) / 60);
+  const seconds = sessionDuration % 60;
+  document.getElementById('session-duration').textContent = 
+    `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  
+  document.getElementById('manual-clicks').textContent = formatNumber(game.stats.manualClicks || 0);
+  document.getElementById('auto-clicks').textContent = formatNumber(game.stats.autoClicks || 0);
+  
+  const totalClicks = (game.stats.manualClicks || 0) + (game.stats.autoClicks || 0);
+  const efficiency = totalClicks > 0 ? ((game.stats.autoClicks || 0) / totalClicks * 100) : 0;
+  document.getElementById('click-efficiency').textContent = `${efficiency.toFixed(1)}%`;
+  
+  // Update upgrade analytics
+  const upgradeAnalytics = document.getElementById('upgrade-analytics');
+  upgradeAnalytics.innerHTML = '';
+  
+  Object.entries(game.upgrades).forEach(([type, upgrade]) => {
+    const row = document.createElement('tr');
+    const totalCPS = (upgrade.count || 0) * (upgrade.cps || 0);
+    const lifetimeProduction = game.stats.upgradeProduction[type] || 0;
+    const roi = upgrade.count > 0 ? (upgrade.cost / (totalCPS * 3600)) : 0;
+    
+    row.innerHTML = `
+      <td>${upgrade.name || type}</td>
+      <td>${upgrade.count || 0}</td>
+      <td>${(upgrade.cps || 0).toFixed(1)}</td>
+      <td>${totalCPS.toFixed(1)}</td>
+      <td>${formatNumber(lifetimeProduction)}</td>
+      <td>${roi.toFixed(2)}</td>
+    `;
+    
+    upgradeAnalytics.appendChild(row);
+  });
+}
+
 // Initialize the game when DOM is loaded
-document.addEventListener('DOMContentLoaded', initGame); 
 document.addEventListener('DOMContentLoaded', initGame); 

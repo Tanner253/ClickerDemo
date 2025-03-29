@@ -254,6 +254,30 @@ body::after {
   margin: 0;
 }
 
+.power-meter-tooltip {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--gold-light);
+  border-radius: 8px;
+  padding: 10px;
+  width: max-content;
+  max-width: 200px;
+  color: var(--text-light);
+  font-size: 0.9em;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+}
+
+.power-meter-container:hover .power-meter-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
 .power-meter::after {
   content: '';
   position: absolute;
@@ -300,6 +324,13 @@ body::after {
   padding: 10px 0;
 }
 
+/* Remove all marker-related styles */
+.power-meter-markers,
+.power-marker,
+.power-marker-label {
+  display: none !important;
+}
+
 @media (max-width: 768px) {
   .power-meter-container {
     left: 10px;
@@ -331,14 +362,6 @@ body::after {
     font-size: 0.9em;
     letter-spacing: 0.5px;
   }
-}
-
-/* Remove all old power meter styles */
-.power-meter-marks,
-.power-meter-marks span,
-.power-meter-marks::before,
-.power-meter-cps {
-  display: none !important;
 }
 
 /* Hamburger Menu */
@@ -1000,4 +1023,177 @@ body.gold-rush-active {
   0% { transform: translate(-50%, 0) scale(0); }
   50% { transform: translate(-50%, 0) scale(1.2); }
   100% { transform: translate(-50%, 0) scale(1); }
+}
+
+/* Analytics Button */
+.analytics-btn {
+  position: fixed;
+  top: 40px;
+  left: 70px; /* Position next to settings button */
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: var(--text-light);
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 10px rgba(76, 175, 80, 0.4);
+  border: 2px solid rgba(76, 175, 80, 0.8);
+}
+
+.analytics-btn:hover {
+  transform: rotate(-15deg);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.6);
+}
+
+.analytics-btn i {
+  font-size: 1.5em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Analytics Modal Styling */
+.analytics-section {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.analytics-section h6 {
+  color: var(--gold-light);
+  margin-bottom: 15px;
+  font-size: 1.1em;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.analytics-section h6 i {
+  color: var(--gold-light);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.stat-item {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.stat-item label {
+  display: block;
+  font-size: 0.8em;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 5px;
+}
+
+.stat-item span {
+  display: block;
+  font-size: 1.1em;
+  color: var(--gold-light);
+  font-weight: bold;
+}
+
+/* Power Monitor */
+.power-monitor {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  padding: 15px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  position: relative;
+}
+
+.power-monitor canvas {
+  width: 100% !important;
+  height: 200px !important;
+  margin-bottom: 10px;
+}
+
+.power-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.power-stat {
+  text-align: center;
+}
+
+.power-stat label {
+  display: block;
+  font-size: 0.8em;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2px;
+}
+
+.power-stat span {
+  font-size: 1.2em;
+  color: #4CAF50;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+/* Table Styling */
+.table-dark {
+  background: rgba(0, 0, 0, 0.3) !important;
+  color: var(--text-light) !important;
+  border-color: rgba(255, 215, 0, 0.1) !important;
+}
+
+.table-dark th {
+  background: rgba(0, 0, 0, 0.4) !important;
+  color: var(--gold-light) !important;
+  font-size: 0.9em;
+  font-weight: normal;
+  border-color: rgba(255, 215, 0, 0.1) !important;
+}
+
+.table-dark td {
+  font-size: 0.9em;
+  border-color: rgba(255, 215, 0, 0.1) !important;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .analytics-btn {
+    top: 40px;
+    left: 70px;
+    width: 36px;
+    height: 36px;
+  }
+  
+  .analytics-btn i {
+    font-size: 1.2em;
+  }
+  
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .power-monitor canvas {
+    height: 150px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .power-monitor canvas {
+    height: 120px !important;
+  }
 } 
