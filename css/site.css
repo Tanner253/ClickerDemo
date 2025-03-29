@@ -1,0 +1,318 @@
+:root {
+  --gold-light: #FFD700;
+  --gold-dark: #FFA500;
+  --bg-overlay: rgba(32, 32, 32, 0.92);
+  --text-light: white;
+  --stat-bg: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideBackground {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 200% 200%;
+  }
+}
+
+body {
+  background-color: #1a1a1a;
+  color: var(--text-light);
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding-top: 100px;
+  margin: 0;
+  user-select: none;
+  min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/3d-gold-coin-rain-png.webp');
+  background-size: 800px 800px;
+  background-repeat: repeat;
+  opacity: 0.25;
+  animation: slideBackground 30s linear infinite;
+  z-index: -2;
+  transform: rotate(15deg);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-overlay);
+  z-index: -1;
+}
+
+/* Gold Rush Progress Header */
+.gold-rush-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: var(--stat-bg);
+  z-index: 100;
+  border-bottom: 1px solid var(--gold-light);
+}
+
+.gold-rush-fill {
+  height: 100%;
+  background: linear-gradient(to right, #4d3319, #FFD700);
+  width: 0%;
+  transition: width 0.2s ease;
+}
+
+.gold-rush-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 0 3px black;
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.gold-bar {
+  width: 200px;
+  height: 120px;
+  background: linear-gradient(to top left, var(--gold-light), var(--gold-dark));
+  border-radius: 12px;
+  box-shadow: 0 0 20px var(--gold-light);
+  margin: 20px auto;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  transition: transform 0.1s ease;
+  position: relative;
+}
+
+.gold-bar:active {
+  transform: scale(0.95);
+}
+
+.gold-bar.auto-click {
+  animation: pulse 0.3s ease;
+}
+
+.stat {
+  margin: 10px;
+  font-size: 1.2em;
+}
+
+.stat-gold {
+  background-color: var(--stat-bg);
+  color: var(--gold-light);
+  padding: 12px 16px;
+  border-radius: 10px;
+  width: 320px;
+  margin: 10px auto;
+  border: 1px solid var(--gold-light);
+  box-shadow: 0 0 10px #444;
+}
+
+.stat-cps {
+  background: linear-gradient(to top left, var(--gold-light), var(--gold-dark));
+  color: black;
+  padding: 12px 16px;
+  border-radius: 10px;
+  width: 320px;
+  margin: 10px auto;
+  border: 2px solid #FF8C00;
+  box-shadow: 0 0 10px var(--gold-light);
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.upgrade-btn {
+  width: 340px;
+  height: 100px;
+  position: relative;
+  text-align: center;
+  background: #bdbdbd;
+  color: black;
+  border: 2px solid var(--gold-light);
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.1s ease;
+}
+
+.upgrade-btn:active {
+  transform: scale(0.98);
+}
+
+.upgrade-btn img {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 24px;
+  filter: brightness(0);
+}
+
+.upgrade-owned {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-size: 0.75em;
+  color: black;
+  font-weight:bold
+}
+
+.upgrade-title {
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 25px;
+}
+
+.upgrade-cps {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  font-size: 0.75em;
+  color: black;
+}
+
+.upgrade-cost {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  font-size: 0.75em;
+  color: black;
+}
+
+footer {
+  margin-top: 40px;
+  border-top: 2px solid var(--gold-light);
+  padding-top: 20px;
+  font-size: 0.9em;
+  color: #ccc;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.2); }
+}
+
+/* Gold Rush Banner */
+.gold-rush-banner {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2em;
+  font-weight: bold;
+  animation: wave 0.4s ease-in-out infinite;
+  z-index: 1001;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Confetti */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: var(--gold-light);
+  opacity: 0.8;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% { 
+    transform: translateY(-100px) rotate(0deg); 
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Click Feedback */
+.click-feedback {
+  position: absolute;
+  font-size: 1.5em;
+  font-weight: bold;
+  opacity: 1;
+  transition: all 1s ease-out;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.auto-click-feedback {
+  position: fixed;
+  font-size: 1.2em;
+  font-weight: bold;
+  opacity: 1;
+  transition: all 1.5s ease-out;
+  pointer-events: none;
+  z-index: 999;
+  color: var(--gold-light);
+  text-shadow: 0 0 3px black;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8em;
+  pointer-events: none;
+  z-index: 1000;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: opacity 0.2s;
+} 
