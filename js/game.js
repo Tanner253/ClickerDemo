@@ -31,7 +31,7 @@ function cacheElements() {
   game.elements = {
     goldBar: document.getElementById('gold-bar'),
     coinCount: document.getElementById('coin-count'),
-    cpsDisplay: document.getElementById('cps'),
+    cpsDisplay: document.getElementById('cps-display'),
     cpsContainer: document.getElementById('cps-container'),
     clickCount: document.getElementById('click-count'),
     goldRushFill: document.getElementById('gold-rush-fill'),
@@ -418,10 +418,17 @@ function calculateTotalCPS() {
 function calculateActualCPS() {
   const now = Date.now();
   // Remove clicks older than 1 second
-  game.stats.lastClicks = game.stats.lastClicks.filter(click => now - click.time < 1000);
+  game.stats.lastClicks = game.stats.lastClicks.filter(click => now - click.time <= 1000);
   
   // Sum all clicks in the last second
-  return game.stats.lastClicks.reduce((total, click) => total + click.amount, 0);
+  const recentClicks = game.stats.lastClicks.reduce((total, click) => total + click.amount, 0);
+  
+  // Add auto-clicker CPS
+  const autoCPS = Object.values(game.upgrades).reduce((total, upgrade) => {
+    return total + (upgrade.count * upgrade.cps);
+  }, 0);
+  
+  return recentClicks + autoCPS;
 }
 
 function updateStats() {
@@ -429,31 +436,42 @@ function updateStats() {
   const cps = calculateActualCPS();
   
   // Update displays
-  game.elements.clickCount.textContent = game.stats.totalClicks;
-  game.elements.coinCount.textContent = game.stats.coinCount.toFixed(1);
-  game.elements.cpsDisplay.textContent = cps.toFixed(1);
+  game.elements.coinCount.textContent = formatNumber(game.stats.coinCount);
   
-  // Update CPS meter color
-  updateCPSMeterColor(cps);
+  // Update power meter and CPS display
+  updatePowerMeter(cps);
   
   // Update upgrade buttons state
   updateUpgradeButtons();
-  
-  // Update power meter
-  updatePowerMeter(cps);
 }
 
-function updateCPSMeterColor(cps) {
-  let bgColor;
+function updatePowerMeter(cps) {
+  // Calculate height percentage (max CPS is 200)
+  const maxCPS = 200;
+  const percentage = Math.min((cps / maxCPS) * 100, 100);
   
-  if (cps > 100) bgColor = 'linear-gradient(to right, #ff0000, #cc0000)';
-  else if (cps > 75) bgColor = 'linear-gradient(to right, #ff6600, #ff3300)';
-  else if (cps > 50) bgColor = 'linear-gradient(to right, #ffcc00, #ff9900)';
-  else if (cps > 25) bgColor = 'linear-gradient(to right, #ccff66, #ffff66)';
-  else if (cps > 10) bgColor = 'linear-gradient(to right, #e0ffe0, #c8ffc8)';
-  else bgColor = 'linear-gradient(to top left, var(--gold-light), var(--gold-dark))';
+  // Update height
+  game.elements.powerMeterFill.style.height = `${percentage}%`;
   
-  game.elements.cpsContainer.style.background = bgColor;
+  // Update CPS text
+  game.elements.cpsDisplay.textContent = `${cps.toFixed(1)} CPS`;
+  
+  // Add/remove high-power class based on CPS
+  if (cps > maxCPS * 0.7) { // Over 70% of max
+    game.elements.powerMeterFill.classList.add('high-power');
+  } else {
+    game.elements.powerMeterFill.classList.remove('high-power');
+  }
+}
+
+// Add number formatting function
+function formatNumber(num) {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K';
+  }
+  return num.toFixed(1);
 }
 
 function updateUpgradeDisplay(type) {
@@ -560,23 +578,6 @@ function loadGame() {
     Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
   } catch (e) {
     console.error('Failed to load save:', e);
-  }
-}
-
-// Add this function to update the power meter
-function updatePowerMeter(cps) {
-  // Calculate height percentage (max CPS is 200)
-  const maxCPS = 200;
-  const percentage = Math.min((cps / maxCPS) * 100, 100);
-  
-  // Update height
-  game.elements.powerMeterFill.style.height = `${percentage}%`;
-  
-  // Add/remove high-power class based on CPS
-  if (cps > maxCPS * 0.7) { // Over 70% of max
-    game.elements.powerMeterFill.classList.add('high-power');
-  } else {
-    game.elements.powerMeterFill.classList.remove('high-power');
   }
 }
 

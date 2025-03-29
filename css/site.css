@@ -19,19 +19,14 @@
 }
 
 body {
+  margin: 0;
+  padding: 0;
   background-color: var(--bg-primary);
   color: var(--text-light);
   font-family: Arial, sans-serif;
-  text-align: center;
-  margin: 0;
-  user-select: none;
-  min-height: 100vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   overflow: hidden;
-  padding: 0;
+  width: 100vw;
+  height: 100vh;
 }
 
 body::before {
@@ -62,12 +57,163 @@ body::after {
   z-index: -1;
 }
 
-/* Gold Rush Progress Header */
-.gold-rush-header {
-  position: absolute;
-  top: 0;
+/* Main Layout */
+.app-wrapper {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Game Container */
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 40px 0 100px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.container.sidebar-open {
+  padding-right: 0;
+}
+
+.game-content {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Gold Bar Button */
+.gold-bar {
+  margin: 0;
+  width: 200px;
+  height: 120px;
+  background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700);
+  border-radius: 12px;
+  box-shadow: 
+    0 0 25px var(--gold-glow),
+    inset 0 0 15px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transform-origin: center;
+}
+
+.gold-bar:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 0 35px var(--gold-glow),
+    inset 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.gold-bar:active {
+  transform: scale(0.95);
+}
+
+/* Stats Display */
+.stats-container {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.stat-gold {
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  color: var(--gold-light);
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 2px solid var(--gold-light);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  backdrop-filter: blur(5px);
+  font-size: 1.2em;
+}
+
+/* Footer */
+footer {
+  position: fixed;
+  bottom: 0;
   left: 0;
   width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  border-top: 2px solid var(--gold-light);
+  padding: 10px 0;
+  z-index: 98;
+}
+
+footer p {
+  max-width: 800px;
+  margin: 10px auto;
+  font-size: 0.9em;
+  line-height: 1.4;
+  padding: 0 20px;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .gold-bar {
+    width: 160px;
+    height: 90px;
+    font-size: 1.2em;
+  }
+
+  .stats-container {
+    padding: 0 20px;
+  }
+
+  footer p {
+    font-size: 0.8em;
+  }
+}
+
+/* Main app wrapper */
+.app-wrapper {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Gold Rush Header */
+.gold-rush-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1600px;
   height: 30px;
   background: rgba(0, 0, 0, 0.3);
   z-index: 100;
@@ -94,30 +240,45 @@ body::after {
   width: 100%;
 }
 
+/* Container adjustments */
 .container {
+  width: 100%;
+  max-width: 1600px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding: 60px 20px;
-  margin: 0;
-  width: 100%;
-  padding-right: 20px;
-  transition: padding-right 0.3s ease;
+  justify-content: center;
+  flex: 1;
+  position: relative;
+  margin-top: 40px;
+  margin-bottom: 100px;
+  box-sizing: border-box;
+  padding-right: 0;
 }
 
 .container.sidebar-open {
-  padding-right: 400px;
+  padding-right: 0;
 }
 
-.right-panel {
+/* Stats container */
+.stats-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px 0;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 320px;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
+.stat {
+  width: 100%;
+  text-align: center;
+}
+
+/* Gold Bar */
 .gold-bar {
   width: 200px;
   height: 120px;
@@ -126,7 +287,7 @@ body::after {
   box-shadow: 
     0 0 25px var(--gold-glow),
     inset 0 0 15px rgba(255, 255, 255, 0.5);
-  margin: 40px auto;
+  margin: 0;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -138,6 +299,195 @@ body::after {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   border: 2px solid rgba(255, 255, 255, 0.3);
   transform-origin: center;
+}
+
+/* Footer adjustments */
+footer {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  border-top: 2px solid var(--gold-light);
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 98;
+  box-sizing: border-box;
+}
+
+footer p {
+  max-width: 800px;
+  margin: 10px auto;
+}
+
+/* Gold Rush Banner */
+.gold-rush-banner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  padding: 20px 40px;
+  border-radius: 10px;
+  font-size: 2em;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: 
+    0 0 20px var(--gold-light),
+    0 0 40px rgba(255, 215, 0, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    margin-top: 30px;
+    margin-bottom: 80px;
+  }
+
+  .gold-bar {
+    width: 160px;
+    height: 90px;
+    font-size: 1.2em;
+  }
+
+  .game-content {
+    gap: 15px;
+  }
+
+  .stats-container {
+    padding: 0 10px;
+  }
+
+  footer {
+    padding: 8px;
+  }
+
+  footer p {
+    font-size: 0.8em;
+    padding: 0 10px;
+  }
+}
+
+/* Update sidebar positioning for max-width */
+.upgrades-sidebar {
+  position: fixed;
+  top: 0;
+  right: calc((100% - 1600px) / 2);
+  transform: translateX(100%);
+  height: 100vh;
+  width: 380px;
+  transition: transform 0.3s ease;
+}
+
+.upgrades-sidebar.open {
+  transform: translateX(0);
+}
+
+@media (max-width: 1600px) {
+  .upgrades-sidebar {
+    right: 0;
+  }
+}
+
+/* Update stats container for better mobile fit */
+.stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 320px;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+/* Update mobile styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 40px 10px 100px;
+  }
+
+  .upgrades-sidebar {
+    right: -100%;
+    width: 100%;
+    padding: 15px;
+  }
+
+  .upgrade-btn {
+    width: 100%;
+    max-width: 100%;
+    margin: 5px 0;
+    box-sizing: border-box;
+  }
+
+  .gold-bar {
+    width: 160px;
+    height: 90px;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+
+  .stat {
+    width: 100%;
+    max-width: 300px;
+    margin: 5px auto;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .power-meter {
+    left: 5px;
+    height: 280px;
+    width: 35px;
+  }
+
+  .power-meter-cps {
+    font-size: 0.9em;
+    bottom: -40px;
+    padding: 4px 8px;
+  }
+
+  .power-meter-marks {
+    right: 40px;
+    font-size: 0.75em;
+  }
+
+  footer {
+    padding: 8px;
+    font-size: 0.8em;
+  }
+
+  footer p {
+    margin: 5px 0;
+    padding: 0 10px;
+  }
+
+  .gold-rush-header {
+    font-size: 0.9em;
+  }
+}
+
+/* Ensure upgrade buttons fit properly */
+.upgrade-btn {
+  width: 100%;
+  max-width: 340px;
+  box-sizing: border-box;
+  margin: 8px auto;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 0;
 }
 
 .gold-bar:hover {
@@ -165,11 +515,14 @@ body::after {
   color: var(--gold-light);
   padding: 12px 16px;
   border-radius: 10px;
-  width: 320px;
-  margin: 10px auto;
+  width: 100%;
+  max-width: 320px;
   border: 2px solid var(--gold-light);
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
   backdrop-filter: blur(5px);
+  font-size: 1.2em;
+  text-align: center;
+  margin: 0;
 }
 
 .stat-cps {
@@ -255,22 +608,6 @@ body::after {
   color: black;
 }
 
-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(5px);
-  z-index: 98;
-  border-top: 2px solid var(--gold-light);
-  padding: 10px 20px;
-  font-size: 0.9em;
-  color: #ccc;
-  text-align: center;
-  box-sizing: border-box;
-}
-
 /* Animations */
 @keyframes pulse {
   0% { transform: scale(1); }
@@ -281,23 +618,6 @@ footer {
 @keyframes wave {
   0%, 100% { transform: translateX(-50%) scale(1); }
   50% { transform: translateX(-50%) scale(1.2); }
-}
-
-/* Gold Rush Banner */
-.gold-rush-banner {
-  position: fixed;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-size: 2em;
-  font-weight: bold;
-  animation: wave 0.4s ease-in-out infinite;
-  z-index: 1001;
-  opacity: 0;
-  transition: opacity 0.3s;
 }
 
 /* Confetti */
@@ -406,6 +726,24 @@ footer {
     0 0 20px rgba(255, 78, 0, 0.6),
     0 0 40px rgba(255, 154, 0, 0.4),
     0 0 60px rgba(255, 215, 0, 0.2);
+}
+
+.power-meter-cps {
+  position: absolute;
+  bottom: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--gold-light);
+  font-size: 1em;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 5px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--gold-light);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
 }
 
 .power-meter-marks {
@@ -544,13 +882,6 @@ footer {
   margin: auto;
 }
 
-.stats-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-}
-
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .upgrades-sidebar {
@@ -590,23 +921,12 @@ footer {
   }
 }
 
-/* Adjust container padding for sidebar */
-.container {
-  padding-right: 400px;
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding-right: 20px;
-  }
-}
-
 /* Update existing styles */
 .gold-bar {
-  margin: 40px auto;
+  margin: 0 auto;
   transform-origin: center;
 }
 
 .stat-gold, .stat-cps {
-  margin: 10px auto;
+  margin: 0 auto;
 } 
