@@ -135,6 +135,10 @@ body::after {
   transition: all 0.2s ease;
   margin: 0;
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .gold-bar img {
@@ -143,6 +147,9 @@ body::after {
   object-fit: contain;
   transition: all 0.2s ease;
   filter: drop-shadow(0 0 30px var(--gold-glow));
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .gold-bar:hover img {
@@ -530,4 +537,134 @@ footer p {
   66.67% { color: #0088ff; }
   83.33% { color: #8800ff; }
   100% { color: #ff0000; }
+}
+
+/* Click Feedback */
+.click-feedback {
+  position: absolute;
+  pointer-events: none;
+  font-weight: bold;
+  font-size: 3em;
+  z-index: 10000;
+  white-space: nowrap;
+  text-shadow: 
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    2px 2px 0 #000;
+  animation: floatUpAndRainbow 1s ease-out forwards;
+  transform-origin: center;
+}
+
+@keyframes floatUpAndRainbow {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+    color: #ff0000;
+  }
+  20% {
+    transform: translate(-50%, -100%) scale(1.2);
+    opacity: 1;
+    color: #ffff00;
+  }
+  50% {
+    color: #00ff00;
+  }
+  80% {
+    color: #0088ff;
+  }
+  100% {
+    transform: translate(-50%, -200%) scale(1);
+    opacity: 0;
+    color: #ff0000;
+  }
+}
+
+/* Auto-click Feedback */
+.auto-click-feedback {
+  position: fixed;
+  pointer-events: none;
+  font-size: 1.5em;
+  font-weight: bold;
+  z-index: 10001;
+  white-space: nowrap;
+  text-shadow: 
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+  animation: autoClickFloat 1s ease-out forwards;
+}
+
+@keyframes autoClickFloat {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+    color: #ff0000;
+  }
+  20% {
+    transform: translateY(-20px);
+    opacity: 1;
+    color: #ffff00;
+  }
+  100% {
+    transform: translateY(-40px);
+    opacity: 0;
+    color: #00ff00;
+  }
+}
+
+/* Gold Rush Multiplier */
+.gold-rush-multiplier {
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 0.7em;
+  margin-left: 5px;
+}
+
+/* Power Meter CPS Display */
+.cps-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.current-cps {
+  color: #ffd700;
+  font-size: 1.2em;
+}
+
+.cps-separator {
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 2px;
+}
+
+.max-cps {
+  color: rgba(255, 215, 0, 0.7);
+}
+
+.cps-label {
+  color: rgba(255, 255, 255, 0.7);
+  margin-left: 5px;
+  font-size: 0.9em;
+}
+
+/* Power Meter Marks */
+.power-meter-marks span {
+  display: block;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9em;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  padding: 2px 5px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  margin: 5px 0;
 } 

@@ -107,11 +107,12 @@ function gameLoop() {
 
 // Event Listeners
 function setupEventListeners() {
-  // Gold bar click
-  game.elements.goldBar.addEventListener('click', handleClick);
-  game.elements.goldBar.addEventListener('mousedown', startHoldClick);
-  game.elements.goldBar.addEventListener('mouseup', stopHoldClick);
-  game.elements.goldBar.addEventListener('mouseleave', stopHoldClick);
+  // Gold bar click - attach to the container instead of the image
+  const goldBar = game.elements.goldBar;
+  goldBar.addEventListener('click', handleClick);
+  goldBar.addEventListener('mousedown', startHoldClick);
+  goldBar.addEventListener('mouseup', stopHoldClick);
+  goldBar.addEventListener('mouseleave', stopHoldClick);
   
   // Upgrade purchases
   game.elements.auto.btn.addEventListener('click', () => buyUpgrade('auto'));
@@ -134,13 +135,20 @@ function setupEventListeners() {
   game.elements.hamburgerBtn.addEventListener('click', toggleUpgradesSidebar);
   game.elements.closeUpgradesBtn.addEventListener('click', toggleUpgradesSidebar);
 
-  // Close sidebar when clicking outside
+  // Close sidebar when clicking outside (but not on desktop when clicking gold bar)
   document.addEventListener('click', (e) => {
-    if (game.elements.upgradesSidebar.classList.contains('open') &&
-        !game.elements.upgradesSidebar.contains(e.target) &&
-        !game.elements.hamburgerBtn.contains(e.target)) {
-      toggleUpgradesSidebar();
-    }
+    // Only close if sidebar is open
+    if (!game.elements.upgradesSidebar.classList.contains('open')) return;
+    
+    // Don't close if clicking inside sidebar or hamburger button
+    if (game.elements.upgradesSidebar.contains(e.target) || 
+        game.elements.hamburgerBtn.contains(e.target)) return;
+    
+    // On desktop, don't close when clicking gold bar
+    if (window.innerWidth > 768 && game.elements.goldBar.contains(e.target)) return;
+    
+    // Close in all other cases
+    toggleUpgradesSidebar();
   });
 
   // Prevent clicks inside sidebar from closing it
@@ -176,7 +184,20 @@ function handleClick(e) {
   
   game.stats.coinCount += clickValue;
   
-  spawnClickFeedback(clickValue, e.clientX, e.clientY);
+  // Create click feedback at click position
+  const feedback = document.createElement('div');
+  feedback.className = 'click-feedback';
+  feedback.textContent = `+${clickValue}`;
+  
+  // Position at click coordinates
+  feedback.style.left = `${e.clientX}px`;
+  feedback.style.top = `${e.clientY}px`;
+  
+  document.body.appendChild(feedback);
+  
+  // Remove after animation completes
+  setTimeout(() => feedback.remove(), 1000);
+  
   updateStats();
   
   // Check for Gold Rush
@@ -393,48 +414,22 @@ function createGoldRushBanner() {
   }, 4500);
 }
 
-function spawnClickFeedback(amount, x, y) {
-  const feedback = document.createElement('div');
-  feedback.className = 'click-feedback';
-  feedback.textContent = `+${amount}`;
-  feedback.style.left = `${x + (Math.random() * 40 - 20)}px`;
-  feedback.style.top = `${y + (Math.random() * 40 - 20)}px`;
-  feedback.style.color = `hsl(${Math.random() * 60 + 30}, 100%, 50%)`;
-  document.body.appendChild(feedback);
-  
-  setTimeout(() => {
-    feedback.style.transform = 'translateY(-40px)';
-    feedback.style.opacity = '0';
-  }, 10);
-  
-  setTimeout(() => feedback.remove(), 1000);
-}
-
 function spawnAutoClickFeedback(amount, type) {
+  // Only show upgrade feedback when sidebar is open
+  if (!game.elements.upgradesSidebar.classList.contains('open')) return;
+  
   const feedback = document.createElement('div');
   feedback.className = 'auto-click-feedback';
-  feedback.textContent = `+${amount.toFixed(1)} (${game.upgrades[type].name})`;
+  feedback.textContent = `+${amount.toFixed(1)}`;
   
   // Position near the upgrade button
   const upgradeBtn = game.elements[type].btn;
   const rect = upgradeBtn.getBoundingClientRect();
   
-  feedback.style.left = `${rect.left + (Math.random() * 40 - 20)}px`;
-  feedback.style.top = `${rect.top + (Math.random() * 40 - 20)}px`;
+  feedback.style.left = `${rect.right - 60}px`;
+  feedback.style.top = `${rect.top + (rect.height / 2)}px`;
   
   document.body.appendChild(feedback);
-  
-  // Set initial opacity to 0 and force reflow
-  feedback.style.opacity = '0';
-  feedback.offsetHeight;
-  
-  // Animate
-  requestAnimationFrame(() => {
-    feedback.style.transform = 'translateY(-40px)';
-    feedback.style.opacity = game.elements.upgradesSidebar.classList.contains('open') ? '1' : '0';
-  });
-  
-  setTimeout(() => feedback.remove(), 1500);
 }
 
 // Stats and Display
@@ -460,6 +455,29 @@ function calculateActualCPS() {
   return recentClicks + autoCPS;
 }
 
+function calculateMaxPotentialCPS() {
+  // Calculate CPS from all upgrades
+  const upgradeCPS = Object.values(game.upgrades).reduce((total, upgrade) => {
+    return total + (upgrade.count * upgrade.cps);
+  }, 0);
+  
+  // Calculate maximum possible manual CPS
+  const maxManualCPS = (1000 / 200) + (1000 / 300); // ~8.33 clicks per second
+  
+  // Calculate current total potential
+  const currentPotential = upgradeCPS + maxManualCPS;
+  
+  // If in Gold Rush, multiply by 5
+  const multiplier = game.stats.goldRushActive ? 5 : 1;
+  
+  // Dynamic scaling factor that grows with CPS
+  // This ensures the meter never completely fills
+  // The higher your CPS, the more room there is to grow
+  const scalingFactor = Math.max(2, Math.log10(currentPotential + 1) * 1.5);
+  
+  return currentPotential * multiplier * scalingFactor;
+}
+
 function updateStats() {
   // Calculate actual CPS from recent clicks
   const cps = calculateActualCPS();
@@ -474,19 +492,59 @@ function updateStats() {
   updateUpgradeButtons();
 }
 
+function updatePowerMeterMarks(maxCPS) {
+  const marksContainer = document.querySelector('.power-meter-marks');
+  if (!marksContainer) return;
+  
+  // Clear existing marks
+  marksContainer.innerHTML = '';
+  
+  // Create logarithmically spaced marks for better distribution
+  const steps = 6;
+  for (let i = steps - 1; i >= 0; i--) {
+    const mark = document.createElement('span');
+    // Use a log scale for more evenly distributed marks
+    const value = maxCPS * Math.pow(i / (steps - 1), 2);
+    mark.textContent = `${formatNumber(value)} CPS`;
+    marksContainer.appendChild(mark);
+  }
+}
+
 function updatePowerMeter(cps) {
-  // Calculate height percentage (max CPS is 200)
-  const maxCPS = 200;
-  const percentage = Math.min((cps / maxCPS) * 100, 100);
+  // Calculate dynamic maximum CPS based on current potential
+  const maxPotentialCPS = calculateMaxPotentialCPS();
+  
+  // Use the larger of maxPotentialCPS or current CPS
+  const maxCPS = Math.max(maxPotentialCPS, cps);
+  
+  // Update the marks with new max CPS
+  updatePowerMeterMarks(maxCPS);
+  
+  // Calculate height percentage using a log scale for smoother progression
+  const percentage = Math.min((Math.log10(cps + 1) / Math.log10(maxCPS + 1)) * 100, 100);
   
   // Update height
   game.elements.powerMeterFill.style.height = `${percentage}%`;
   
-  // Update CPS text
-  game.elements.cpsDisplay.textContent = `${cps.toFixed(1)} CPS`;
+  // Format current and max CPS for display
+  const currentCPSFormatted = formatNumber(cps);
+  const maxCPSFormatted = formatNumber(maxCPS);
   
-  // Add/remove high-power class based on CPS
-  if (cps > maxCPS * 0.7) { // Over 70% of max
+  // Create styled CPS display
+  const cpsHTML = `
+    <div class="cps-display">
+      <span class="current-cps">${currentCPSFormatted}</span>
+      <span class="cps-separator">/</span>
+      <span class="max-cps">${maxCPSFormatted}</span>
+      <span class="cps-label">CPS</span>
+    </div>
+  `;
+  
+  // Update CPS text
+  game.elements.cpsDisplay.innerHTML = cpsHTML;
+  
+  // Add/remove high-power class based on relative CPS
+  if (percentage > 70) {
     game.elements.powerMeterFill.classList.add('high-power');
   } else {
     game.elements.powerMeterFill.classList.remove('high-power');
