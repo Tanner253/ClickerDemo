@@ -227,32 +227,31 @@ body::after {
 }
 
 /* Power Meter */
-.power-meter {
+.power-meter-container {
   position: fixed;
-  left: 60px;
+  left: 20px;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  border: 2px solid var(--gold-light);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+}
+
+.power-meter {
+  position: relative;
   width: 40px;
   height: 400px;
   background: rgba(0, 0, 0, 0.3);
   border: 2px solid var(--gold-light);
   border-radius: 20px;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-  z-index: 100;
   overflow: hidden;
-}
-
-.power-meter::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 10%;
-  width: 100%;
-  height: 80%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  pointer-events: none;
+  margin: 0;
 }
 
 .power-meter::after {
@@ -286,9 +285,7 @@ body::after {
 }
 
 .power-meter-label {
-  position: absolute;
-  top: 30%;
-  transform: translateY(-50%);
+  position: relative;
   color: var(--gold-light);
   font-size: 1.2em;
   font-weight: bold;
@@ -297,31 +294,42 @@ body::after {
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.5),
                0 0 20px rgba(255, 215, 0, 0.3);
   white-space: nowrap;
-  z-index: 101;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--gold-light);
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  text-align: center;
+  padding: 10px 0;
 }
 
 @media (max-width: 768px) {
-  .power-meter {
-    left: 50px;
-    width: 35px;
-    height: 300px;
+  .power-meter-container {
+    left: 10px;
+    padding: 8px;
   }
 
-  .power-meter-fill {
-    left: 2px;
-    width: calc(100% - 4px);
-    border-radius: 14px;
+  .power-meter {
+    width: 30px;
+    height: 250px;
   }
 
   .power-meter-label {
-    left: 45px;
     font-size: 1em;
     letter-spacing: 1px;
-    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .power-meter-container {
+    left: 5px;
+  }
+
+  .power-meter {
+    width: 25px;
+    height: 200px;
+  }
+
+  .power-meter-label {
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
   }
 }
 
@@ -576,12 +584,17 @@ footer p {
   border: 3px solid rgba(255, 215, 0, 0.5);
   box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
   backdrop-filter: blur(5px);
+  width: auto;
+  max-width: 90vw;
+  overflow: hidden;
 }
 
-@keyframes bannerPop {
-  0% { transform: translate(-50%, 0) scale(0); }
-  50% { transform: translate(-50%, 0) scale(1.2); }
-  100% { transform: translate(-50%, 0) scale(1); }
+@media (max-width: 768px) {
+  .gold-rush-banner {
+    font-size: 2em;
+    padding: 15px 25px;
+    top: 40px;
+  }
 }
 
 .gold-rush-banner span {
@@ -981,4 +994,10 @@ body.gold-rush-active {
 .app-wrapper {
   animation: none;
   transform: none;
+}
+
+@keyframes bannerPop {
+  0% { transform: translate(-50%, 0) scale(0); }
+  50% { transform: translate(-50%, 0) scale(1.2); }
+  100% { transform: translate(-50%, 0) scale(1); }
 } 
