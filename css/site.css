@@ -18,6 +18,10 @@ body {
   overflow: hidden;
   width: 100vw;
   height: 100vh;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 /* Background Effects */
@@ -258,8 +262,7 @@ body::after {
 
 .power-meter-label {
   position: absolute;
-  left: -85px;
-  top: 50%;
+  top: 30%;
   transform: translateY(-50%);
   color: var(--gold-light);
   font-size: 1.2em;
@@ -269,7 +272,11 @@ body::after {
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.5),
                0 0 20px rgba(255, 215, 0, 0.3);
   white-space: nowrap;
-  z-index: 1;
+  z-index: 101;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--gold-light);
 }
 
 @media (max-width: 768px) {
@@ -286,9 +293,10 @@ body::after {
   }
 
   .power-meter-label {
-    left: -75px;
+    left: 45px;
     font-size: 1em;
     letter-spacing: 1px;
+    padding: 6px 10px;
   }
 }
 
