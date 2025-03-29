@@ -332,36 +332,65 @@ function createConfetti() {
   const container = document.createElement('div');
   container.className = 'confetti-container';
   
-  // Create 100 pieces of confetti
-  for (let i = 0; i < 100; i++) {
+  // Create 150 pieces of confetti with varied colors and shapes
+  for (let i = 0; i < 150; i++) {
     const confetti = document.createElement('div');
     confetti.className = 'confetti';
+    
+    // Random position
     confetti.style.left = `${Math.random() * 100}%`;
-    confetti.style.backgroundColor = `hsl(${Math.random() * 60 + 30}, 100%, 50%)`;
-    confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+    
+    // Random colors (gold, yellow, orange variations)
+    const hue = Math.random() * 60 + 30; // 30-90 range for gold colors
+    const lightness = Math.random() * 20 + 50; // 50-70% lightness
+    confetti.style.backgroundColor = `hsl(${hue}, 100%, ${lightness}%)`;
+    
+    // Random size
+    const size = Math.random() * 8 + 6; // 6-14px
+    confetti.style.width = `${size}px`;
+    confetti.style.height = `${size}px`;
+    
+    // Random rotation and animation duration
+    confetti.style.animationDuration = `${Math.random() * 2 + 2}s`;
     confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+    
+    // Random shape (square or circle)
+    if (Math.random() > 0.5) {
+      confetti.style.borderRadius = '50%';
+    }
+    
     container.appendChild(confetti);
   }
   
   document.body.appendChild(container);
-  
-  // Remove after animation completes
-  setTimeout(() => {
-    container.style.opacity = '0';
-    setTimeout(() => container.remove(), 5000);
-  }, 5000);
 }
 
 function createGoldRushBanner() {
   const banner = document.createElement('div');
   banner.className = 'gold-rush-banner';
-  banner.textContent = 'GOLD RUSH! x5';
+  
+  // Create rainbow text effect by wrapping each character in a span
+  const text = 'GOLD RUSH! x5';
+  text.split('').forEach(char => {
+    const span = document.createElement('span');
+    if (char === ' ') {
+      // For spaces, use a non-breaking space and add extra margin
+      span.innerHTML = '&nbsp;';
+      span.style.marginRight = '10px';
+    } else {
+      span.textContent = char;
+    }
+    banner.appendChild(span);
+  });
+  
   document.body.appendChild(banner);
   
-  // Fade in
+  // Remove the banner after Gold Rush ends
   setTimeout(() => {
-    banner.style.opacity = '1';
-  }, 10);
+    banner.style.opacity = '0';
+    banner.style.transform = 'translate(-50%, 0) scale(0)';
+    setTimeout(() => banner.remove(), 500);
+  }, 4500);
 }
 
 function spawnClickFeedback(amount, x, y) {
