@@ -12,11 +12,11 @@
 </head>
 <body>
   <div class="app-wrapper">
-    <!-- Gold Rush Progress Header -->
-    <div class="gold-rush-header">
-      <div class="gold-rush-fill" id="gold-rush-fill"></div>
-      <div class="gold-rush-text" id="gold-rush-text">Gold Rush: 0/100</div>
-    </div>
+  <!-- Gold Rush Progress Header -->
+  <div class="gold-rush-header">
+    <div class="gold-rush-fill" id="gold-rush-fill"></div>
+    <div class="gold-rush-text" id="gold-rush-text">Gold Rush: 0/100</div>
+  </div>
 
     <!-- Power Meter -->
     <div class="power-meter-label">POWER LEVEL</div>
@@ -42,48 +42,88 @@
         <h2>Upgrades</h2>
         <button class="close-btn" id="close-upgrades">&times;</button>
       </div>
-      <div class="right-panel">
-        <button id="buy-auto" class="upgrade-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Auto Clicker">
-          <div class="upgrade-owned">Owned: <span id="auto-count">0</span></div>
-          <div class="upgrade-title">Auto Clicker</div>
-          <div class="upgrade-cps">0.1 CPS</div>
-          <div class="upgrade-cost">Cost: <span id="auto-cost">10</span></div>
-        </button>
-        
-        <button id="buy-miner" class="upgrade-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/3185/3185927.png" alt="Miner">
-          <div class="upgrade-owned">Owned: <span id="miner-count">0</span></div>
-          <div class="upgrade-title">Miner</div>
-          <div class="upgrade-cps">1 CPS</div>
-          <div class="upgrade-cost">Cost: <span id="miner-cost">100</span></div>
-        </button>
-        
-        <button id="buy-machine" class="upgrade-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Machine">
-          <div class="upgrade-owned">Owned: <span id="machine-count">0</span></div>
-          <div class="upgrade-title">Machining</div>
-          <div class="upgrade-cps">10 CPS</div>
-          <div class="upgrade-cost">Cost: <span id="machine-cost">1000</span></div>
-        </button>
-        
-        <button id="buy-drill" class="upgrade-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/2933/2933556.png" alt="Drill">
-          <div class="upgrade-owned">Owned: <span id="drill-count">0</span></div>
-          <div class="upgrade-title">Drill</div>
-          <div class="upgrade-cps">50 CPS</div>
-          <div class="upgrade-cost">Cost: <span id="drill-cost">5000</span></div>
-        </button>
-        
-        <button id="buy-lab" class="upgrade-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Lab">
-          <div class="upgrade-owned">Owned: <span id="lab-count">0</span></div>
-          <div class="upgrade-title">Gold Lab</div>
-          <div class="upgrade-cps">200 CPS</div>
-          <div class="upgrade-cost">Cost: <span id="lab-cost">20000</span></div>
-        </button>
-      </div>
+    <div class="right-panel">
+      <button id="buy-auto" class="upgrade-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Auto Clicker">
+        <div class="upgrade-owned">Owned: <span id="auto-count">0</span></div>
+        <div class="upgrade-title">Auto Clicker</div>
+        <div class="upgrade-cps">0.1 CPS</div>
+        <div class="upgrade-cost">Cost: <span id="auto-cost">10</span></div>
+      </button>
+      
+      <button id="buy-pickaxe" class="upgrade-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/3185/3185927.png" alt="Pickaxe">
+        <div class="upgrade-owned">Owned: <span id="pickaxe-count">0</span></div>
+        <div class="upgrade-title">Pickaxe</div>
+        <div class="upgrade-cps">0.5 CPS</div>
+        <div class="upgrade-cost">Cost: <span id="pickaxe-cost">50</span></div>
+      </button>
+      
+      <button id="buy-miner" class="upgrade-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/3185/3185927.png" alt="Miner">
+        <div class="upgrade-owned">Owned: <span id="miner-count">0</span></div>
+        <div class="upgrade-title">Miner</div>
+        <div class="upgrade-cps">1 CPS</div>
+        <div class="upgrade-cost">Cost: <span id="miner-cost">100</span></div>
+      </button>
+      
+      <button id="buy-excavator" class="upgrade-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Excavator">
+        <div class="upgrade-owned">Owned: <span id="excavator-count">0</span></div>
+        <div class="upgrade-title">Excavator</div>
+        <div class="upgrade-cps">5 CPS</div>
+        <div class="upgrade-cost">Cost: <span id="excavator-cost">500</span></div>
+      </button>
+      
+      <button id="buy-machine" class="upgrade-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Machine">
+        <div class="upgrade-owned">Owned: <span id="machine-count">0</span></div>
+        <div class="upgrade-title">Machining</div>
+        <div class="upgrade-cps">10 CPS</div>
+        <div class="upgrade-cost">Cost: <span id="machine-cost">1000</span></div>
+      </button>
+      
+      <button id="buy-drill" class="upgrade-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/2933/2933556.png" alt="Drill">
+        <div class="upgrade-owned">Owned: <span id="drill-count">0</span></div>
+        <div class="upgrade-title">Drill</div>
+        <div class="upgrade-cps">50 CPS</div>
+        <div class="upgrade-cost">Cost: <span id="drill-cost">5000</span></div>
+      </button>
+      
+      <button id="buy-refinery" class="upgrade-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Refinery">
+        <div class="upgrade-owned">Owned: <span id="refinery-count">0</span></div>
+        <div class="upgrade-title">Refinery</div>
+        <div class="upgrade-cps">100 CPS</div>
+        <div class="upgrade-cost">Cost: <span id="refinery-cost">10000</span></div>
+      </button>
+      
+      <button id="buy-lab" class="upgrade-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Lab">
+        <div class="upgrade-owned">Owned: <span id="lab-count">0</span></div>
+        <div class="upgrade-title">Gold Lab</div>
+        <div class="upgrade-cps">200 CPS</div>
+        <div class="upgrade-cost">Cost: <span id="lab-cost">20000</span></div>
+      </button>
+      
+      <button id="buy-quantum" class="upgrade-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Quantum">
+        <div class="upgrade-owned">Owned: <span id="quantum-count">0</span></div>
+        <div class="upgrade-title">Quantum Miner</div>
+        <div class="upgrade-cps">500 CPS</div>
+        <div class="upgrade-cost">Cost: <span id="quantum-cost">50000</span></div>
+      </button>
+      
+      <button id="buy-singularity" class="upgrade-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Singularity">
+        <div class="upgrade-owned">Owned: <span id="singularity-count">0</span></div>
+        <div class="upgrade-title">Singularity</div>
+        <div class="upgrade-cps">1000 CPS</div>
+        <div class="upgrade-cost">Cost: <span id="singularity-cost">100000</span></div>
+      </button>
     </div>
+  </div>
 
     <!-- Main Game Container -->
     <div class="container">
@@ -96,20 +136,20 @@
             <strong>Gold Bars:</strong> <span id="coin-count">0</span>
           </div>
         </div>
-      </div>
     </div>
+  </div>
 
-    <footer>
-      <h3 style="color: gold;">How to Play</h3>
-      <p>
-        Click the gold bar to earn gold bars.<br>
-        Purchase upgrades to generate more clicks per second (CPS).<br>
-        Gold Rush triggers at increasing intervals (starts at 100 clicks, then 110, etc.)<br>
-        During Gold Rush all earnings are multiplied by 5x for 5 seconds.<br>
-        Hold down mouse for continuous clicking (with delay).<br>
-        Shift-click upgrades to buy as many as you can afford.
-      </p>
-    </footer>
+  <footer>
+    <h3 style="color: gold;">How to Play</h3>
+    <p>
+      Click the gold bar to earn gold bars.<br>
+      Purchase upgrades to generate more clicks per second (CPS).<br>
+      Gold Rush triggers at increasing intervals (starts at 100 clicks, then 110, etc.)<br>
+      During Gold Rush all earnings are multiplied by 5x for 5 seconds.<br>
+      Hold down mouse for continuous clicking (with delay).<br>
+      Shift-click upgrades to buy as many as you can afford.
+    </p>
+  </footer>
   </div>
 
   <!-- Settings Modal -->

@@ -15,10 +15,15 @@ const game = {
   },
   upgrades: {
     auto: { count: 0, cost: 10, cps: 0.1, costMultiplier: 1.3, name: "Auto Clicker" },
+    pickaxe: { count: 0, cost: 50, cps: 0.5, costMultiplier: 1.35, name: "Pickaxe" },
     miner: { count: 0, cost: 100, cps: 1, costMultiplier: 1.4, name: "Miner" },
+    excavator: { count: 0, cost: 500, cps: 5, costMultiplier: 1.45, name: "Excavator" },
     machine: { count: 0, cost: 1000, cps: 10, costMultiplier: 1.5, name: "Machining" },
     drill: { count: 0, cost: 5000, cps: 50, costMultiplier: 1.6, name: "Drill" },
-    lab: { count: 0, cost: 20000, cps: 200, costMultiplier: 1.7, name: "Gold Lab" }
+    refinery: { count: 0, cost: 10000, cps: 100, costMultiplier: 1.65, name: "Refinery" },
+    lab: { count: 0, cost: 20000, cps: 200, costMultiplier: 1.7, name: "Gold Lab" },
+    quantum: { count: 0, cost: 50000, cps: 500, costMultiplier: 1.75, name: "Quantum Miner" },
+    singularity: { count: 0, cost: 100000, cps: 1000, costMultiplier: 1.8, name: "Singularity" }
   },
   elements: {},
   intervals: {},
@@ -37,23 +42,26 @@ function cacheElements() {
     goldRushFill: document.getElementById('gold-rush-fill'),
     goldRushText: document.getElementById('gold-rush-text'),
     
-    // Settings elements
-    settingsBtn: document.getElementById('settings-btn'),
-    settingsModal: new bootstrap.Modal(document.getElementById('settingsModal')),
-    resetConfirmModal: new bootstrap.Modal(document.getElementById('resetConfirmModal')),
-    resetGameBtn: document.getElementById('resetGameBtn'),
-    confirmResetBtn: document.getElementById('confirmResetBtn'),
-    
     // Upgrade buttons
     auto: {
       btn: document.getElementById('buy-auto'),
       count: document.getElementById('auto-count'),
       cost: document.getElementById('auto-cost')
     },
+    pickaxe: {
+      btn: document.getElementById('buy-pickaxe'),
+      count: document.getElementById('pickaxe-count'),
+      cost: document.getElementById('pickaxe-cost')
+    },
     miner: {
       btn: document.getElementById('buy-miner'),
       count: document.getElementById('miner-count'),
       cost: document.getElementById('miner-cost')
+    },
+    excavator: {
+      btn: document.getElementById('buy-excavator'),
+      count: document.getElementById('excavator-count'),
+      cost: document.getElementById('excavator-cost')
     },
     machine: {
       btn: document.getElementById('buy-machine'),
@@ -65,10 +73,25 @@ function cacheElements() {
       count: document.getElementById('drill-count'),
       cost: document.getElementById('drill-cost')
     },
+    refinery: {
+      btn: document.getElementById('buy-refinery'),
+      count: document.getElementById('refinery-count'),
+      cost: document.getElementById('refinery-cost')
+    },
     lab: {
       btn: document.getElementById('buy-lab'),
       count: document.getElementById('lab-count'),
       cost: document.getElementById('lab-cost')
+    },
+    quantum: {
+      btn: document.getElementById('buy-quantum'),
+      count: document.getElementById('quantum-count'),
+      cost: document.getElementById('quantum-cost')
+    },
+    singularity: {
+      btn: document.getElementById('buy-singularity'),
+      count: document.getElementById('singularity-count'),
+      cost: document.getElementById('singularity-cost')
     },
     powerMeterFill: document.getElementById('power-meter-fill'),
     hamburgerBtn: document.getElementById('hamburger-btn'),
@@ -89,24 +112,24 @@ function initGame() {
     if (wasOpen === null || wasOpen === 'true') {
       openSidebar();
     }
+  } else {
+    closeSidebar();
   }
   
-  // Add resize listener for responsive behavior
-  window.addEventListener('resize', handleResize);
-  
+  // Load saved game state
   loadGame();
   
-  // Main game loop (runs every second for auto-clickers)
-  game.intervals.autoClick = setInterval(autoClickLoop, 1000);
+  // Start auto-clicker interval
+  game.intervals.autoClicker = setInterval(autoClickLoop, 1000);
   
-  // Stats update loop
-  game.intervals.statsUpdate = setInterval(updateStats, 250);
+  // Start the game loop for other updates
+  gameLoop();
   
-  // Start animation frame loop
-  requestAnimationFrame(gameLoop);
+  // Update stats display
+  updateStats();
 }
 
-// Main game loop
+// Main game loop (for visual updates only)
 function gameLoop() {
   updateGoldRushProgress();
   requestAnimationFrame(gameLoop);
@@ -114,41 +137,35 @@ function gameLoop() {
 
 // Event Listeners
 function setupEventListeners() {
-  // Settings button listeners
-  game.elements.settingsBtn.addEventListener('click', () => {
-    game.elements.settingsModal.show();
-  });
-  
-  game.elements.resetGameBtn.addEventListener('click', () => {
-    game.elements.settingsModal.hide();
-    game.elements.resetConfirmModal.show();
-  });
-  
-  game.elements.confirmResetBtn.addEventListener('click', () => {
-    resetGame();
-    game.elements.resetConfirmModal.hide();
-  });
-
-  // Gold bar click - attach to the container instead of the image
-  const goldBar = game.elements.goldBar;
-  goldBar.addEventListener('click', handleClick);
-  goldBar.addEventListener('mousedown', startHoldClick);
-  goldBar.addEventListener('mouseup', stopHoldClick);
-  goldBar.addEventListener('mouseleave', stopHoldClick);
+  // Gold bar click
+  game.elements.goldBar.addEventListener('click', handleClick);
+  game.elements.goldBar.addEventListener('mousedown', startHoldClick);
+  game.elements.goldBar.addEventListener('mouseup', stopHoldClick);
+  game.elements.goldBar.addEventListener('mouseleave', stopHoldClick);
   
   // Upgrade purchases
   game.elements.auto.btn.addEventListener('click', () => buyUpgrade('auto'));
+  game.elements.pickaxe.btn.addEventListener('click', () => buyUpgrade('pickaxe'));
   game.elements.miner.btn.addEventListener('click', () => buyUpgrade('miner'));
+  game.elements.excavator.btn.addEventListener('click', () => buyUpgrade('excavator'));
   game.elements.machine.btn.addEventListener('click', () => buyUpgrade('machine'));
   game.elements.drill.btn.addEventListener('click', () => buyUpgrade('drill'));
+  game.elements.refinery.btn.addEventListener('click', () => buyUpgrade('refinery'));
   game.elements.lab.btn.addEventListener('click', () => buyUpgrade('lab'));
+  game.elements.quantum.btn.addEventListener('click', () => buyUpgrade('quantum'));
+  game.elements.singularity.btn.addEventListener('click', () => buyUpgrade('singularity'));
   
   // Shift-click for bulk purchases
   game.elements.auto.btn.addEventListener('click', (e) => e.shiftKey && buyMax('auto'));
+  game.elements.pickaxe.btn.addEventListener('click', (e) => e.shiftKey && buyMax('pickaxe'));
   game.elements.miner.btn.addEventListener('click', (e) => e.shiftKey && buyMax('miner'));
+  game.elements.excavator.btn.addEventListener('click', (e) => e.shiftKey && buyMax('excavator'));
   game.elements.machine.btn.addEventListener('click', (e) => e.shiftKey && buyMax('machine'));
   game.elements.drill.btn.addEventListener('click', (e) => e.shiftKey && buyMax('drill'));
+  game.elements.refinery.btn.addEventListener('click', (e) => e.shiftKey && buyMax('refinery'));
   game.elements.lab.btn.addEventListener('click', (e) => e.shiftKey && buyMax('lab'));
+  game.elements.quantum.btn.addEventListener('click', (e) => e.shiftKey && buyMax('quantum'));
+  game.elements.singularity.btn.addEventListener('click', (e) => e.shiftKey && buyMax('singularity'));
   
   // Tooltips for upgrades
   setupTooltips();
@@ -157,25 +174,82 @@ function setupEventListeners() {
   game.elements.hamburgerBtn.addEventListener('click', toggleUpgradesSidebar);
   game.elements.closeUpgradesBtn.addEventListener('click', toggleUpgradesSidebar);
 
-  // Close sidebar when clicking outside (but not on desktop when clicking gold bar)
+  // Close sidebar when clicking outside
   document.addEventListener('click', (e) => {
-    // Only close if sidebar is open
-    if (!game.elements.upgradesSidebar.classList.contains('open')) return;
-    
-    // Don't close if clicking inside sidebar or hamburger button
-    if (game.elements.upgradesSidebar.contains(e.target) || 
-        game.elements.hamburgerBtn.contains(e.target)) return;
-    
-    // On desktop, don't close when clicking gold bar
-    if (window.innerWidth > 768 && game.elements.goldBar.contains(e.target)) return;
-    
-    // Close in all other cases
-    toggleUpgradesSidebar();
+    if (game.elements.upgradesSidebar.classList.contains('open') &&
+        !game.elements.upgradesSidebar.contains(e.target) &&
+        !game.elements.hamburgerBtn.contains(e.target)) {
+      toggleUpgradesSidebar();
+    }
   });
 
   // Prevent clicks inside sidebar from closing it
   game.elements.upgradesSidebar.addEventListener('click', (e) => {
     e.stopPropagation();
+  });
+
+  // Settings button click handler
+  document.getElementById('settings-btn').addEventListener('click', () => {
+    const settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
+    settingsModal.show();
+  });
+
+  // Reset game button click handler
+  document.getElementById('resetGameBtn').addEventListener('click', () => {
+    const settingsModal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+    settingsModal.hide();
+    const resetConfirmModal = new bootstrap.Modal(document.getElementById('resetConfirmModal'));
+    resetConfirmModal.show();
+  });
+
+  // Confirm reset button click handler
+  document.getElementById('confirmResetBtn').addEventListener('click', () => {
+    // Reset game state
+    game.stats = {
+      totalClicks: 0,
+      manualClicks: 0,
+      autoClicks: 0,
+      coinCount: 0,
+      clicksSinceLastGoldRush: 0,
+      goldRushActive: false,
+      startTime: performance.now(),
+      lastAutoClickTime: 0,
+      lastManualClickTime: 0,
+      lastClicks: [],
+      goldRushThreshold: 100
+    };
+
+    // Reset upgrades
+    Object.keys(game.upgrades).forEach(type => {
+      game.upgrades[type].count = 0;
+      game.upgrades[type].cost = game.upgrades[type].cost;
+    });
+
+    // Clear saved game
+    localStorage.removeItem('goldBarClickerSave');
+
+    // Update displays
+    updateStats();
+    Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
+
+    // Close both modals
+    const resetConfirmModal = document.getElementById('resetConfirmModal');
+    const settingsModal = document.getElementById('settingsModal');
+    
+    // Hide both modals and remove their backdrops
+    bootstrap.Modal.getInstance(resetConfirmModal).hide();
+    bootstrap.Modal.getInstance(settingsModal).hide();
+    
+    // Remove modal backdrops
+    const backdrops = document.getElementsByClassName('modal-backdrop');
+    while (backdrops.length > 0) {
+      backdrops[0].remove();
+    }
+    
+    // Remove modal-open class from body
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
   });
 }
 
@@ -206,20 +280,7 @@ function handleClick(e) {
   
   game.stats.coinCount += clickValue;
   
-  // Create click feedback at click position
-  const feedback = document.createElement('div');
-  feedback.className = 'click-feedback';
-  feedback.textContent = `+${clickValue}`;
-  
-  // Position at click coordinates
-  feedback.style.left = `${e.clientX}px`;
-  feedback.style.top = `${e.clientY}px`;
-  
-  document.body.appendChild(feedback);
-  
-  // Remove after animation completes
-  setTimeout(() => feedback.remove(), 1000);
-  
+  spawnClickFeedback(clickValue, e.clientX, e.clientY);
   updateStats();
   
   // Check for Gold Rush
@@ -247,7 +308,7 @@ function stopHoldClick() {
   }
 }
 
-// Auto-clicker Logic (now runs once per second)
+// Auto-clicker Logic (runs every second)
 function autoClickLoop() {
   const now = Date.now();
   const multiplier = game.stats.goldRushActive ? 5 : 1;
@@ -255,9 +316,11 @@ function autoClickLoop() {
   // Process each upgrade type separately to show individual feedback
   Object.entries(game.upgrades).forEach(([type, upgrade]) => {
     if (upgrade.count > 0) {
+      // Calculate earnings for this upgrade
       const earned = upgrade.count * upgrade.cps * multiplier;
       
       if (earned > 0) {
+        // Update game stats
         game.stats.coinCount += earned;
         game.stats.autoClicks += upgrade.count * upgrade.cps;
         game.stats.totalClicks += upgrade.count * upgrade.cps;
@@ -289,6 +352,33 @@ function autoClickLoop() {
     saveGame();
     game.stats.lastAutoClickTime = now;
   }
+  
+  // Update stats display
+  updateStats();
+}
+
+function spawnAutoClickFeedback(amount, type) {
+  const feedback = document.createElement('div');
+  feedback.className = 'auto-click-feedback';
+  feedback.textContent = `+${amount.toFixed(1)} (${game.upgrades[type].name})`;
+  
+  // Position near the upgrade button
+  const upgradeBtn = game.elements[type].btn;
+  const rect = upgradeBtn.getBoundingClientRect();
+  
+  feedback.style.left = `${rect.left + (Math.random() * 40 - 20)}px`;
+  feedback.style.top = `${rect.top + (Math.random() * 40 - 20)}px`;
+  
+  document.body.appendChild(feedback);
+  
+  // Always show feedback when sidebar is open
+  feedback.style.opacity = '1';
+  feedback.style.transform = 'translateY(-40px)';
+  
+  setTimeout(() => {
+    feedback.style.opacity = '0';
+    setTimeout(() => feedback.remove(), 300);
+  }, 1000);
 }
 
 // Upgrade System
@@ -436,22 +526,21 @@ function createGoldRushBanner() {
   }, 4500);
 }
 
-function spawnAutoClickFeedback(amount, type) {
-  // Only show upgrade feedback when sidebar is open
-  if (!game.elements.upgradesSidebar.classList.contains('open')) return;
-  
+function spawnClickFeedback(amount, x, y) {
   const feedback = document.createElement('div');
-  feedback.className = 'auto-click-feedback';
-  feedback.textContent = `+${amount.toFixed(1)}`;
-  
-  // Position near the upgrade button
-  const upgradeBtn = game.elements[type].btn;
-  const rect = upgradeBtn.getBoundingClientRect();
-  
-  feedback.style.left = `${rect.right - 60}px`;
-  feedback.style.top = `${rect.top + (rect.height / 2)}px`;
-  
+  feedback.className = 'click-feedback';
+  feedback.textContent = `+${amount}`;
+  feedback.style.left = `${x + (Math.random() * 40 - 20)}px`;
+  feedback.style.top = `${y + (Math.random() * 40 - 20)}px`;
+  feedback.style.color = `hsl(${Math.random() * 60 + 30}, 100%, 50%)`;
   document.body.appendChild(feedback);
+  
+  setTimeout(() => {
+    feedback.style.transform = 'translateY(-40px)';
+    feedback.style.opacity = '0';
+  }, 10);
+  
+  setTimeout(() => feedback.remove(), 1000);
 }
 
 // Stats and Display
@@ -470,34 +559,9 @@ function calculateActualCPS() {
   const recentClicks = game.stats.lastClicks.reduce((total, click) => total + click.amount, 0);
   
   // Add auto-clicker CPS
-  const autoCPS = Object.values(game.upgrades).reduce((total, upgrade) => {
-    return total + (upgrade.count * upgrade.cps);
-  }, 0);
+  const autoCPS = calculateTotalCPS();
   
   return recentClicks + autoCPS;
-}
-
-function calculateMaxPotentialCPS() {
-  // Calculate CPS from all upgrades
-  const upgradeCPS = Object.values(game.upgrades).reduce((total, upgrade) => {
-    return total + (upgrade.count * upgrade.cps);
-  }, 0);
-  
-  // Calculate maximum possible manual CPS
-  const maxManualCPS = (1000 / 200) + (1000 / 300); // ~8.33 clicks per second
-  
-  // Calculate current total potential
-  const currentPotential = upgradeCPS + maxManualCPS;
-  
-  // If in Gold Rush, multiply by 5
-  const multiplier = game.stats.goldRushActive ? 5 : 1;
-  
-  // Much more aggressive scaling factor that grows exponentially with CPS
-  // This ensures the meter stays low until you get really close to your potential
-  const baseScaling = Math.max(4, Math.pow(Math.log10(currentPotential + 1), 2) * 2);
-  const scalingFactor = baseScaling * (1 + Math.log10(currentPotential + 1));
-  
-  return currentPotential * multiplier * scalingFactor;
 }
 
 function updateStats() {
@@ -515,25 +579,18 @@ function updateStats() {
 }
 
 function updatePowerMeter(cps) {
-  // Calculate dynamic maximum CPS based on current potential
-  const maxPotentialCPS = calculateMaxPotentialCPS();
-  
-  // Use the larger of maxPotentialCPS or current CPS
-  const maxCPS = Math.max(maxPotentialCPS, cps);
-  
-  // Calculate height percentage using a log scale for smoother progression
-  const logBase = 10;
-  const percentage = Math.min(
-    (Math.log(cps + 1) / Math.log(logBase)) / 
-    (Math.log(maxCPS + 1) / Math.log(logBase)) * 100,
-    100
-  );
+  // Calculate height percentage (max CPS is 200)
+  const maxCPS = 200;
+  const percentage = Math.min((cps / maxCPS) * 100, 100);
   
   // Update height
   game.elements.powerMeterFill.style.height = `${percentage}%`;
   
-  // Add/remove high-power class based on relative CPS
-  if (percentage > 70) {
+  // Update CPS text
+  game.elements.cpsDisplay.textContent = `${cps.toFixed(1)} CPS`;
+  
+  // Add/remove high-power class based on CPS
+  if (cps > maxCPS * 0.7) { // Over 70% of max
     game.elements.powerMeterFill.classList.add('high-power');
   } else {
     game.elements.powerMeterFill.classList.remove('high-power');
@@ -579,17 +636,25 @@ function setupTooltips() {
     const element = game.elements[type];
     const upgrade = game.upgrades[type];
     
-    const tooltip = document.createElement('div');
-    tooltip.className = 'tooltip';
-    tooltip.textContent = `Each ${type} produces ${upgrade.cps} clicks per second`;
-    element.btn.appendChild(tooltip);
-    
-    element.btn.addEventListener('mouseenter', () => {
-      tooltip.style.opacity = '1';
-    });
-    
-    element.btn.addEventListener('mouseleave', () => {
-      tooltip.style.opacity = '0';
+    // Create tooltip content with upgrade description
+    let description = `<div class="upgrade-tooltip">`;
+    description += `<div class="tooltip-title">${upgrade.name}</div>`;
+    description += `<div class="tooltip-stats">`;
+    description += `Base Production: ${upgrade.cps} CPS<br>`;
+    description += `Cost Increase: ${Math.round((upgrade.costMultiplier - 1) * 100)}% per purchase<br>`;
+    description += `</div>`;
+    description += `<div class="tooltip-tip">Shift-click to buy max</div>`;
+    description += `</div>`;
+
+    // Initialize Bootstrap tooltip
+    new bootstrap.Tooltip(element.btn, {
+      title: description,
+      html: true,
+      placement: 'right',
+      trigger: 'hover',
+      container: 'body',
+      animation: true,
+      delay: { show: 100, hide: 100 }
     });
   });
 }
@@ -608,10 +673,15 @@ function saveGame() {
     },
     upgrades: {
       auto: { count: game.upgrades.auto.count, cost: game.upgrades.auto.cost },
+      pickaxe: { count: game.upgrades.pickaxe.count, cost: game.upgrades.pickaxe.cost },
       miner: { count: game.upgrades.miner.count, cost: game.upgrades.miner.cost },
+      excavator: { count: game.upgrades.excavator.count, cost: game.upgrades.excavator.cost },
       machine: { count: game.upgrades.machine.count, cost: game.upgrades.machine.cost },
       drill: { count: game.upgrades.drill.count, cost: game.upgrades.drill.cost },
-      lab: { count: game.upgrades.lab.count, cost: game.upgrades.lab.cost }
+      refinery: { count: game.upgrades.refinery.count, cost: game.upgrades.refinery.cost },
+      lab: { count: game.upgrades.lab.count, cost: game.upgrades.lab.cost },
+      quantum: { count: game.upgrades.quantum.count, cost: game.upgrades.quantum.cost },
+      singularity: { count: game.upgrades.singularity.count, cost: game.upgrades.singularity.cost }
     }
   };
   
@@ -637,8 +707,14 @@ function loadGame() {
     game.upgrades.auto.count = parsed.upgrades.auto.count || 0;
     game.upgrades.auto.cost = parsed.upgrades.auto.cost || 10;
     
+    game.upgrades.pickaxe.count = parsed.upgrades.pickaxe.count || 0;
+    game.upgrades.pickaxe.cost = parsed.upgrades.pickaxe.cost || 50;
+    
     game.upgrades.miner.count = parsed.upgrades.miner.count || 0;
     game.upgrades.miner.cost = parsed.upgrades.miner.cost || 100;
+    
+    game.upgrades.excavator.count = parsed.upgrades.excavator.count || 0;
+    game.upgrades.excavator.cost = parsed.upgrades.excavator.cost || 500;
     
     game.upgrades.machine.count = parsed.upgrades.machine.count || 0;
     game.upgrades.machine.cost = parsed.upgrades.machine.cost || 1000;
@@ -646,8 +722,17 @@ function loadGame() {
     game.upgrades.drill.count = parsed.upgrades.drill.count || 0;
     game.upgrades.drill.cost = parsed.upgrades.drill.cost || 5000;
     
+    game.upgrades.refinery.count = parsed.upgrades.refinery.count || 0;
+    game.upgrades.refinery.cost = parsed.upgrades.refinery.cost || 10000;
+    
     game.upgrades.lab.count = parsed.upgrades.lab.count || 0;
     game.upgrades.lab.cost = parsed.upgrades.lab.cost || 20000;
+    
+    game.upgrades.quantum.count = parsed.upgrades.quantum.count || 0;
+    game.upgrades.quantum.cost = parsed.upgrades.quantum.cost || 50000;
+    
+    game.upgrades.singularity.count = parsed.upgrades.singularity.count || 0;
+    game.upgrades.singularity.cost = parsed.upgrades.singularity.cost || 100000;
     
     // Update displays
     updateStats();
@@ -703,85 +788,6 @@ function handleResize() {
   }
 }
 
-function resetGame() {
-  // Reset all game stats
-  game.stats = {
-    totalClicks: 0,
-    manualClicks: 0,
-    autoClicks: 0,
-    coinCount: 0,
-    clicksSinceLastGoldRush: 0,
-    goldRushActive: false,
-    startTime: performance.now(),
-    lastAutoClickTime: 0,
-    lastManualClickTime: 0,
-    lastClicks: [],
-    goldRushThreshold: 100
-  };
-  
-  // Reset all upgrades
-  Object.keys(game.upgrades).forEach(type => {
-    game.upgrades[type].count = 0;
-    game.upgrades[type].cost = game.upgrades[type].cost;
-  });
-  
-  // Reset costs to initial values
-  game.upgrades.auto.cost = 10;
-  game.upgrades.miner.cost = 100;
-  game.upgrades.machine.cost = 1000;
-  game.upgrades.drill.cost = 5000;
-  game.upgrades.lab.cost = 20000;
-  
-  // Clear any active intervals/timeouts
-  if (game.goldRushTimeout) {
-    clearTimeout(game.goldRushTimeout);
-    game.goldRushTimeout = null;
-  }
-  
-  if (game.holdClickInterval) {
-    clearInterval(game.holdClickInterval);
-    game.holdClickInterval = null;
-  }
-  
-  // Remove any visual effects
-  document.querySelectorAll('.confetti-container, .gold-rush-banner').forEach(el => el.remove());
-  
-  // Update all displays
-  updateStats();
-  Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
-  
-  // Clear local storage
-  localStorage.removeItem('goldBarClickerSave');
-  
-  // Show feedback toast
-  showResetFeedback();
-}
-
-function showResetFeedback() {
-  const toast = document.createElement('div');
-  toast.className = 'reset-toast';
-  toast.innerHTML = `
-    <div class="reset-toast-content">
-      <i class="fas fa-check-circle"></i>
-      <span>Game progress has been reset!</span>
-    </div>
-  `;
-  
-  document.body.appendChild(toast);
-  
-  // Trigger animation
-  requestAnimationFrame(() => {
-    toast.style.opacity = '1';
-    toast.style.transform = 'translateY(0)';
-  });
-  
-  // Remove after animation
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateY(-20px)';
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-}
-
 // Initialize the game when DOM is loaded
+document.addEventListener('DOMContentLoaded', initGame); 
 document.addEventListener('DOMContentLoaded', initGame); 
