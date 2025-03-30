@@ -234,8 +234,11 @@ function setupEventListeners() {
       e.preventDefault();
       const analyticsModal = new bootstrap.Modal(document.getElementById('analyticsModal'));
       analyticsModal.show();
-      initPowerMonitor();
-      updateAnalytics();
+      // Initialize power monitor after a short delay to ensure modal is visible
+      setTimeout(() => {
+        initPowerMonitor();
+        updateAnalytics();
+      }, 100);
       updateMobileNavActive('mobile-analytics');
     });
   }
@@ -1069,9 +1072,16 @@ function initPowerMonitor() {
   const canvas = document.getElementById('powerMonitor');
   if (!canvas) return;
   
+  // Get the container width and set canvas size
+  const container = canvas.parentElement;
+  const containerWidth = container.clientWidth;
+  const containerHeight = 200; // Fixed height for better mobile display
+  
+  // Set canvas size to match container
+  canvas.width = containerWidth;
+  canvas.height = containerHeight;
+  
   const ctx = canvas.getContext('2d');
-  const width = canvas.width;
-  const height = canvas.height;
   
   function animate() {
     if (!document.getElementById('analyticsModal').classList.contains('show')) {
@@ -1079,9 +1089,9 @@ function initPowerMonitor() {
       return;
     }
     
-    // Semi-transparent background for trail effect
+    // Clear canvas with semi-transparent background for trail effect
     ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Get current power level from power meter
     const powerMeterFill = document.getElementById('power-meter-fill');
@@ -1101,29 +1111,29 @@ function initPowerMonitor() {
     ctx.lineWidth = 1;
     
     // Vertical grid lines (every minute)
-    for (let x = 0; x < width; x += (width / 10)) {
+    for (let x = 0; x < canvas.width; x += (canvas.width / 10)) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
+      ctx.lineTo(x, canvas.height);
       ctx.stroke();
       
       // Add time labels (every minute)
-      const minutes = Math.floor((x / width) * 10);
+      const minutes = Math.floor((x / canvas.width) * 10);
       ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
       ctx.font = '10px Arial';
       ctx.textAlign = 'center';
-      ctx.fillText(`${minutes}m`, x, height - 5);
+      ctx.fillText(`${minutes}m`, x, canvas.height - 5);
     }
     
     // Horizontal grid lines (every 20% power)
-    for (let y = 0; y <= height; y += (height / 5)) {
+    for (let y = 0; y <= canvas.height; y += (canvas.height / 5)) {
       ctx.beginPath();
       ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
+      ctx.lineTo(canvas.width, y);
       ctx.stroke();
       
       // Add power level labels
-      const powerLevel = 100 - Math.floor((y / height) * 100);
+      const powerLevel = 100 - Math.floor((y / canvas.height) * 100);
       ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
       ctx.font = '10px Arial';
       ctx.textAlign = 'left';
@@ -1132,7 +1142,7 @@ function initPowerMonitor() {
     
     // Draw power line with gradient effect
     ctx.beginPath();
-    const gradient = ctx.createLinearGradient(0, 0, width, 0);
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
     const hue = 120 * (1 - powerPercentage/100); // Green to Red
     gradient.addColorStop(0, `hsl(${hue}, 100%, 50%)`);
     gradient.addColorStop(1, `hsl(${hue + 20}, 100%, 50%)`);
@@ -1144,16 +1154,16 @@ function initPowerMonitor() {
     // Draw the line with smooth curves
     let firstPoint = true;
     for (let i = 0; i < powerData.length; i++) {
-      const x = (i / powerData.length) * width;
-      const y = height - (powerData[i] / 100) * height;
+      const x = (i / powerData.length) * canvas.width;
+      const y = canvas.height - (powerData[i] / 100) * canvas.height;
       
       if (firstPoint) {
         ctx.moveTo(x, y);
         firstPoint = false;
       } else {
         // Use quadratic curves for smoother lines
-        const prevX = ((i - 1) / powerData.length) * width;
-        const prevY = height - (powerData[i - 1] / 100) * height;
+        const prevX = ((i - 1) / powerData.length) * canvas.width;
+        const prevY = canvas.height - (powerData[i - 1] / 100) * canvas.height;
         const xc = (x + prevX) / 2;
         const yc = (y + prevY) / 2;
         ctx.quadraticCurveTo(prevX, prevY, xc, yc);
@@ -1171,9 +1181,9 @@ function initPowerMonitor() {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
     ctx.font = '12px Arial';
     ctx.textAlign = 'right';
-    ctx.fillText(`Current: ${powerPercentage.toFixed(1)}%`, width - 10, 20);
-    ctx.fillText(`Peak: ${maxPower.toFixed(1)}%`, width - 10, 40);
-    ctx.fillText(`Low: ${minPower.toFixed(1)}%`, width - 10, 60);
+    ctx.fillText(`Current: ${powerPercentage.toFixed(1)}%`, canvas.width - 10, 20);
+    ctx.fillText(`Peak: ${maxPower.toFixed(1)}%`, canvas.width - 10, 40);
+    ctx.fillText(`Low: ${minPower.toFixed(1)}%`, canvas.width - 10, 60);
     
     // Add time range indicator
     ctx.textAlign = 'left';
@@ -1182,7 +1192,24 @@ function initPowerMonitor() {
     requestAnimationFrame(animate);
   }
   
+  // Start animation
   animate();
+  
+  // Add resize handler to update canvas size
+  const resizeHandler = () => {
+    const newWidth = container.clientWidth;
+    if (newWidth !== canvas.width) {
+      canvas.width = newWidth;
+    }
+  };
+  
+  window.addEventListener('resize', resizeHandler);
+  
+  // Clean up on modal close
+  const modal = document.getElementById('analyticsModal');
+  modal.addEventListener('hidden.bs.modal', () => {
+    window.removeEventListener('resize', resizeHandler);
+  });
 }
 
 function updateAnalytics() {
