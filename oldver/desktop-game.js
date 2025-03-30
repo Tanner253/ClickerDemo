@@ -55,6 +55,7 @@ function cacheElements() {
     goldRushFill: document.getElementById('gold-rush-fill'),
     goldRushText: document.getElementById('gold-rush-text'),
     powerMeterFill: document.getElementById('power-meter-fill'),
+    instructionOverlay: document.getElementById('instruction-overlay'),
     
     // Upgrade buttons
     auto: {
@@ -191,6 +192,9 @@ function initGame() {
   
   // Start session duration timer
   setInterval(updateSessionDuration, 1000);
+  
+  // Initial click me overlay state
+  updateClickMeOverlay();
 }
 
 // Main game loop (for visual updates only)
@@ -323,6 +327,9 @@ function setupEventListeners() {
     // Update displays
     updateStats();
     Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
+    
+    // Show click me overlay since gold bars are 0
+    updateClickMeOverlay();
 
     // Close both modals
     const resetConfirmModal = document.getElementById('resetConfirmModal');
@@ -429,6 +436,9 @@ function handleClick(e) {
   
   // Save game state after each click
   saveGame();
+  
+  // Update click me overlay
+  updateClickMeOverlay();
 }
 
 // Hold-to-click functionality
@@ -941,6 +951,9 @@ function loadGame() {
     // Update displays
     updateStats();
     Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
+    
+    // Update click me overlay based on loaded state
+    updateClickMeOverlay();
   } catch (e) {
     console.error('Failed to load save:', e);
   }
@@ -1265,6 +1278,13 @@ function showPrestigeAnimation() {
   
   // Remove effect after animation
   setTimeout(() => effect.remove(), 3000);
+}
+
+// Add updateClickMeOverlay function
+function updateClickMeOverlay() {
+  if (game.elements.instructionOverlay) {
+    game.elements.instructionOverlay.style.display = game.stats.coinCount > 0 ? 'none' : 'flex';
+  }
 }
 
 // Initialize the game when DOM is loaded
