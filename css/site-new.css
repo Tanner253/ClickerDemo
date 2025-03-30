@@ -61,7 +61,7 @@ body::after {
 /* Layout */
 .app-wrapper {
   width: 100%;
-  max-width: 1600px;
+  max-width: 1200px; /* Reduced from 1600px for better mobile experience */
   margin: 0 auto;
   position: relative;
   min-height: 100vh;
@@ -203,27 +203,23 @@ body::after {
 
 /* Stats Display */
 .stats-container {
-  width: 100%;
-  max-width: 320px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  z-index: 1000;
+  text-align: center;
+  font-size: 18px;
 }
 
 .stat-gold {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
-  color: var(--gold-light);
-  padding: 12px 16px;
-  border-radius: 10px;
-  width: 100%;
-  border: 2px solid var(--gold-light);
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-  backdrop-filter: blur(5px);
-  font-size: 1.2em;
-  text-align: center;
-  margin: 0;
+  color: #fff;
+  border: 2px solid #ffd700;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
 }
 
 /* Power Meter */
@@ -332,86 +328,154 @@ body::after {
 }
 
 @media (max-width: 768px) {
+  .stats-container {
+    bottom: 70px;
+    font-size: 16px;
+  }
+
   .power-meter-container {
-    left: 10px;
-    padding: 8px;
+    left: 20px;
+    height: 300px;
+    width: 40px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 2px solid #ffd700;
+    border-radius: 20px;
+    padding: 3px;
   }
 
   .power-meter {
-    width: 30px;
-    height: 250px;
+    height: 100%;
+    width: 100%;
+    background: #333;
+    border-radius: 16px;
+    overflow: hidden;
   }
 
   .power-meter-label {
-    font-size: 1em;
-    letter-spacing: 1px;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: center;
+    transform: translate(-50%, -50%) rotate(180deg);
+    color: #ffd700;
+    font-size: 16px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    letter-spacing: 2px;
+  }
+
+  .power-meter-tooltip {
+    display: none;
+  }
+
+  /* Container and Navigation Styles */
+  .container {
+    padding-left: 80px;
+    padding-bottom: 80px;
+  }
+
+  .gold-rush-header {
+    top: 0;
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+  }
+
+  .upgrades-sidebar {
+    position: fixed;
+    width: 100%;
+    height: calc(100% - 60px);
+    top: 0;
+    right: -100%;
+    background: rgba(0, 0, 0, 0.95);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    z-index: 1000;
+    padding: 20px 10px;
+    transform: translateX(100%);
+  }
+
+  .upgrades-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .mobile-nav-item.active {
+    background: rgba(255, 215, 0, 0.2);
+    border-top: 2px solid var(--gold-light);
+  }
+
+  .mobile-nav-item.active i {
+    color: var(--gold);
+  }
+
+  .mobile-nav-item.active span {
+    color: var(--gold);
+  }
+
+  /* Increase gold bar size */
+  .gold-bar {
+    transform: scale(2);
+    margin: 40px auto;
+  }
+
+  .gold-bar img {
+    width: 100px;
+    height: auto;
   }
 }
 
 @media (max-width: 480px) {
-  .power-meter-container {
-    left: 5px;
+  .stats-container {
+    bottom: 65px;
+    font-size: 14px;
   }
 
-  .power-meter {
-    width: 25px;
-    height: 200px;
+  .power-meter-container {
+    height: 260px;
+    width: 35px;
   }
 
   .power-meter-label {
-    font-size: 0.9em;
-    letter-spacing: 0.5px;
+    font-size: 14px;
+  }
+
+  .container {
+    padding-left: 65px;
+  }
+
+  /* Keep gold bar size consistent with larger mobile view */
+  .gold-bar {
+    transform: scale(2);
+    margin: 40px auto;
   }
 }
 
 /* Hamburger Menu */
 .hamburger-btn {
-  position: fixed;
-  top: 40px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 2px solid var(--gold-light);
-  border-radius: 8px;
-  cursor: pointer;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-  padding: 10px;
-  transition: all 0.3s ease;
-}
-
-.hamburger-btn.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.hamburger-line {
-  width: 100%;
-  height: 3px;
-  background-color: var(--gold-light);
-  transition: width 0.3s ease;
+  display: none !important;
 }
 
 /* Upgrades Sidebar */
 .upgrades-sidebar {
   position: fixed;
-  top: 32px; /* Position just below gold rush banner (30px + 2px border) */
-  right: -400px;
-  width: 380px;
-  height: calc(100vh - 32px - 120px); /* Viewport height minus top banner and footer */
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
+  width: 100%;
+  height: calc(100% - 140px);
+  top: 60px;
+  right: -100%;
+  background: rgba(0, 0, 0, 0.95);
   border-left: 2px solid var(--gold-light);
-  z-index: 999;
-  transition: right 0.3s ease;
-  overflow-y: auto;
   padding: 20px;
+  overflow-y: auto;
+  z-index: 1000;
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(100%);
+}
+
+.upgrades-sidebar.open {
+  right: 0;
+  transform: translateX(0);
 }
 
 /* Custom scrollbar for the upgrades sidebar */
@@ -438,10 +502,6 @@ body::after {
 .upgrades-sidebar .right-panel {
   height: 100%;
   padding-bottom: 20px;
-}
-
-.upgrades-sidebar.open {
-  right: 0;
 }
 
 .upgrades-header {
@@ -531,14 +591,14 @@ body::after {
 }
 
 /* Footer */
-footer {
+footer, .desktop-footer {
   position: fixed;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   max-width: 1600px;
-  height: 120px; /* Explicitly set footer height */
+  height: 120px;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(5px);
   border-top: 2px solid var(--gold-light);
@@ -547,7 +607,7 @@ footer {
   text-align: center;
 }
 
-footer p {
+footer p, .desktop-footer p {
   max-width: 800px;
   margin: 10px auto;
   font-size: 0.9em;
@@ -616,7 +676,7 @@ footer p {
   .gold-rush-banner {
     font-size: 2em;
     padding: 15px 25px;
-    top: 40px;
+    top: 70px;
   }
 }
 
@@ -904,8 +964,8 @@ footer p {
 
 @media (max-width: 768px) {
   .settings-btn {
-    top: 40px;
-    left: 20px;
+    top: 10px;
+    left: 10px;
     width: 36px;
     height: 36px;
   }
@@ -928,9 +988,11 @@ footer p {
 
 @media (max-width: 768px) {
   .upgrades-sidebar {
+    width: 100%;
+    right: -100%;
     top: 0;
     height: 100vh;
-    margin-bottom: 0;
+    z-index: 1100;
   }
   
   .container.sidebar-open {
@@ -1169,8 +1231,8 @@ body.gold-rush-active {
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .analytics-btn {
-    top: 40px;
-    left: 70px;
+    top: 10px;
+    left: 56px; /* 10px + 36px + 10px spacing */
     width: 36px;
     height: 36px;
   }
@@ -1319,8 +1381,8 @@ body.gold-rush-active {
 
 @media (max-width: 768px) {
   .prestige-btn {
-    top: 40px;
-    left: 120px; /* Keep consistent spacing on mobile */
+    top: 10px;
+    left: 102px; /* 56px + 36px + 10px spacing */
     width: 36px;
     height: 36px;
   }
@@ -1382,5 +1444,568 @@ body.gold-rush-active {
   
   .prestige-multiplier {
     font-size: 1.2em;
+  }
+}
+
+/* Base Mobile Viewport Settings */
+@media (max-width: 768px) {
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .app-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Header Elements */
+  .gold-rush-header {
+    height: 20px;
+    font-size: 0.9em;
+  }
+
+  /* Control Buttons */
+  .control-buttons {
+    position: fixed;
+    top: 25px; /* Just below gold rush header */
+    left: 0;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 10px;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+
+  .settings-btn,
+  .analytics-btn,
+  .prestige-btn {
+    position: static;
+    width: 32px;
+    height: 32px;
+    transform: none;
+  }
+
+  .settings-btn i,
+  .analytics-btn i,
+  .prestige-btn i {
+    font-size: 1.2em;
+  }
+
+  /* Main Game Area */
+  .container {
+    flex: 1;
+    padding: 70px 10px 120px; /* Top padding for buttons, bottom for power meter */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .game-content {
+    width: 100%;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .gold-bar {
+    width: 85%;
+    max-width: 300px;
+    height: auto;
+    aspect-ratio: 1.67/1;
+  }
+
+  .gold-bar img {
+    width: 100px;
+    height: auto;
+  }
+
+  /* Stats Display */
+  .stats-container {
+    width: 90%;
+    max-width: 300px;
+    margin: 10px auto;
+  }
+
+  .stat-gold {
+    font-size: 1.1em;
+    padding: 10px;
+  }
+
+  /* Footer */
+  footer, .desktop-footer {
+    display: none !important; /* Force hide on mobile */
+  }
+
+  /* Upgrades Sidebar */
+  .upgrades-sidebar {
+    position: fixed;
+    width: 100%;
+    height: calc(100% - 140px); /* Account for top bars and bottom nav */
+    top: 60px; /* Below gold rush + power meter */
+    right: -100%;
+    background: rgba(0, 0, 0, 0.95);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    z-index: 1000;
+    padding: 20px 10px;
+    transform: translateX(100%);
+  }
+
+  .upgrades-sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Style active state for mobile nav upgrades button */
+  .mobile-nav-item.active {
+    background: rgba(255, 215, 0, 0.2);
+    border-top: 2px solid var(--gold-light);
+  }
+
+  .mobile-nav-item.active i {
+    color: var(--gold);
+  }
+
+  .mobile-nav-item.active span {
+    color: var(--gold);
+  }
+
+  /* Click Feedback */
+  .click-feedback {
+    font-size: 2em;
+  }
+
+  .auto-click-feedback {
+    font-size: 1em;
+  }
+
+  /* Gold Rush Banner */
+  .gold-rush-banner {
+    font-size: 2em;
+    padding: 15px 25px;
+    top: 70px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .mobile-nav-item {
+    padding: 6px;
+  }
+
+  .mobile-nav-item i {
+    font-size: 1.3em;
+  }
+
+  .mobile-nav-item span {
+    font-size: 0.7em;
+  }
+
+  .gold-bar {
+    width: 95%;
+    max-width: 250px;
+  }
+
+  .stats-container {
+    width: 95%;
+  }
+}
+
+/* Handle landscape mode */
+@media (max-width: 768px) and (orientation: landscape) {
+  .container {
+    padding: 60px 10px 90px;
+  }
+
+  .gold-bar {
+    width: 60%;
+    max-width: 400px;
+  }
+
+  footer, .desktop-footer {
+    min-height: 60px;
+  }
+
+  footer p, .desktop-footer p {
+    max-width: 600px;
+  }
+}
+
+/* Prevent body scroll when sidebar is open */
+body.sidebar-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+  border-top: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.mobile-nav-items {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-decoration: none;
+  padding: 8px;
+  color: #ffd700;
+  transition: all 0.3s ease;
+}
+
+.mobile-nav-item i {
+  font-size: 20px;
+  margin-bottom: 4px;
+  color: #ffd700;
+}
+
+.mobile-nav-item span {
+  font-size: 12px;
+  color: #ffd700;
+}
+
+.mobile-nav-item.active {
+  background: rgba(255, 215, 0, 0.2);
+  border-top: 2px solid #ffd700;
+}
+
+.mobile-nav-item.active i,
+.mobile-nav-item.active span {
+  color: #ffd700;
+}
+
+.mobile-nav-item:hover {
+  background: rgba(255, 215, 0, 0.1);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  /* Hide desktop buttons */
+  .settings-btn,
+  .analytics-btn,
+  .prestige-btn,
+  .hamburger-btn {
+    display: none;
+  }
+
+  /* Show mobile navigation */
+  .mobile-nav {
+    display: block;
+  }
+
+  /* Adjust container padding for mobile nav */
+  .container {
+    padding-bottom: 80px; /* Increased to account for mobile nav */
+  }
+
+  /* Adjust footer for mobile */
+  footer, .desktop-footer {
+    padding-bottom: 80px; /* Increased to account for mobile nav */
+  }
+
+  /* Adjust power meter position */
+  .power-meter-container {
+    bottom: 80px; /* Adjusted to account for mobile nav */
+  }
+
+  /* Adjust upgrades sidebar */
+  .upgrades-sidebar {
+    position: fixed;
+    width: 100%;
+    height: calc(100% - 140px);
+    top: 60px;
+    right: -100%;
+    background: rgba(0, 0, 0, 0.95);
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(100%);
+    z-index: 1000;
+    padding: 20px 10px;
+    overflow-y: auto;
+  }
+
+  .upgrades-sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Adjust gold rush header */
+  .gold-rush-header {
+    height: 30px;
+    font-size: 0.9em;
+  }
+
+  /* Adjust stats container */
+  .stats-container {
+    width: 90%;
+    max-width: 300px;
+    margin: 10px auto;
+  }
+
+  /* Adjust modal positioning */
+  .modal-dialog {
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .mobile-nav-item {
+    padding: 6px;
+  }
+
+  .mobile-nav-item i {
+    font-size: 18px;
+  }
+  
+  .mobile-nav-item span {
+    font-size: 11px;
+  }
+
+  .gold-bar {
+    width: 95%;
+    max-width: 250px;
+  }
+
+  .stats-container {
+    width: 95%;
+  }
+}
+
+/* Handle landscape mode */
+@media (max-width: 768px) and (orientation: landscape) {
+  .mobile-nav {
+    padding: 4px 0;
+  }
+
+  .mobile-nav-item {
+    padding: 4px;
+  }
+
+  .mobile-nav-item i {
+    font-size: 1.3em;
+  }
+
+  .mobile-nav-item span {
+    font-size: 0.7em;
+  }
+
+  .container {
+    padding-bottom: 60px;
+  }
+
+  .power-meter-container {
+    bottom: 60px;
+  }
+}
+
+/* How to Play Section in Settings Modal */
+.how-to-play-content {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+.how-to-play-content p {
+  margin: 0;
+  font-size: 0.9em;
+  line-height: 1.6;
+  color: var(--text-light);
+}
+
+.how-to-play-content p br {
+  margin-bottom: 5px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  /* Hide desktop footer on mobile */
+  footer, .desktop-footer {
+    display: none;
+  }
+
+  /* Adjust container padding for mobile nav */
+  .container {
+    padding-bottom: 80px; /* Increased to account for mobile nav */
+  }
+
+  /* Adjust power meter position */
+  .power-meter-container {
+    bottom: 80px; /* Adjusted to account for mobile nav */
+  }
+
+  /* Adjust upgrades sidebar */
+  .upgrades-sidebar {
+    width: 100%;
+    height: calc(100% - 80px); /* Account for mobile nav */
+    top: 0;
+    right: -100%;
+    padding: 20px 10px;
+  }
+
+  /* Adjust gold rush header */
+  .gold-rush-header {
+    height: 30px;
+    font-size: 0.9em;
+  }
+
+  /* Adjust stats container */
+  .stats-container {
+    width: 90%;
+    max-width: 300px;
+    margin: 10px auto;
+  }
+
+  /* Adjust modal positioning */
+  .modal-dialog {
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+
+  /* Adjust settings modal content */
+  .settings-section {
+    margin-bottom: 20px;
+  }
+
+  .how-to-play-content {
+    padding: 12px;
+  }
+
+  .how-to-play-content p {
+    font-size: 0.85em;
+  }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .how-to-play-content {
+    padding: 10px;
+  }
+
+  .how-to-play-content p {
+    font-size: 0.8em;
+  }
+}
+
+/* Handle landscape mode */
+@media (max-width: 768px) and (orientation: landscape) {
+  .container {
+    padding-bottom: 60px;
+  }
+
+  .power-meter-container {
+    bottom: 60px;
+  }
+
+  .how-to-play-content {
+    padding: 10px;
+  }
+
+  .how-to-play-content p {
+    font-size: 0.8em;
+  }
+}
+
+/* Instruction Overlay Styles */
+.instruction-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1000;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.click-me-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -150%);
+  font-size: 4rem;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5),
+               -2px -2px 4px rgba(255, 215, 0, 0.3);
+  animation: pulseText 2s ease-in-out infinite;
+  white-space: nowrap;
+  z-index: 1001;
+}
+
+.mouse-pointer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  animation: pulsePointer 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+  z-index: 1001;
+}
+
+@keyframes pulseText {
+  0% { transform: translate(-50%, -150%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%, -150%) scale(1.1); opacity: 0.8; }
+  100% { transform: translate(-50%, -150%) scale(1); opacity: 1; }
+}
+
+@keyframes pulsePointer {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%, -60%) scale(1.1); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .click-me-text {
+    font-size: 3rem;
+  }
+  
+  .mouse-pointer {
+    font-size: 4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .click-me-text {
+    font-size: 2rem;
+  }
+  
+  .mouse-pointer {
+    font-size: 3rem;
   }
 } 

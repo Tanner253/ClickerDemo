@@ -55,7 +55,6 @@ function cacheElements() {
     goldRushFill: document.getElementById('gold-rush-fill'),
     goldRushText: document.getElementById('gold-rush-text'),
     powerMeterFill: document.getElementById('power-meter-fill'),
-    instructionOverlay: document.getElementById('instruction-overlay'),
     
     // Upgrade buttons
     auto: {
@@ -242,52 +241,16 @@ function setupEventListeners() {
   game.elements.hamburgerBtn.addEventListener('click', toggleUpgradesSidebar);
   game.elements.closeUpgradesBtn.addEventListener('click', toggleUpgradesSidebar);
 
-  // Mobile Navigation
-  const mobileUpgrades = document.getElementById('mobile-upgrades');
-  const mobileAnalytics = document.getElementById('mobile-analytics');
-  const mobileSettings = document.getElementById('mobile-settings');
-  const mobilePrestige = document.getElementById('mobile-prestige');
-
-  if (mobileUpgrades) {
-    mobileUpgrades.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation(); // Prevent event from bubbling
-      toggleUpgradesSidebar();
-    });
-  }
-
-  if (mobileAnalytics) {
-    mobileAnalytics.addEventListener('click', (e) => {
-      e.preventDefault();
-      const analyticsModal = new bootstrap.Modal(document.getElementById('analyticsModal'));
-      analyticsModal.show();
-      updateMobileNavActive('mobile-analytics');
-    });
-  }
-
-  if (mobileSettings) {
-    mobileSettings.addEventListener('click', (e) => {
-      e.preventDefault();
-      const settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
-      settingsModal.show();
-      updateMobileNavActive('mobile-settings');
-    });
-  }
-
-  if (mobilePrestige) {
-    mobilePrestige.addEventListener('click', (e) => {
-      e.preventDefault();
-      prestige();
-      updateMobileNavActive('mobile-prestige');
-    });
-  }
-
-  // Close sidebar when clicking outside
+  // Close sidebar when clicking outside, but not when clicking gold bar in desktop mode
   document.addEventListener('click', (e) => {
+    const isMobile = window.innerWidth <= 768;
+    const isGoldBar = game.elements.goldBar.contains(e.target);
+    
     if (game.elements.upgradesSidebar.classList.contains('open') &&
         !game.elements.upgradesSidebar.contains(e.target) &&
-        !e.target.closest('#mobile-upgrades')) {
-      closeSidebar();
+        !game.elements.hamburgerBtn.contains(e.target) &&
+        !(isGoldBar && !isMobile)) { // Don't close if clicking gold bar on desktop
+      toggleUpgradesSidebar();
     }
   });
 
@@ -422,17 +385,6 @@ function setupEventListeners() {
       prestigeBtn.disabled = game.stats.coinCount < cost;
     }, 100);
   }
-}
-
-// Add function to update mobile navigation active state
-function updateMobileNavActive(activeId) {
-  const navItems = document.querySelectorAll('.mobile-nav-item');
-  navItems.forEach(item => {
-    item.classList.remove('active');
-    if (item.id === activeId) {
-      item.classList.add('active');
-    }
-  });
 }
 
 // Click Handling
@@ -771,16 +723,6 @@ function calculateActualCPS() {
 }
 
 function updateStats() {
-  // Update coin count display
-  game.elements.coinCount.textContent = formatNumber(game.stats.coinCount);
-  
-  // Show/hide instruction overlay based on coin count
-  if (game.stats.coinCount === 0) {
-    game.elements.instructionOverlay.style.display = 'flex';
-  } else {
-    game.elements.instructionOverlay.style.display = 'none';
-  }
-  
   // Calculate actual CPS from recent clicks
   const cps = calculateActualCPS();
   
@@ -1004,32 +946,36 @@ function loadGame() {
   }
 }
 
-// Update toggle upgrades sidebar function
+// Add new function for toggling the upgrades sidebar
 function toggleUpgradesSidebar() {
-  const isOpen = game.elements.upgradesSidebar.classList.contains('open');
-  const mobileUpgradesBtn = document.getElementById('mobile-upgrades');
-  
-  if (isOpen) {
+  if (game.elements.upgradesSidebar.classList.contains('open')) {
     closeSidebar();
   } else {
     openSidebar();
   }
-  
-  // Update mobile navigation active state
-  updateMobileNavActive(isOpen ? null : 'mobile-upgrades');
 }
 
 // Split toggle into open/close functions
 function openSidebar() {
   game.elements.upgradesSidebar.classList.add('open');
   game.elements.container.classList.add('sidebar-open');
-  document.getElementById('mobile-upgrades').classList.add('active');
+  game.elements.hamburgerBtn.classList.add('hidden');
+  localStorage.setItem('sidebarOpen', 'true');
+  
+  // Animate hamburger
+  const lines = game.elements.hamburgerBtn.querySelectorAll('.hamburger-line');
+  lines.forEach(line => line.style.width = '70%');
 }
 
 function closeSidebar() {
   game.elements.upgradesSidebar.classList.remove('open');
   game.elements.container.classList.remove('sidebar-open');
-  document.getElementById('mobile-upgrades').classList.remove('active');
+  game.elements.hamburgerBtn.classList.remove('hidden');
+  localStorage.setItem('sidebarOpen', 'false');
+  
+  // Animate hamburger
+  const lines = game.elements.hamburgerBtn.querySelectorAll('.hamburger-line');
+  lines.forEach(line => line.style.width = '100%');
 }
 
 // Update handleResize function
