@@ -192,6 +192,9 @@ function initGame() {
   
   // Start session duration timer
   setInterval(updateSessionDuration, 1000);
+  
+  // Initial click me overlay state
+  updateClickMeOverlay();
 }
 
 // Main game loop (for visual updates only)
@@ -426,13 +429,15 @@ function setupEventListeners() {
 
 // Add function to update mobile navigation active state
 function updateMobileNavActive(activeId) {
+  // Remove active class from all nav items
   const navItems = document.querySelectorAll('.mobile-nav-item');
-  navItems.forEach(item => {
-    item.classList.remove('active');
-    if (item.id === activeId) {
-      item.classList.add('active');
-    }
-  });
+  navItems.forEach(item => item.classList.remove('active'));
+  
+  // Add active class to clicked item
+  const activeItem = document.getElementById(activeId);
+  if (activeItem) {
+    activeItem.classList.add('active');
+  }
 }
 
 // Click Handling
@@ -477,6 +482,9 @@ function handleClick(e) {
   
   // Save game state after each click
   saveGame();
+  
+  // Update click me overlay
+  updateClickMeOverlay();
 }
 
 // Hold-to-click functionality
@@ -1320,6 +1328,26 @@ function showPrestigeAnimation() {
   // Remove effect after animation
   setTimeout(() => effect.remove(), 3000);
 }
+
+// Update click me overlay
+function updateClickMeOverlay() {
+  if (game.elements.instructionOverlay) {
+    game.elements.instructionOverlay.style.display = game.stats.coinCount > 0 ? 'none' : 'flex';
+  }
+}
+
+// Add CSS for active mobile nav state
+const style = document.createElement('style');
+style.textContent = `
+  .mobile-nav-item.active {
+    color: #ffd700;
+    transform: scale(1.1);
+  }
+  .mobile-nav-item.active i {
+    color: #ffd700;
+  }
+`;
+document.head.appendChild(style);
 
 // Initialize the game when DOM is loaded
 document.addEventListener('DOMContentLoaded', initGame); 
