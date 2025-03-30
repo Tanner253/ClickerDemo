@@ -3,6 +3,12 @@ working on something....
 
 - the game play loop is simple. Free players play game, game is addicting. Players get served ads. players can purchase in-app purchases to skip ads. Ad revenue and in-app purchases pump the liquidity pool of the games memecoin. User receives memecoins from playing games at a rate of 1:2, meaning if the memecoin is worth 1$ then the user would have to watch/generate 2$ worth of ad watch time before receiving the memecoin. The user can stake these memecoin payouts for more ingame rewards or cash out for money. Its a self feeding cycle where funds move from advertisers into gamers/crypto bros pockets. Rebate time spent watching ads.
 
+- why play the game? its addicting and fun first, and you can make a couple bucks second.
+- what keeps the chart from tanking and everyone just selling out? The distributioon amount per player will be so small tanking the chart due to gameplay will be impossible. Ad revenue and in app purchases will supplement any selloffs as well, feeding the chart with long term constant growth.
+- what keeps players playing? a guild system, and a tie to the chart.
+
+- This game is tied to the chart through chart %Gain or %loss. I will use an api to check the status of the chart in real-time, and use this % gain or loss as a multiplier for everyone in-game to increase or decrease click rates (prestige rates -> meme coin distribution) giving every player the incentive to hold their coins and not sell. If the chart is going super green then we can afford to distribute more coins, if it goes red then everyone's click rates will be nerfed, slowing down the mining speed, generating more ad reevenue per player due to longer play time, pumping the chart with liquidity faster... It Will Work.
+
 # 🪙 Gold Rush Tycoon
 
 **Tagline:** _"Stack Bars, Break Stars."_
