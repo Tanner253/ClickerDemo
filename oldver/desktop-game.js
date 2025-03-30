@@ -173,6 +173,19 @@ function initGame() {
     closeSidebar();
   }
   
+  // Add CSS for falling money animation
+  const moneyStyle = document.createElement('style');
+  moneyStyle.textContent = `
+    .falling-money {
+      position: fixed;
+      z-index: 1000;
+      pointer-events: none;
+      will-change: transform;
+      filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+    }
+  `;
+  document.head.appendChild(moneyStyle);
+  
   // Load saved game state
   loadGame();
   
@@ -425,6 +438,15 @@ function handleClick(e) {
   game.stats.totalGoldEarned += clickValue;
   
   spawnClickFeedback(clickValue, e.clientX, e.clientY);
+  
+  // Create falling money effect from top of screen
+  // Generate fewer coins (reduced by 50%)
+  const numberOfCoins = Math.ceil(multiplier * 1.5); // Reduced from multiplier * 3
+  for (let i = 0; i < numberOfCoins; i++) {
+    const randomX = Math.random() * window.innerWidth;
+    createFallingMoney(randomX, 0, 1); // y=0 ensures it spawns from the top
+  }
+  
   updateStats();
   
   // Check for Gold Rush
@@ -610,6 +632,12 @@ function startGoldRush() {
   // Create visual effects
   createConfetti();
   createGoldRushBanner();
+  
+  // Create falling money from top of screen during Gold Rush (reduced by 50%)
+  for (let i = 0; i < 2; i++) { // Reduced from 5 to 2
+    const x = Math.random() * window.innerWidth;
+    createFallingMoney(x, 0, 5);
+  }
   
   // Add screen shake effect
   document.body.classList.add('gold-rush-active');
@@ -1284,6 +1312,71 @@ function showPrestigeAnimation() {
 function updateClickMeOverlay() {
   if (game.elements.instructionOverlay) {
     game.elements.instructionOverlay.style.display = game.stats.coinCount > 0 ? 'none' : 'flex';
+  }
+}
+
+// Add createFallingMoney function at the end of the file
+function createFallingMoney(x, y, multiplier = 1) {
+  const moneyImages = [
+    'assets/dollar.png',
+    'assets/money.png',
+    'assets/money-bags.png'
+  ];
+  const count = Math.ceil(multiplier * 1.5); // Reduced from multiplier * 3
+  
+  for (let i = 0; i < count; i++) {
+    const money = document.createElement('img');
+    money.className = 'falling-money';
+    money.src = moneyImages[Math.floor(Math.random() * moneyImages.length)];
+    
+    // Random position across the entire viewport width if starting from top (y=0)
+    // Otherwise, use the provided x position with some randomness
+    const randomX = y === 0 ? Math.random() * window.innerWidth : x + (Math.random() * 100 - 50);
+    money.style.left = `${randomX}px`;
+    money.style.top = y === 0 ? '-50px' : `${y - 50}px`; // Start slightly above if from top
+    
+    // Random rotation and animation duration
+    const duration = Math.random() * 1.5 + 1.5; // 1.5-3 seconds
+    
+    // Random size (slightly larger for better visibility)
+    const size = Math.random() * 30 + 25; // 25-55px
+    money.style.width = `${size}px`;
+    money.style.height = `${size}px`;
+    
+    // Random initial rotation and fall path
+    const rotation = Math.random() * 360;
+    const horizontalMovement = Math.random() * 200 - 100; // -100px to +100px horizontal movement
+    
+    // Create keyframe animation for this specific element
+    const keyframeStyle = document.createElement('style');
+    const animationName = `fall${Date.now()}${i}`;
+    keyframeStyle.textContent = `
+      @keyframes ${animationName} {
+        0% {
+          transform: translateX(0) translateY(0) rotate(${rotation}deg);
+          opacity: 1;
+        }
+        20% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(${horizontalMovement}px) translateY(${window.innerHeight + 100}px) rotate(${rotation + 720}deg);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(keyframeStyle);
+    
+    // Apply the unique animation
+    money.style.animation = `${animationName} ${duration}s ease-in forwards`;
+    
+    document.body.appendChild(money);
+    
+    // Cleanup after animation
+    setTimeout(() => {
+      money.remove();
+      keyframeStyle.remove();
+    }, duration * 1000);
   }
 }
 

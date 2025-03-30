@@ -1,5 +1,5 @@
-// Game State
-const game = {
+// Default game state
+const defaultGameState = {
   stats: {
     totalClicks: 0,
     manualClicks: 0,
@@ -32,7 +32,12 @@ const game = {
     lab: { count: 0, cost: 20000, cps: 200, costMultiplier: 1.7, name: "Gold Lab" },
     quantum: { count: 0, cost: 50000, cps: 500, costMultiplier: 1.75, name: "Quantum Miner" },
     singularity: { count: 0, cost: 100000, cps: 1000, costMultiplier: 1.8, name: "Singularity" }
-  },
+  }
+};
+
+// Game State
+const game = {
+  ...defaultGameState,
   elements: {},
   intervals: {},
   goldRushTimeout: null,
@@ -323,6 +328,7 @@ function setupEventListeners() {
   document.getElementById('confirmResetBtn').addEventListener('click', () => {
     // Reset game state
     game.stats = {
+      ...defaultGameState.stats,
       totalClicks: 0,
       manualClicks: 0,
       autoClicks: 0,
@@ -338,10 +344,7 @@ function setupEventListeners() {
       totalGoldSpent: 0,
       goldRushCount: 0,
       peakPower: 0,
-      upgradeProduction: {},
-      currentPowerMultiplier: 1,
-      prestigeLevel: 0,
-      prestigeMultiplier: 1.0
+      upgradeProduction: {}
     };
 
     // Reset upgrades to initial values
@@ -460,6 +463,9 @@ function handleClick(e) {
   // Apply both power and prestige multipliers
   const clickValue = baseClickAmount * multiplier * game.stats.currentPowerMultiplier * game.stats.prestigeMultiplier;
   
+  // Create falling money effect (reduced by 50%)
+  createFallingMoney(e.clientX, e.clientY, multiplier * 0.5); // Reduced multiplier by 50%
+  
   game.stats.totalClicks += baseClickAmount;
   game.stats.manualClicks += baseClickAmount;
   
@@ -512,6 +518,8 @@ function stopHoldClick() {
 function autoClickLoop() {
   const now = Date.now();
   const multiplier = game.stats.goldRushActive ? 5 : 1;
+  let totalEarned = 0;
+  let totalClicks = 0;
   
   // Process each upgrade type separately to show individual feedback
   Object.entries(game.upgrades).forEach(([type, upgrade]) => {
@@ -520,23 +528,11 @@ function autoClickLoop() {
       const earned = upgrade.count * upgrade.cps * multiplier;
       
       if (earned > 0) {
-        // Update game stats
-        game.stats.coinCount += earned;
-        game.stats.autoClicks += upgrade.count * upgrade.cps;
-        game.stats.totalClicks += upgrade.count * upgrade.cps;
-        game.stats.totalGoldEarned += earned;
+        totalEarned += earned;
+        totalClicks += upgrade.count * upgrade.cps;
+        
+        // Update upgrade production
         game.stats.upgradeProduction[type] += earned;
-        
-        // Record auto-clicks for CPS calculation (but not power meter)
-        game.stats.lastClicks.push({
-          time: now,
-          amount: upgrade.count * upgrade.cps,
-          isManual: false
-        });
-        
-        if (!game.stats.goldRushActive) {
-          game.stats.clicksSinceLastGoldRush += upgrade.count * upgrade.cps;
-        }
         
         // Visual feedback for each upgrade type
         spawnAutoClickFeedback(earned, type);
@@ -544,11 +540,30 @@ function autoClickLoop() {
     }
   });
   
-  // Visual feedback for auto-clicks
-  game.elements.goldBar.classList.add('auto-click');
-  setTimeout(() => {
-    game.elements.goldBar.classList.remove('auto-click');
-  }, 300);
+  if (totalEarned > 0) {
+    // Update game stats in bulk
+    game.stats.coinCount += totalEarned;
+    game.stats.autoClicks += totalClicks;
+    game.stats.totalClicks += totalClicks;
+    game.stats.totalGoldEarned += totalEarned;
+    
+    // Record auto-clicks for CPS calculation
+    game.stats.lastClicks.push({
+      time: now,
+      amount: totalClicks,
+      isManual: false
+    });
+    
+    if (!game.stats.goldRushActive) {
+      game.stats.clicksSinceLastGoldRush += totalClicks;
+    }
+    
+    // Visual feedback for auto-clicks
+    game.elements.goldBar.classList.add('auto-click');
+    setTimeout(() => {
+      game.elements.goldBar.classList.remove('auto-click');
+    }, 300);
+  }
   
   // Save game state periodically
   if (now - game.stats.lastAutoClickTime > 5000) {
@@ -559,7 +574,7 @@ function autoClickLoop() {
   // Update stats display
   updateStats();
   
-  // Check for Gold Rush in auto-clicker as well
+  // Check for Gold Rush
   if (game.stats.clicksSinceLastGoldRush >= game.stats.goldRushThreshold && 
       !game.stats.goldRushActive && 
       !game.goldRushTimeout) {
@@ -656,6 +671,12 @@ function startGoldRush() {
   game.stats.goldRushCount++;
   game.stats.goldRushActive = true;
   game.goldRushTimeout = Date.now() + 5000; // 5 seconds from now
+  
+  // Create initial burst of money across the screen (reduced by 50%)
+  for (let i = 0; i < 5; i++) { // Reduced from 10 to 5 (50% reduction)
+    const x = Math.random() * window.innerWidth;
+    createFallingMoney(x, 0, 5);
+  }
   
   // Increase threshold for next Gold Rush by 10%
   game.stats.goldRushThreshold = Math.floor(game.stats.goldRushThreshold * 1.4);
@@ -966,54 +987,27 @@ function loadGame() {
   try {
     const parsed = JSON.parse(saveData);
     
-    // Load stats
-    game.stats.totalClicks = parsed.stats.totalClicks || 0;
-    game.stats.manualClicks = parsed.stats.manualClicks || 0;
-    game.stats.autoClicks = parsed.stats.autoClicks || 0;
-    game.stats.coinCount = parsed.stats.coinCount || 0;
-    game.stats.clicksSinceLastGoldRush = parsed.stats.clicksSinceLastGoldRush || 0;
-    game.stats.goldRushThreshold = parsed.stats.goldRushThreshold || 100;
-    game.stats.totalGoldEarned = parsed.stats.totalGoldEarned || 0;
-    game.stats.totalGoldSpent = parsed.stats.totalGoldSpent || 0;
-    game.stats.goldRushCount = parsed.stats.goldRushCount || 0;
-    game.stats.peakPower = parsed.stats.peakPower || 0;
-    game.stats.upgradeProduction = parsed.stats.upgradeProduction || {};
-    game.stats.currentPowerMultiplier = parsed.stats.currentPowerMultiplier || 1;
+    // Load stats with defaults
+    game.stats = {
+      ...defaultGameState.stats,
+      ...parsed.stats
+    };
     
-    // Load upgrades
-    game.upgrades.auto.count = parsed.upgrades.auto.count || 0;
-    game.upgrades.auto.cost = parsed.upgrades.auto.cost || 10;
-    
-    game.upgrades.pickaxe.count = parsed.upgrades.pickaxe.count || 0;
-    game.upgrades.pickaxe.cost = parsed.upgrades.pickaxe.cost || 50;
-    
-    game.upgrades.miner.count = parsed.upgrades.miner.count || 0;
-    game.upgrades.miner.cost = parsed.upgrades.miner.cost || 100;
-    
-    game.upgrades.excavator.count = parsed.upgrades.excavator.count || 0;
-    game.upgrades.excavator.cost = parsed.upgrades.excavator.cost || 500;
-    
-    game.upgrades.machine.count = parsed.upgrades.machine.count || 0;
-    game.upgrades.machine.cost = parsed.upgrades.machine.cost || 1000;
-    
-    game.upgrades.drill.count = parsed.upgrades.drill.count || 0;
-    game.upgrades.drill.cost = parsed.upgrades.drill.cost || 5000;
-    
-    game.upgrades.refinery.count = parsed.upgrades.refinery.count || 0;
-    game.upgrades.refinery.cost = parsed.upgrades.refinery.cost || 10000;
-    
-    game.upgrades.lab.count = parsed.upgrades.lab.count || 0;
-    game.upgrades.lab.cost = parsed.upgrades.lab.cost || 20000;
-    
-    game.upgrades.quantum.count = parsed.upgrades.quantum.count || 0;
-    game.upgrades.quantum.cost = parsed.upgrades.quantum.cost || 50000;
-    
-    game.upgrades.singularity.count = parsed.upgrades.singularity.count || 0;
-    game.upgrades.singularity.cost = parsed.upgrades.singularity.cost || 100000;
+    // Load upgrades with defaults
+    Object.keys(game.upgrades).forEach(type => {
+      game.upgrades[type] = {
+        ...defaultGameState.upgrades[type],
+        count: parsed.upgrades[type]?.count || 0,
+        cost: parsed.upgrades[type]?.cost || defaultGameState.upgrades[type].cost
+      };
+    });
     
     // Update displays
     updateStats();
     Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
+    
+    // Update click me overlay based on loaded state
+    updateClickMeOverlay();
   } catch (e) {
     console.error('Failed to load save:', e);
   }
@@ -1291,42 +1285,21 @@ function calculatePrestigeCost() {
 function prestige() {
   const cost = calculatePrestigeCost();
   if (game.stats.coinCount >= cost) {
-    // Increase prestige level and multiplier
-    game.stats.prestigeLevel++;
-    game.stats.prestigeMultiplier = 1 + (game.stats.prestigeLevel * 0.5);
-    
     // Save prestige stats before reset
     const prestigeStats = {
-      prestigeLevel: game.stats.prestigeLevel,
-      prestigeMultiplier: game.stats.prestigeMultiplier
+      prestigeLevel: game.stats.prestigeLevel + 1,
+      prestigeMultiplier: 1 + ((game.stats.prestigeLevel + 1) * 0.5)
     };
     
-    // Reset all other stats
+    // Reset game state while preserving prestige stats
     game.stats = {
+      ...defaultGameState.stats,
       ...prestigeStats,
-      totalClicks: 0,
-      manualClicks: 0,
-      autoClicks: 0,
-      coinCount: 0,
-      clicksSinceLastGoldRush: 0,
-      goldRushActive: false,
-      startTime: performance.now(),
-      lastAutoClickTime: 0,
-      lastManualClickTime: 0,
-      lastClicks: [],
-      goldRushThreshold: 100,
-      totalGoldEarned: 0,
-      totalGoldSpent: 0,
-      goldRushCount: 0,
-      peakPower: 0,
-      upgradeProduction: {}
+      startTime: performance.now()
     };
     
-    // Reset upgrades
-    Object.keys(game.upgrades).forEach(type => {
-      game.upgrades[type].count = 0;
-      game.upgrades[type].cost = game.upgrades[type].cost;
-    });
+    // Reset upgrades to initial values
+    game.upgrades = JSON.parse(JSON.stringify(defaultGameState.upgrades));
     
     // Initialize upgrade production tracking
     Object.keys(game.upgrades).forEach(type => {
@@ -1380,5 +1353,81 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+// Add CSS for falling money animation
+const moneyStyle = document.createElement('style');
+moneyStyle.textContent = `
+  .falling-money {
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+    will-change: transform;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+  }
+`;
+document.head.appendChild(moneyStyle);
+
 // Initialize the game when DOM is loaded
-document.addEventListener('DOMContentLoaded', initGame); 
+document.addEventListener('DOMContentLoaded', initGame);
+
+function createFallingMoney(x, y, multiplier = 1) {
+  const moneyImages = [
+    'assets/dollar.png',
+    'assets/money.png',
+    'assets/money-bags.png'
+  ];
+  const count = Math.ceil(multiplier * 1.5); // Reduced from multiplier * 3 (50% reduction)
+  
+  for (let i = 0; i < count; i++) {
+    const money = document.createElement('img');
+    money.className = 'falling-money';
+    money.src = moneyImages[Math.floor(Math.random() * moneyImages.length)];
+    
+    // Random position across the entire viewport width
+    const randomX = Math.random() * window.innerWidth;
+    money.style.left = `${randomX}px`;
+    money.style.top = '-50px'; // Start slightly above viewport
+    
+    // Random rotation and animation duration
+    const duration = Math.random() * 1.5 + 1.5; // 1.5-3 seconds
+    
+    // Random size (slightly larger for better visibility)
+    const size = Math.random() * 30 + 25; // 25-55px
+    money.style.width = `${size}px`;
+    money.style.height = `${size}px`;
+    
+    // Random initial rotation and fall path
+    const rotation = Math.random() * 360;
+    const horizontalMovement = Math.random() * 200 - 100; // -100px to +100px horizontal movement
+    
+    // Create keyframe animation for this specific element
+    const keyframeStyle = document.createElement('style');
+    const animationName = `fall${Date.now()}${i}`;
+    keyframeStyle.textContent = `
+      @keyframes ${animationName} {
+        0% {
+          transform: translateX(0) translateY(0) rotate(${rotation}deg);
+          opacity: 1;
+        }
+        20% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(${horizontalMovement}px) translateY(${window.innerHeight + 100}px) rotate(${rotation + 720}deg);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(keyframeStyle);
+    
+    // Apply the unique animation
+    money.style.animation = `${animationName} ${duration}s ease-in forwards`;
+    
+    document.body.appendChild(money);
+    
+    // Cleanup after animation
+    setTimeout(() => {
+      money.remove();
+      keyframeStyle.remove();
+    }, duration * 1000);
+  }
+} 
