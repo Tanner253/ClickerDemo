@@ -1,6 +1,9 @@
 # ClickerDemo
 working on something....
 
+
+![Concept Diagram](assets/Documentation/ConceptIdea.jpg)
+
 - the game play loop is simple. Free players play game, game is addicting. Players get served ads. players can purchase in-app purchases to skip ads. Ad revenue and in-app purchases pump the liquidity pool of the games memecoin. User receives memecoins from playing games at a rate of 1:2, meaning if the memecoin is worth 1$ then the user would have to watch/generate 2$ worth of ad watch time before receiving the memecoin. The user can stake these memecoin payouts for more ingame rewards or cash out for money. Its a self feeding cycle where funds move from advertisers into gamers/crypto bros pockets. Rebate time spent watching ads. early adopters make lots of money due to retail traders once the chart gets momentum and people start talking about the ticker and game. This is an eco system where fake projects run up to 300m, the difference being im not making a fake project.
   
 - why play the game? its addicting and fun first, and you can make a couple bucks second.
@@ -11,13 +14,7 @@ working on something....
 
 # 🪙 Gold Rush Tycoon
 
-**Tagline:** _"Stack Bars, Break Stars."_
 
-![Concept Diagram](assets/Documentation/ConceptIdea.jpg)
-
-A satirical, addictive idle clicker meets meme coin ecosystem. Think **Cookie Clicker** meets **DeFi**, with real-world value, crypto volatility, and a social multiplayer backbone.
-
----
 
 ## 📜 Concept Summary
 
@@ -27,8 +24,8 @@ A satirical, addictive idle clicker meets meme coin ecosystem. Think **Cookie Cl
 
 - Exponential idle clicker progression.
 - Meme coin (**GoldBux – GBX**) earned by playing, watching ads, and engaging.
-- Ad revenue and IAPs fund the meme coin's liquidity pool.
-- Free-to-play users "_earn to play_" by simply engaging.
+- Ad revenue and IAPs fund the meme coin’s liquidity pool.
+- Free-to-play users _“earn to play”_ by simply engaging.
 - Players can **stake GBX for in-game boosts**, or **sell it** on the open market.
 - Dev profits come from surplus ad/IAP revenue vs. coin distribution — forming a **symbiotic loop**.
 
