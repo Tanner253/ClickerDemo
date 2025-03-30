@@ -6,6 +6,8 @@ working on something....
 
 **Tagline:** _"Stack Bars, Break Stars."_
 
+![Concept Diagram](assets/Documentation/ConceptIdea.jpg)
+
 A satirical, addictive idle clicker meets meme coin ecosystem. Think **Cookie Clicker** meets **DeFi**, with real-world value, crypto volatility, and a social multiplayer backbone.
 
 ---
@@ -18,8 +20,8 @@ A satirical, addictive idle clicker meets meme coin ecosystem. Think **Cookie Cl
 
 - Exponential idle clicker progression.
 - Meme coin (**GoldBux – GBX**) earned by playing, watching ads, and engaging.
-- Ad revenue and IAPs fund the meme coin’s liquidity pool.
-- Free-to-play users _“earn to play”_ by simply engaging.
+- Ad revenue and IAPs fund the meme coin's liquidity pool.
+- Free-to-play users "_earn to play_" by simply engaging.
 - Players can **stake GBX for in-game boosts**, or **sell it** on the open market.
 - Dev profits come from surplus ad/IAP revenue vs. coin distribution — forming a **symbiotic loop**.
 
@@ -45,7 +47,7 @@ A satirical, addictive idle clicker meets meme coin ecosystem. Think **Cookie Cl
 - **Free Version:** Ad-driven, standard polish.
 - **Premium Version:** Ad-free, premium UX, sold separately.
 - Shared backend, different front-end UX.
-- Two revenue streams + “buy-in” for ad-averse players.
+- Two revenue streams + "buy-in" for ad-averse players.
 
 ### 🔁 Self-Feeding Economic Loop
 1. Players watch ads → generate revenue.
@@ -104,7 +106,7 @@ A satirical, addictive idle clicker meets meme coin ecosystem. Think **Cookie Cl
   - Guild creation/invite
   - Cosmetic shop (free items)
   - Daily login rewards
-  - First “Ad Boost” (e.g., 2x coins for 30s)
+  - First "Ad Boost" (e.g., 2x coins for 30s)
 - _Goal: Introduce monetization gently._
 
 ### 🧪 Stage 2: Challenge Layer (Prestige 2–3)
@@ -229,7 +231,7 @@ Flip traditional wealth — ride the crypto chaos.
 - **Visuals:** Pixel gold + neon crypto glow  
 - **Tone:** Greedy, goofy, galactic
 
-> _“Gold’s for boomers. GBX is for winners.”_
+> "_Gold's for boomers. GBX is for winners."_
 
 ---
 
