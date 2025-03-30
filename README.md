@@ -2,8 +2,7 @@
 working on something....
 
 - the game play loop is simple. Free players play game, game is addicting. Players get served ads. players can purchase in-app purchases to skip ads. Ad revenue and in-app purchases pump the liquidity pool of the games memecoin. User receives memecoins from playing games at a rate of 1:2, meaning if the memecoin is worth 1$ then the user would have to watch/generate 2$ worth of ad watch time before receiving the memecoin. The user can stake these memecoin payouts for more ingame rewards or cash out for money. Its a self feeding cycle where funds move from advertisers into gamers/crypto bros pockets. Rebate time spent watching ads. early adopters make lots of money due to retail traders once the chart gets momentum and people start talking about the ticker and game. This is an eco system where fake projects run up to 300m, the difference being im not making a fake project.
-- 
-
+  
 - why play the game? its addicting and fun first, and you can make a couple bucks second.
 - what keeps the chart from tanking and everyone just selling out? The distributioon amount per player will be so small tanking the chart due to gameplay will be impossible. Ad revenue and in app purchases will supplement any selloffs as well, feeding the chart with long term constant growth.
 - what keeps players playing? a guild system, and a tie to the chart.
