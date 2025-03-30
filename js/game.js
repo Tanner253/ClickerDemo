@@ -57,6 +57,12 @@ function cacheElements() {
     powerMeterFill: document.getElementById('power-meter-fill'),
     instructionOverlay: document.getElementById('instruction-overlay'),
     
+    // Mobile Navigation
+    mobileUpgrades: document.getElementById('mobile-upgrades'),
+    mobileAnalytics: document.getElementById('mobile-analytics'),
+    mobileSettings: document.getElementById('mobile-settings'),
+    mobilePrestige: document.getElementById('mobile-prestige'),
+    
     // Upgrade buttons
     auto: {
       btn: document.getElementById('buy-auto'),
@@ -214,6 +220,43 @@ function setupEventListeners() {
   game.elements.goldBar.addEventListener('mouseup', stopHoldClick);
   game.elements.goldBar.addEventListener('mouseleave', stopHoldClick);
   
+  // Mobile Navigation
+  if (game.elements.mobileUpgrades) {
+    game.elements.mobileUpgrades.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleUpgradesSidebar();
+      updateMobileNavActive('mobile-upgrades');
+    });
+  }
+  
+  if (game.elements.mobileAnalytics) {
+    game.elements.mobileAnalytics.addEventListener('click', (e) => {
+      e.preventDefault();
+      const analyticsModal = new bootstrap.Modal(document.getElementById('analyticsModal'));
+      analyticsModal.show();
+      initPowerMonitor();
+      updateAnalytics();
+      updateMobileNavActive('mobile-analytics');
+    });
+  }
+  
+  if (game.elements.mobileSettings) {
+    game.elements.mobileSettings.addEventListener('click', (e) => {
+      e.preventDefault();
+      const settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
+      settingsModal.show();
+      updateMobileNavActive('mobile-settings');
+    });
+  }
+  
+  if (game.elements.mobilePrestige) {
+    game.elements.mobilePrestige.addEventListener('click', (e) => {
+      e.preventDefault();
+      prestige();
+      updateMobileNavActive('mobile-prestige');
+    });
+  }
+  
   // Upgrade purchases
   game.elements.auto.btn.addEventListener('click', () => buyUpgrade('auto'));
   game.elements.pickaxe.btn.addEventListener('click', () => buyUpgrade('pickaxe'));
@@ -244,46 +287,6 @@ function setupEventListeners() {
   // Hamburger menu controls
   game.elements.hamburgerBtn.addEventListener('click', toggleUpgradesSidebar);
   game.elements.closeUpgradesBtn.addEventListener('click', toggleUpgradesSidebar);
-
-  // Mobile Navigation
-  const mobileUpgrades = document.getElementById('mobile-upgrades');
-  const mobileAnalytics = document.getElementById('mobile-analytics');
-  const mobileSettings = document.getElementById('mobile-settings');
-  const mobilePrestige = document.getElementById('mobile-prestige');
-
-  if (mobileUpgrades) {
-    mobileUpgrades.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation(); // Prevent event from bubbling
-      toggleUpgradesSidebar();
-    });
-  }
-
-  if (mobileAnalytics) {
-    mobileAnalytics.addEventListener('click', (e) => {
-      e.preventDefault();
-      const analyticsModal = new bootstrap.Modal(document.getElementById('analyticsModal'));
-      analyticsModal.show();
-      updateMobileNavActive('mobile-analytics');
-    });
-  }
-
-  if (mobileSettings) {
-    mobileSettings.addEventListener('click', (e) => {
-      e.preventDefault();
-      const settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
-      settingsModal.show();
-      updateMobileNavActive('mobile-settings');
-    });
-  }
-
-  if (mobilePrestige) {
-    mobilePrestige.addEventListener('click', (e) => {
-      e.preventDefault();
-      prestige();
-      updateMobileNavActive('mobile-prestige');
-    });
-  }
 
   // Close sidebar when clicking outside
   document.addEventListener('click', (e) => {
@@ -429,9 +432,10 @@ function setupEventListeners() {
 
 // Add function to update mobile navigation active state
 function updateMobileNavActive(activeId) {
-  // Remove active class from all nav items
-  const navItems = document.querySelectorAll('.mobile-nav-item');
-  navItems.forEach(item => item.classList.remove('active'));
+  // Remove active class from all items
+  document.querySelectorAll('.mobile-nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
   
   // Add active class to clicked item
   const activeItem = document.getElementById(activeId);
