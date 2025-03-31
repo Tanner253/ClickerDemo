@@ -576,13 +576,16 @@ body::after {
 /* Ensure tooltips remain interactive and maintain appearance when button is disabled */
 .upgrade-btn:disabled .upgrade-info-icon,
 .upgrade-btn:disabled .upgrade-info-panel {
-  display: none;
+  opacity: 1;
+  pointer-events: auto;
+  cursor: pointer;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  z-index: 100000;
 }
 
 .upgrade-btn:disabled .upgrade-info-icon {
-  color: white;
-  top: 10px;
-  right: 40px;
+  display: none;
 }
 
 .upgrade-btn:disabled .upgrade-info-panel {
