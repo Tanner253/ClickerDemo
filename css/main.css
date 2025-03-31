@@ -251,7 +251,7 @@ body::after {
 .power-meter {
   position: relative;
   width: 40px;
-  height: 200px;
+  height: 400px;
   background: rgba(0, 0, 0, 0.3);
   border: 2px solid var(--gold-light);
   border-radius: 20px;
@@ -347,7 +347,7 @@ body::after {
 
   .power-meter {
     width: 30px;
-    height: 100px;
+    height: 200px;
   }
 
   .power-meter-label {
@@ -379,7 +379,7 @@ body::after {
 
   .power-meter {
     width: 25px;
-    height: 80px;
+    height: 160px;
   }
 
   .power-meter-label {
@@ -403,13 +403,13 @@ body::after {
   position: fixed;
   top: 40px;
   right: 20px;
-  width: 50px;
-  height: 50px;
+  z-index: 1000;
   background: rgba(0, 0, 0, 0.3);
   border: 2px solid var(--gold-light);
   border-radius: 8px;
+  width: 50px;
+  height: 50px;
   cursor: pointer;
-  z-index: 1000;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -419,17 +419,48 @@ body::after {
   transition: all 0.3s ease;
 }
 
-.hamburger-btn.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
 .hamburger-line {
   width: 100%;
   height: 3px;
   background-color: var(--gold-light);
-  transition: width 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.upgrade-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  border: 2px solid #000;
+  box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.upgrade-badge.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hamburger-btn:hover .hamburger-line {
+  background-color: var(--gold);
+}
+
+.hamburger-btn.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* Upgrades Sidebar */
@@ -470,8 +501,9 @@ body::after {
 
 /* Ensure the right panel takes full height */
 .upgrades-sidebar .right-panel {
-  height: 100%;
-  padding-bottom: 20px;
+  padding: 20px;
+  padding-bottom: 50px;
+  overflow-y: auto;
 }
 
 .upgrades-sidebar.open {
@@ -522,7 +554,7 @@ body::after {
 .upgrade-btn {
   width: 100%;
   padding: 15px;
-  margin: 10px 0;
+  margin: 15px 0;
   background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
   border: 2px solid var(--gold-light);
   border-radius: 10px;
@@ -531,11 +563,12 @@ body::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
   position: relative;
   overflow: visible;
   outline: none;
   -webkit-tap-highlight-color: transparent;
+  min-height: 120px;
 }
 
 .upgrade-btn:hover {
@@ -555,22 +588,27 @@ body::after {
   border-color: #666;
 }
 
-.upgrade-btn:disabled:hover,
-.upgrade-btn:disabled:active,
-.upgrade-btn:disabled:focus {
-  transform: none;
-  box-shadow: none;
-}
-
 .upgrade-btn:disabled img {
-  filter: grayscale(100%);
+  filter: grayscale(100%) brightness(0.5);
+  opacity: 0.5;
+  background: rgba(0, 0, 0, 0.2);
+  border-color: #666;
+  box-shadow: none;
 }
 
 .upgrade-btn:disabled .upgrade-cost,
 .upgrade-btn:disabled .upgrade-title,
 .upgrade-btn:disabled .upgrade-cps,
 .upgrade-btn:disabled .upgrade-owned {
-  color: #888;
+  color: #666;
+  opacity: 0.7;
+}
+
+.upgrade-btn:disabled:hover,
+.upgrade-btn:disabled:active,
+.upgrade-btn:disabled:focus {
+  transform: none;
+  box-shadow: none;
 }
 
 /* Ensure tooltips remain interactive and maintain appearance when button is disabled */
@@ -609,10 +647,26 @@ body::after {
 
 .upgrade-btn img {
   position: absolute;
-  top: 8px;
-  right: 10px;
-  width: 24px;
-  filter: brightness(0) invert(1);
+  top: 12px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  filter: brightness(1) invert(0.8);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 8px;
+  border-radius: 8px;
+  border: 2px solid var(--gold-light);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.upgrade-btn:hover img {
+  filter: brightness(1) invert(0.9);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.upgrade-separator {
+  display: none;
 }
 
 .upgrade-owned {
@@ -1763,4 +1817,18 @@ body.gold-rush-active {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+.upgrade-section {
+  margin-bottom: 20px;
+}
+
+.upgrade-section-header {
+  color: var(--gold);
+  font-size: 1.2em;
+  margin: 10px 0;
+  padding: 0 10px;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+  padding-bottom: 5px;
 } 

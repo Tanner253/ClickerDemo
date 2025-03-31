@@ -1,0 +1,83 @@
+.power-meter-container.powered-up {
+    box-shadow: 0 0 15px #ff0,
+                0 0 30px #ff0,
+                0 0 45px #ff0;
+    animation: powerGlow 2s infinite;
+}
+
+@keyframes powerGlow {
+    0% { box-shadow: 0 0 15px #ff0, 0 0 30px #ff0, 0 0 45px #ff0; }
+    50% { box-shadow: 0 0 20px #ff0, 0 0 40px #ff0, 0 0 60px #ff0; }
+    100% { box-shadow: 0 0 15px #ff0, 0 0 30px #ff0, 0 0 45px #ff0; }
+}
+
+.lemon {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: url('https://cdn-icons-png.flaticon.com/512/1998/1998610.png') no-repeat center center;
+    background-size: contain;
+    cursor: pointer;
+    z-index: 1000;
+    animation: fall 3s linear forwards;
+    transform-origin: center;
+    pointer-events: auto;
+}
+
+@keyframes fall {
+    from {
+        top: -50px;
+        transform: translateX(0) rotate(0deg);
+    }
+    to {
+        top: 100vh;
+        transform: translateX(100px) rotate(360deg);
+    }
+}
+
+.lemon.caught {
+    animation: catch 0.5s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes catch {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5) rotate(180deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(0) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Add a visual indicator for active power boost */
+.power-boost-indicator {
+    position: fixed;
+    left: 50%;
+    top: calc(50% - 300px);
+    transform: translateX(-50%);
+    background: rgba(255, 255, 0, 0.2);
+    padding: 5px 10px;
+    border-radius: 15px;
+    color: #ff0;
+    font-weight: bold;
+    text-shadow: 0 0 5px #ff0;
+    display: none;
+    z-index: 1001;
+}
+
+.power-boost-indicator.active {
+    display: block;
+    animation: boostPulse 1s infinite;
+}
+
+@keyframes boostPulse {
+    0% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.1); }
+    100% { transform: translateX(-50%) scale(1); }
+} 
