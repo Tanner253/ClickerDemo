@@ -1493,10 +1493,25 @@ function prestige() {
       upgradeProduction: {}
     };
     
-    // Reset upgrades
+    // Reset upgrades and scale their costs with prestige
     Object.keys(game.upgrades).forEach(type => {
-      game.upgrades[type].count = 0;
-      game.upgrades[type].cost = game.upgrades[type].cost;
+      const upgrade = game.upgrades[type];
+      upgrade.count = 0;
+      // Reset to base cost and then scale with prestige
+      const baseCost = {
+        shiftClick: 1500000,
+        auto: 10,
+        pickaxe: 50,
+        miner: 100,
+        excavator: 500,
+        machine: 1000,
+        drill: 5000,
+        refinery: 10000,
+        lab: 20000,
+        quantum: 50000,
+        singularity: 100000
+      }[type];
+      upgrade.cost = Math.floor(baseCost * game.stats.prestigeMultiplier);
     });
     
     // Initialize upgrade production tracking
