@@ -10,8 +10,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   
   <!-- Game CSS -->
-  <link rel="stylesheet" href="css/mobile.css" media="(max-width: 767px)">
-  <link rel="stylesheet" href="oldver/desktop.css" media="(min-width: 768px)">
+  <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
   <div class="app-wrapper">
@@ -29,23 +28,6 @@
       <div class="power-meter-label">POWER LEVEL</div>
     </div>
 
-
-
-    <!-- Add settings button -->
-    <button id="settings-btn" class="settings-btn">
-      <i class="fas fa-cog"></i>
-    </button>
-
-    <!-- Add analytics button -->
-    <button id="analytics-btn" class="analytics-btn">
-      <i class="fas fa-chart-line"></i>
-    </button>
-
-    <!-- Add prestige button -->
-    <button id="prestige-btn" class="prestige-btn" disabled>
-      <i class="fas fa-sync-alt"></i>
-    </button>
-
     <!-- Hamburger Menu Button -->
     <button class="hamburger-btn" id="hamburger-btn">
       <div class="hamburger-line"></div>
@@ -56,88 +38,110 @@
     <!-- Upgrades Sidebar -->
     <div class="upgrades-sidebar" id="upgrades-sidebar">
       <div class="upgrades-header">
-        <h2>Upgrades</h2>
+        <div class="upgrades-title">
+          <h2>Upgrades</h2>
+          <div class="upgrades-balance">Gold Bars: <span id="upgrades-gold-count">0</span></div>
+        </div>
         <button class="close-btn" id="close-upgrades">&times;</button>
       </div>
     <div class="right-panel">
+      <button id="buy-shift-click" class="upgrade-btn">
+        <div class="info-icon-container">
+          <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="shiftClick"></i>
+        </div>
+        <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Shift Click">
+        <div class="upgrade-cost">Cost: <span id="shift-click-cost">1,500,000</span></div>
+        <div class="upgrade-title">Shift Click Power</div>
+        <div class="upgrade-cps"><strong>+ 2x</strong> Click Power</div>
+        <div class="upgrade-owned">Owned: <span id="shift-click-count">0</span></div>
+      </button>
+      
+      <hr class="upgrade-separator">
+      
       <button id="buy-auto" class="upgrade-btn">
+        <div class="info-icon-container">
+          <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="auto"></i>
+        </div>
         <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Auto Clicker">
-        <div class="upgrade-owned">Owned: <span id="auto-count">0</span></div>
-        <div class="upgrade-title">Auto Clicker</div>
-        <div class="upgrade-cps">0.1 CPS</div>
         <div class="upgrade-cost">Cost: <span id="auto-cost">10</span></div>
+        <div class="upgrade-title">Auto Clicker</div>
+        <div class="upgrade-cps"><strong>+ 0.1</strong> CPS</div>
+        <div class="upgrade-owned">Owned: <span id="auto-count">0</span></div>
       </button>
       
       <button id="buy-pickaxe" class="upgrade-btn">
+        <div class="info-icon-container">
+          <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="pickaxe"></i>
+        </div>
         <img src="https://cdn-icons-png.flaticon.com/512/3185/3185927.png" alt="Pickaxe">
-        <div class="upgrade-owned">Owned: <span id="pickaxe-count">0</span></div>
-        <div class="upgrade-title">Pickaxe</div>
-        <div class="upgrade-cps">0.5 CPS</div>
         <div class="upgrade-cost">Cost: <span id="pickaxe-cost">50</span></div>
+        <div class="upgrade-title">Pickaxe</div>
+        <div class="upgrade-cps"><strong>+ 0.5</strong> CPS</div>
+        <div class="upgrade-owned">Owned: <span id="pickaxe-count">0</span></div>
       </button>
       
       <button id="buy-miner" class="upgrade-btn">
         <img src="https://cdn-icons-png.flaticon.com/512/3185/3185927.png" alt="Miner">
-        <div class="upgrade-owned">Owned: <span id="miner-count">0</span></div>
-        <div class="upgrade-title">Miner</div>
-        <div class="upgrade-cps">1 CPS</div>
         <div class="upgrade-cost">Cost: <span id="miner-cost">100</span></div>
+        <div class="upgrade-title">Miner</div>
+        <div class="upgrade-cps"><strong>+ 1</strong> CPS</div>
+        <div class="upgrade-owned">Owned: <span id="miner-count">0</span></div>
       </button>
       
       <button id="buy-excavator" class="upgrade-btn">
         <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Excavator">
-        <div class="upgrade-owned">Owned: <span id="excavator-count">0</span></div>
-        <div class="upgrade-title">Excavator</div>
-        <div class="upgrade-cps">5 CPS</div>
         <div class="upgrade-cost">Cost: <span id="excavator-cost">500</span></div>
+        <div class="upgrade-title">Excavator</div>
+        <div class="upgrade-cps"><strong>+ 5</strong> CPS</div>
+        <div class="upgrade-owned">Owned: <span id="excavator-count">0</span></div>
       </button>
       
       <button id="buy-machine" class="upgrade-btn">
         <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Machine">
-        <div class="upgrade-owned">Owned: <span id="machine-count">0</span></div>
+        <div class="upgrade-cost">Cost: <span id="machine-cost">1,000</span></div>
         <div class="upgrade-title">Machining</div>
-        <div class="upgrade-cps">10 CPS</div>
-        <div class="upgrade-cost">Cost: <span id="machine-cost">1000</span></div>
+        <div class="upgrade-cps"><strong>+ 10</strong> CPS</div>
+        <div class="upgrade-owned">Owned: <span id="machine-count">0</span></div>
       </button>
       
       <button id="buy-drill" class="upgrade-btn">
         <img src="https://cdn-icons-png.flaticon.com/512/2933/2933556.png" alt="Drill">
-        <div class="upgrade-owned">Owned: <span id="drill-count">0</span></div>
+        <div class="upgrade-cost">Cost: <span id="drill-cost">5,000</span></div>
         <div class="upgrade-title">Drill</div>
-        <div class="upgrade-cps">50 CPS</div>
-        <div class="upgrade-cost">Cost: <span id="drill-cost">5000</span></div>
+        <div class="upgrade-cps"><strong>+ 50</strong> CPS</div>
+        <div class="upgrade-owned">Owned: <span id="drill-count">0</span></div>
       </button>
       
       <button id="buy-refinery" class="upgrade-btn">
         <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Refinery">
-        <div class="upgrade-owned">Owned: <span id="refinery-count">0</span></div>
+        <div class="upgrade-cost">Cost: <span id="refinery-cost">10,000</span></div>
         <div class="upgrade-title">Refinery</div>
-        <div class="upgrade-cps">100 CPS</div>
-        <div class="upgrade-cost">Cost: <span id="refinery-cost">10000</span></div>
+        <div class="upgrade-cps"><strong>+ 100</strong> CPS</div>
+        <div class="upgrade-owned">Owned: <span id="refinery-count">0</span></div>
       </button>
       
       <button id="buy-lab" class="upgrade-btn">
         <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Lab">
-        <div class="upgrade-owned">Owned: <span id="lab-count">0</span></div>
+        <div class="upgrade-cost">Cost: <span id="lab-cost">20,000</span></div>
         <div class="upgrade-title">Gold Lab</div>
-        <div class="upgrade-cps">200 CPS</div>
-        <div class="upgrade-cost">Cost: <span id="lab-cost">20000</span></div>
+        <div class="upgrade-cps"><strong>+ 200</strong> CPS</div>
+        <div class="upgrade-owned">Owned: <span id="lab-count">0</span></div>
       </button>
       
       <button id="buy-quantum" class="upgrade-btn">
         <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Quantum">
-        <div class="upgrade-owned">Owned: <span id="quantum-count">0</span></div>
+        <div class="upgrade-cost">Cost: <span id="quantum-cost">50,000</span></div>
         <div class="upgrade-title">Quantum Miner</div>
-        <div class="upgrade-cps">500 CPS</div>
-        <div class="upgrade-cost">Cost: <span id="quantum-cost">50000</span></div>
+        <div class="upgrade-cps"><strong>+ 500</strong> CPS</div>
+        <div class="upgrade-owned">Owned: <span id="quantum-count">0</span></div>
       </button>
       
       <button id="buy-singularity" class="upgrade-btn">
         <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Singularity">
-        <div class="upgrade-owned">Owned: <span id="singularity-count">0</span></div>
+        <div class="upgrade-cost">Cost: <span id="singularity-cost">100,000</span></div>
         <div class="upgrade-title">Singularity</div>
-        <div class="upgrade-cps">1000 CPS</div>
-        <div class="upgrade-cost">Cost: <span id="singularity-cost">100000</span></div>
+        <div class="upgrade-cps"><strong>+ 1000</strong> CPS</div>
+        <div class="upgrade-owned">Owned: <span id="singularity-count">0</span></div>
       </button>
     </div>
   </div>
@@ -157,6 +161,19 @@
           <div class="stat stat-gold">
             <strong>Gold Bars:</strong> <span id="coin-count">0</span>
           </div>
+        </div>
+        
+        <!-- Add control buttons container for desktop -->
+        <div class="control-buttons-container">
+          <button id="settings-btn" class="settings-btn">
+            <i class="fas fa-cog"></i>
+          </button>
+          <button id="analytics-btn" class="analytics-btn">
+            <i class="fas fa-chart-line"></i>
+          </button>
+          <button id="prestige-btn" class="prestige-btn" disabled>
+            <i class="fas fa-sync-alt"></i>
+          </button>
         </div>
     </div>
   </div>
@@ -183,12 +200,23 @@
             <h6><i class="fas fa-question-circle"></i> How to Play</h6>
             <div class="how-to-play-content">
               <p>
-                Click the gold bar to earn gold bars.<br>
-                Purchase upgrades to generate more clicks per second (CPS).<br>
-                Gold Rush triggers at increasing intervals (starts at 100 clicks, then 110, etc.)<br>
-                During Gold Rush all earnings are multiplied by 5x for 5 seconds.<br>
-                Hold down mouse for continuous clicking (with delay).<br>
-                Shift-click upgrades to buy as many as you can afford.
+                Basic Game Mechanics:<br>
+                • Click the gold bar to earn gold bars<br>
+                • Each click generates 1 gold bar (modified by prestige multiplier)<br>
+                • The power meter shows your current clicking power (max 10 CPS)<br>
+                • Manual and Auto Clicker clicks contribute to power level<br>
+                <br>
+                Upgrades & Automation:<br>
+                • Buy upgrades from the sidebar (click hamburger menu or hover right edge)<br>
+                • Each upgrade adds automatic gold generation (CPS)<br>
+                • Hold Shift and click an upgrade to buy max amount possible<br>
+                • Auto Clicker (first upgrade) contributes to power meter<br>
+                <br>
+                Gold Rush Feature:<br>
+                • Triggers at increasing click intervals (starts at 100, then 110, etc.)<br>
+                • Multiplies all earnings by 5x for 5 seconds<br>
+                • Progress bar at top shows progress to next Gold Rush<br>
+                • Both manual and Auto Clicker clicks count towards Gold Rush
               </p>
             </div>
           </div>
@@ -246,10 +274,28 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="row">
-            <!-- Main Stats -->
+          <!-- Power Monitor - Full Width -->
+          <div class="analytics-section mb-4">
+            <h6><i class="fas fa-heartbeat"></i> Power Monitor</h6>
+            <div class="power-monitor">
+              <canvas id="powerMonitor" width="400" height="200"></canvas>
+              <div class="power-stats">
+                <div class="power-stat">
+                  <label>Current Power</label>
+                  <span id="current-power">0%</span>
+                </div>
+                <div class="power-stat">
+                  <label>Peak Power</label>
+                  <span id="peak-power">0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gold Metrics and Production Rates Side by Side -->
+          <div class="row mb-4">
             <div class="col-md-6">
-              <div class="analytics-section">
+              <div class="analytics-section h-100">
                 <h6><i class="fas fa-coins"></i> Gold Metrics</h6>
                 <div class="stat-grid">
                   <div class="stat-item">
@@ -278,8 +324,10 @@
                   </div>
                 </div>
               </div>
-              
-              <div class="analytics-section">
+            </div>
+            
+            <div class="col-md-6">
+              <div class="analytics-section h-100">
                 <h6><i class="fas fa-tachometer-alt"></i> Production Rates</h6>
                 <div class="stat-grid">
                   <div class="stat-item">
@@ -301,30 +349,10 @@
                 </div>
               </div>
             </div>
-            
-            <!-- Power Monitor -->
-            <div class="col-md-6">
-              <div class="analytics-section">
-                <h6><i class="fas fa-heartbeat"></i> Power Monitor</h6>
-                <div class="power-monitor">
-                  <canvas id="powerMonitor" width="400" height="200"></canvas>
-                  <div class="power-stats">
-                    <div class="power-stat">
-                      <label>Current Power</label>
-                      <span id="current-power">0%</span>
-                    </div>
-                    <div class="power-stat">
-                      <label>Peak Power</label>
-                      <span id="peak-power">0%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
           
-          <!-- Upgrade Analytics -->
-          <div class="analytics-section mt-3">
+          <!-- Production Analytics Table -->
+          <div class="analytics-section mb-4">
             <h6><i class="fas fa-industry"></i> Production Analytics</h6>
             <div class="table-responsive">
               <table class="table table-dark table-hover">
@@ -346,7 +374,7 @@
           </div>
           
           <!-- Session Stats -->
-          <div class="analytics-section mt-3">
+          <div class="analytics-section">
             <h6><i class="fas fa-clock"></i> Session Analytics</h6>
             <div class="stat-grid">
               <div class="stat-item">
@@ -382,45 +410,22 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   
   <!-- Game Scripts -->
+  <script src="js/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Determine which script to load based on viewport width
-      const isMobile = window.innerWidth < 768;
-      const scriptSrc = isMobile ? 'js/game.js' : 'oldver/desktop-game.js';
-      
-      // Create and append the appropriate script
-      const gameScript = document.createElement('script');
-      gameScript.src = scriptSrc;
-      gameScript.onload = function() {
-        // Initialize the game after the script is loaded
-        if (typeof initGame === 'function') {
-          initGame();
-        }
-      };
-      document.body.appendChild(gameScript);
+      // Initialize the game
+      if (typeof initGame === 'function') {
+        initGame();
+      }
     });
   </script>
 
-  <!-- Mobile Navigation -->
-  <nav class="mobile-nav">
-    <div class="mobile-nav-items">
-      <a href="#" class="mobile-nav-item" id="mobile-upgrades">
-        <i class="fas fa-tools"></i>
-        <span>Upgrades</span>
-      </a>
-      <a href="#" class="mobile-nav-item" id="mobile-analytics">
-        <i class="fas fa-chart-line"></i>
-        <span>Analytics</span>
-      </a>
-      <a href="#" class="mobile-nav-item" id="mobile-settings">
-        <i class="fas fa-cog"></i>
-        <span>Settings</span>
-      </a>
-      <a href="#" class="mobile-nav-item" id="mobile-prestige">
-        <i class="fas fa-sync-alt"></i>
-        <span>Prestige</span>
-      </a>
-    </div>
-  </nav>
+  <!-- Add this before the closing body tag -->
+  <div class="upgrade-info-panel">
+    <button class="info-panel-close">&times;</button>
+    <h3 class="info-title"></h3>
+    <div class="info-stats"></div>
+    <div class="info-tip"></div>
+  </div>
 </body>
 </html>

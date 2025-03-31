@@ -19,9 +19,11 @@ const game = {
     upgradeProduction: {},
     currentPowerMultiplier: 1,
     prestigeLevel: 0,
-    prestigeMultiplier: 1.0
+    prestigeMultiplier: 1.0,
+    hasShiftClick: false
   },
   upgrades: {
+    shiftClick: { count: 0, cost: 1500000, cps: 0, costMultiplier: 1, name: "Shift Click Power" },
     auto: { count: 0, cost: 10, cps: 0.1, costMultiplier: 1.3, name: "Auto Clicker" },
     pickaxe: { count: 0, cost: 50, cps: 0.5, costMultiplier: 1.35, name: "Pickaxe" },
     miner: { count: 0, cost: 100, cps: 1, costMultiplier: 1.4, name: "Miner" },
@@ -36,7 +38,8 @@ const game = {
   elements: {},
   intervals: {},
   goldRushTimeout: null,
-  holdClickInterval: null
+  holdClickInterval: null,
+  instructionOverlayTimeout: null
 };
 
 // Initialize upgrade production tracking
@@ -49,6 +52,7 @@ function cacheElements() {
   game.elements = {
     goldBar: document.getElementById('gold-bar'),
     coinCount: document.getElementById('coin-count'),
+    upgradesGoldCount: document.getElementById('upgrades-gold-count'),
     cpsDisplay: document.getElementById('cps-display'),
     cpsContainer: document.getElementById('cps-container'),
     clickCount: document.getElementById('click-count'),
@@ -58,6 +62,11 @@ function cacheElements() {
     instructionOverlay: document.getElementById('instruction-overlay'),
     
     // Upgrade buttons
+    shiftClick: {
+      btn: document.getElementById('buy-shift-click'),
+      count: document.getElementById('shift-click-count'),
+      cost: document.getElementById('shift-click-cost')
+    },
     auto: {
       btn: document.getElementById('buy-auto'),
       count: document.getElementById('auto-count'),
@@ -118,6 +127,16 @@ function cacheElements() {
   if (game.elements.powerMeterFill) {
     game.elements.powerMeterFill.style.height = '0%';
   }
+
+  // Initialize feedback elements
+  Object.keys(game.upgrades).forEach(type => {
+    const element = game.elements[type];
+    if (element && element.btn) {
+      element.feedback = document.createElement('div');
+      element.feedback.className = 'upgrade-feedback';
+      element.btn.appendChild(element.feedback);
+    }
+  });
 }
 
 function initializePowerMeter() {
@@ -213,6 +232,7 @@ function initGame() {
 // Main game loop (for visual updates only)
 function gameLoop() {
   updateGoldRushProgress();
+  updateStats();
   if (document.getElementById('analyticsModal').classList.contains('show')) {
     updateAnalytics();
   }
@@ -222,12 +242,51 @@ function gameLoop() {
 // Event Listeners
 function setupEventListeners() {
   // Gold bar click
-  game.elements.goldBar.addEventListener('click', handleClick);
+  game.elements.goldBar.addEventListener('click', (e) => {
+    const now = performance.now();
+    const timeSinceLastClick = now - game.stats.lastManualClickTime;
+    
+    // Check if shift is pressed and if player has the upgrade
+    const isShiftClick = e.shiftKey && game.stats.hasShiftClick;
+    const baseClickAmount = isShiftClick ? 2 : 1; // Changed from 200000/100000 to 2/1
+    const multiplier = game.stats.goldRushActive ? 5 : 1;
+    
+    // Apply both power and prestige multipliers
+    const clickValue = baseClickAmount * multiplier * game.stats.currentPowerMultiplier * game.stats.prestigeMultiplier;
+    
+    // Add gold based on all multipliers
+    game.stats.coinCount += clickValue;
+    game.stats.totalGoldEarned += clickValue;
+    
+    // Update click stats
+    game.stats.totalClicks += baseClickAmount;
+    game.stats.manualClicks += baseClickAmount;
+    game.stats.lastManualClickTime = now;
+    game.stats.lastClicks.push({
+      time: now,
+      amount: 1, // Always count as 1 for power meter
+      isManual: true,
+      upgradeType: 'manual'
+    });
+    
+    // Update gold rush progress
+    if (!game.stats.goldRushActive) {
+      game.stats.clicksSinceLastGoldRush += baseClickAmount;
+    }
+    
+    // Update displays
+    updateStats();
+    
+    // Save game
+    saveGame();
+  });
+  
   game.elements.goldBar.addEventListener('mousedown', startHoldClick);
   game.elements.goldBar.addEventListener('mouseup', stopHoldClick);
   game.elements.goldBar.addEventListener('mouseleave', stopHoldClick);
-  
+
   // Upgrade purchases
+  game.elements.shiftClick.btn.addEventListener('click', () => buyUpgrade('shiftClick'));
   game.elements.auto.btn.addEventListener('click', () => buyUpgrade('auto'));
   game.elements.pickaxe.btn.addEventListener('click', () => buyUpgrade('pickaxe'));
   game.elements.miner.btn.addEventListener('click', () => buyUpgrade('miner'));
@@ -240,6 +299,7 @@ function setupEventListeners() {
   game.elements.singularity.btn.addEventListener('click', () => buyUpgrade('singularity'));
   
   // Shift-click for bulk purchases
+  game.elements.shiftClick.btn.addEventListener('click', (e) => e.shiftKey && buyMax('shiftClick'));
   game.elements.auto.btn.addEventListener('click', (e) => e.shiftKey && buyMax('auto'));
   game.elements.pickaxe.btn.addEventListener('click', (e) => e.shiftKey && buyMax('pickaxe'));
   game.elements.miner.btn.addEventListener('click', (e) => e.shiftKey && buyMax('miner'));
@@ -312,7 +372,8 @@ function setupEventListeners() {
       upgradeProduction: {},
       currentPowerMultiplier: 1,
       prestigeLevel: 0,
-      prestigeMultiplier: 1.0
+      prestigeMultiplier: 1.0,
+      hasShiftClick: false
     };
 
     // Reset upgrades to initial values
@@ -368,9 +429,34 @@ function setupEventListeners() {
   document.getElementById('analytics-btn').addEventListener('click', () => {
     const analyticsModal = new bootstrap.Modal(document.getElementById('analyticsModal'));
     analyticsModal.show();
-    initPowerMonitor();
-    updateAnalytics();
+    
+    // Initialize power monitor after modal is shown
+    analyticsModal._element.addEventListener('shown.bs.modal', function () {
+      setTimeout(() => {
+        initPowerMonitor();
+        updateAnalytics();
+      }, 100);
+    });
   });
+
+  // Mobile Analytics button click handler
+  if (game.elements.mobileAnalytics) {
+    game.elements.mobileAnalytics.addEventListener('click', (e) => {
+      e.preventDefault();
+      const analyticsModal = new bootstrap.Modal(document.getElementById('analyticsModal'));
+      analyticsModal.show();
+      
+      // Initialize power monitor after modal is shown
+      analyticsModal._element.addEventListener('shown.bs.modal', function () {
+        setTimeout(() => {
+          initPowerMonitor();
+          updateAnalytics();
+        }, 100);
+      });
+      
+      updateMobileNavActive('mobile-analytics');
+    });
+  }
 
   // Prestige button
   const prestigeBtn = document.getElementById('prestige-btn');
@@ -414,8 +500,9 @@ function handleClick(e) {
   if (now - game.stats.lastManualClickTime < 200) return;
   game.stats.lastManualClickTime = now;
   
-  const isShift = e.shiftKey;
-  const baseClickAmount = isShift ? 10 : 1;
+  // Check if shift is pressed and if player has the upgrade
+  const isShiftClick = e.shiftKey && game.stats.hasShiftClick;
+  const baseClickAmount = isShiftClick ? 2 : 1; // Changed from 200000/100000 to 2/1
   const multiplier = game.stats.goldRushActive ? 5 : 1;
   // Apply both power and prestige multipliers
   const clickValue = baseClickAmount * multiplier * game.stats.currentPowerMultiplier * game.stats.prestigeMultiplier;
@@ -427,7 +514,8 @@ function handleClick(e) {
   game.stats.lastClicks.push({
     time: now,
     amount: 1, // Always count as 1 for power meter
-    isManual: true
+    isManual: true,
+    upgradeType: 'manual'
   });
   
   if (!game.stats.goldRushActive) {
@@ -443,8 +531,7 @@ function handleClick(e) {
   // Generate fewer coins (reduced by 50%)
   const numberOfCoins = Math.ceil(multiplier * 1.5); // Reduced from multiplier * 3
   for (let i = 0; i < numberOfCoins; i++) {
-    const randomX = Math.random() * window.innerWidth;
-    createFallingMoney(randomX, 0, 1); // y=0 ensures it spawns from the top
+    createFallingMoney(e.clientX, e.clientY);
   }
   
   updateStats();
@@ -496,11 +583,12 @@ function autoClickLoop() {
         game.stats.totalGoldEarned += earned;
         game.stats.upgradeProduction[type] += earned;
         
-        // Record auto-clicks for CPS calculation (but not power meter)
+        // Record auto-clicks for CPS calculation with upgrade type
         game.stats.lastClicks.push({
           time: now,
           amount: upgrade.count * upgrade.cps,
-          isManual: false
+          isManual: false,
+          upgradeType: type
         });
         
         if (!game.stats.goldRushActive) {
@@ -563,16 +651,33 @@ function spawnAutoClickFeedback(amount, type) {
 // Upgrade System
 function buyUpgrade(type) {
   const upgrade = game.upgrades[type];
-  
+  if (!upgrade) return;
+
+  // Special handling for shift click power
+  if (type === 'shiftClick') {
+    if (game.stats.hasShiftClick) return; // Already purchased
+    if (game.stats.coinCount >= upgrade.cost) {
+      game.stats.coinCount -= upgrade.cost;
+      game.stats.totalGoldSpent += upgrade.cost;
+      game.stats.hasShiftClick = true;
+      game.elements[type].btn.classList.add('shift-click-purchased');
+      game.elements[type].btn.disabled = true;
+      updateStats();
+      showUpgradeFeedback(type, 1);
+      saveGame();
+    }
+    return;
+  }
+
+  // Regular upgrade purchase logic
   if (game.stats.coinCount >= upgrade.cost) {
-    game.stats.totalGoldSpent += upgrade.cost;
     game.stats.coinCount -= upgrade.cost;
+    game.stats.totalGoldSpent += upgrade.cost;
     upgrade.count++;
     upgrade.cost = Math.floor(upgrade.cost * upgrade.costMultiplier);
-    
-    updateUpgradeDisplay(type);
     updateStats();
-    updateAnalytics();
+    updateUpgradeDisplay(type);
+    showUpgradeFeedback(type, 1);
     saveGame();
   }
 }
@@ -725,7 +830,7 @@ function createGoldRushBanner() {
 function spawnClickFeedback(amount, x, y) {
   const feedback = document.createElement('div');
   feedback.className = 'click-feedback';
-  feedback.textContent = `+${amount}`;
+  feedback.textContent = `+${amount.toFixed(1)}`;
   feedback.style.left = `${x + (Math.random() * 40 - 20)}px`;
   feedback.style.top = `${y + (Math.random() * 40 - 20)}px`;
   feedback.style.color = `hsl(${Math.random() * 60 + 30}, 100%, 50%)`;
@@ -761,34 +866,45 @@ function calculateActualCPS() {
 }
 
 function updateStats() {
-  // Calculate actual CPS from recent clicks
-  const cps = calculateActualCPS();
+  // Update gold count displays
+  game.elements.coinCount.textContent = formatNumber(game.stats.coinCount);
+  game.elements.upgradesGoldCount.textContent = formatNumber(game.stats.coinCount);
   
-  // Update displays if elements exist
-  if (game.elements.coinCount) {
-    game.elements.coinCount.textContent = formatNumber(game.stats.coinCount);
-  }
-  
-  // Update power meter and CPS display
-  updatePowerMeter(cps);
-  
-  // Update upgrade buttons state
+  // Update upgrade buttons
   updateUpgradeButtons();
+  
+  // Update gold rush progress
+  updateGoldRushProgress();
+  
+  // Update power meter
+  updatePowerMeter(calculateActualCPS());
+  
+  // Update analytics if modal is open
+  if (document.getElementById('analyticsModal').classList.contains('show')) {
+    updateAnalytics();
+  }
 }
 
 function updatePowerMeter(cps) {
-  // Calculate manual CPS from recent clicks only
+  // Calculate manual CPS and auto-clicks from first upgrade only
   const now = Date.now();
-  const recentManualClicks = game.stats.lastClicks
+  const recentClicks = game.stats.lastClicks
     .filter(click => {
-      // Only count clicks from the last second AND only manual clicks
-      return now - click.time <= 1000 && click.isManual === true;
+      // Count clicks from the last second AND either manual clicks or auto-clicks from first upgrade
+      return now - click.time <= 1000 && 
+        (click.isManual === true || (click.isManual === false && click.upgradeType === 'auto'));
     })
-    .reduce((total, click) => total + click.amount, 0);
+    .reduce((total, click) => {
+      // If it's an auto-click, count it as half
+      if (click.isManual === false) {
+        return total + (click.amount * 0.5);
+      }
+      return total + click.amount;
+    }, 0);
   
-  // Calculate height percentage based on manual CPS only (max CPS is 10 for manual clicks)
-  const maxManualCPS = 10;
-  const percentage = Math.min((recentManualClicks / maxManualCPS) * 100, 100);
+  // Calculate height percentage based on total CPS (max CPS is 10)
+  const maxCPS = 10;
+  const percentage = Math.min((recentClicks / maxCPS) * 100, 100);
   
   // Calculate power multiplier based on percentage (1x to 2x)
   game.stats.currentPowerMultiplier = 1 + (percentage / 100);
@@ -802,8 +918,8 @@ function updatePowerMeter(cps) {
     
     game.elements.powerMeterFill.style.height = `${percentage}%`;
     
-    // Add/remove high-power class based on manual CPS
-    if (recentManualClicks > maxManualCPS * 0.7) { // Over 70% of max
+    // Add/remove high-power class based on CPS
+    if (recentClicks > maxCPS * 0.7) { // Over 70% of max
       game.elements.powerMeterFill.classList.add('high-power');
     } else {
       game.elements.powerMeterFill.classList.remove('high-power');
@@ -819,6 +935,11 @@ function updatePowerMeter(cps) {
   // Update CPS text if element exists
   if (game.elements.cpsDisplay) {
     game.elements.cpsDisplay.textContent = `${cps.toFixed(1)} CPS`;
+  }
+  
+  // Update peak power if current percentage is higher
+  if (percentage > game.stats.peakPower) {
+    game.stats.peakPower = percentage;
   }
 }
 
@@ -840,24 +961,48 @@ function formatNumber(num) {
 function updateUpgradeDisplay(type) {
   const upgrade = game.upgrades[type];
   const element = game.elements[type];
-  
+  if (!upgrade || !element) return;
+
+  // Special handling for shift click power
+  if (type === 'shiftClick') {
+    if (game.stats.hasShiftClick) {
+      element.count.textContent = '1';
+      element.btn.classList.add('shift-click-purchased');
+      element.btn.disabled = true;
+    }
+    return;
+  }
+
+  // Regular upgrade display update
   element.count.textContent = upgrade.count;
-  element.cost.textContent = upgrade.cost;
+  element.cost.textContent = formatNumber(upgrade.cost);
 }
 
 function updateUpgradeButtons() {
   Object.keys(game.upgrades).forEach(type => {
-    const upgrade = game.upgrades[type];
     const element = game.elements[type];
+    if (!element || !element.btn) return;
+
+    const upgrade = game.upgrades[type];
+    const canAfford = game.stats.coinCount >= upgrade.cost;
     
-    if (game.stats.coinCount >= upgrade.cost) {
-      element.btn.disabled = false;
-      element.btn.style.opacity = '1';
-    } else {
-      element.btn.disabled = true;
-      element.btn.style.opacity = '0.7';
+    // Update button disabled state
+    element.btn.disabled = !canAfford;
+    
+    // Update cost display
+    if (element.cost) {
+      element.cost.textContent = formatNumber(upgrade.cost);
+    }
+    
+    // Update count display
+    if (element.count) {
+      element.count.textContent = upgrade.count;
     }
   });
+}
+
+function showUpgradeFeedback(type, amount) {
+  // Feedback removed as requested
 }
 
 // Tooltips
@@ -866,26 +1011,54 @@ function setupTooltips() {
     const element = game.elements[type];
     const upgrade = game.upgrades[type];
     
-    // Create tooltip content with upgrade description
-    let description = `<div class="upgrade-tooltip">`;
-    description += `<div class="tooltip-title">${upgrade.name}</div>`;
-    description += `<div class="tooltip-stats">`;
-    description += `Base Production: ${upgrade.cps} CPS<br>`;
-    description += `Cost Increase: ${Math.round((upgrade.costMultiplier - 1) * 100)}% per purchase<br>`;
-    description += `</div>`;
-    description += `<div class="tooltip-tip">Shift-click to buy max</div>`;
-    description += `</div>`;
-
-    // Initialize Bootstrap tooltip
-    new bootstrap.Tooltip(element.btn, {
-      title: description,
-      html: true,
-      placement: 'right',
-      trigger: 'hover',
-      container: 'body',
-      animation: true,
-      delay: { show: 100, hide: 100 }
+    // Create info icon
+    const infoIcon = document.createElement('div');
+    infoIcon.className = 'upgrade-info-icon';
+    infoIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+    
+    // Create info panel
+    const infoPanel = document.createElement('div');
+    infoPanel.className = 'upgrade-info-panel';
+    infoPanel.innerHTML = `
+      <button class="info-panel-close">&times;</button>
+      <div class="info-title">${upgrade.name}</div>
+      <div class="info-stats">
+        <div>Base Production: ${upgrade.cps} CPS</div>
+        <div>Cost Increase: ${Math.round((upgrade.costMultiplier - 1) * 100)}% per purchase</div>
+      </div>
+      <div class="info-tip">Shift-click to buy max</div>
+    `;
+    
+    // Add click handler for info icon
+    infoIcon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Close any other open panels
+      document.querySelectorAll('.upgrade-info-panel.active').forEach(panel => {
+        if (panel !== infoPanel) {
+          panel.classList.remove('active');
+        }
+      });
+      // Toggle this panel
+      infoPanel.classList.toggle('active');
     });
+    
+    // Add click handler for close button
+    const closeBtn = infoPanel.querySelector('.info-panel-close');
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      infoPanel.classList.remove('active');
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!infoIcon.contains(e.target) && !infoPanel.contains(e.target)) {
+        infoPanel.classList.remove('active');
+      }
+    });
+    
+    // Add elements to the button
+    element.btn.appendChild(infoIcon);
+    element.btn.appendChild(infoPanel);
   });
 }
 
@@ -905,7 +1078,10 @@ function saveGame() {
       goldRushCount: game.stats.goldRushCount,
       peakPower: game.stats.peakPower,
       upgradeProduction: game.stats.upgradeProduction,
-      currentPowerMultiplier: game.stats.currentPowerMultiplier
+      currentPowerMultiplier: game.stats.currentPowerMultiplier,
+      prestigeLevel: game.stats.prestigeLevel,
+      prestigeMultiplier: game.stats.prestigeMultiplier,
+      hasShiftClick: game.stats.hasShiftClick
     },
     upgrades: {
       auto: { count: game.upgrades.auto.count, cost: game.upgrades.auto.cost },
@@ -917,7 +1093,8 @@ function saveGame() {
       refinery: { count: game.upgrades.refinery.count, cost: game.upgrades.refinery.cost },
       lab: { count: game.upgrades.lab.count, cost: game.upgrades.lab.cost },
       quantum: { count: game.upgrades.quantum.count, cost: game.upgrades.quantum.cost },
-      singularity: { count: game.upgrades.singularity.count, cost: game.upgrades.singularity.cost }
+      singularity: { count: game.upgrades.singularity.count, cost: game.upgrades.singularity.cost },
+      shiftClick: { count: game.upgrades.shiftClick.count, cost: game.upgrades.shiftClick.cost }
     }
   };
   
@@ -925,65 +1102,26 @@ function saveGame() {
 }
 
 function loadGame() {
-  const saveData = localStorage.getItem('goldBarClickerSave');
-  if (!saveData) return;
-  
-  try {
-    const parsed = JSON.parse(saveData);
+  const savedGame = localStorage.getItem('goldBarClickerSave');
+  if (savedGame) {
+    const parsed = JSON.parse(savedGame);
     
     // Load stats
-    game.stats.totalClicks = parsed.stats.totalClicks || 0;
-    game.stats.manualClicks = parsed.stats.manualClicks || 0;
-    game.stats.autoClicks = parsed.stats.autoClicks || 0;
-    game.stats.coinCount = parsed.stats.coinCount || 0;
-    game.stats.clicksSinceLastGoldRush = parsed.stats.clicksSinceLastGoldRush || 0;
-    game.stats.goldRushThreshold = parsed.stats.goldRushThreshold || 100;
-    game.stats.totalGoldEarned = parsed.stats.totalGoldEarned || 0;
-    game.stats.totalGoldSpent = parsed.stats.totalGoldSpent || 0;
-    game.stats.goldRushCount = parsed.stats.goldRushCount || 0;
-    game.stats.peakPower = parsed.stats.peakPower || 0;
-    game.stats.upgradeProduction = parsed.stats.upgradeProduction || {};
-    game.stats.currentPowerMultiplier = parsed.stats.currentPowerMultiplier || 1;
+    Object.assign(game.stats, parsed.stats);
     
     // Load upgrades
-    game.upgrades.auto.count = parsed.upgrades.auto.count || 0;
-    game.upgrades.auto.cost = parsed.upgrades.auto.cost || 10;
-    
-    game.upgrades.pickaxe.count = parsed.upgrades.pickaxe.count || 0;
-    game.upgrades.pickaxe.cost = parsed.upgrades.pickaxe.cost || 50;
-    
-    game.upgrades.miner.count = parsed.upgrades.miner.count || 0;
-    game.upgrades.miner.cost = parsed.upgrades.miner.cost || 100;
-    
-    game.upgrades.excavator.count = parsed.upgrades.excavator.count || 0;
-    game.upgrades.excavator.cost = parsed.upgrades.excavator.cost || 500;
-    
-    game.upgrades.machine.count = parsed.upgrades.machine.count || 0;
-    game.upgrades.machine.cost = parsed.upgrades.machine.cost || 1000;
-    
-    game.upgrades.drill.count = parsed.upgrades.drill.count || 0;
-    game.upgrades.drill.cost = parsed.upgrades.drill.cost || 5000;
-    
-    game.upgrades.refinery.count = parsed.upgrades.refinery.count || 0;
-    game.upgrades.refinery.cost = parsed.upgrades.refinery.cost || 10000;
-    
-    game.upgrades.lab.count = parsed.upgrades.lab.count || 0;
-    game.upgrades.lab.cost = parsed.upgrades.lab.cost || 20000;
-    
-    game.upgrades.quantum.count = parsed.upgrades.quantum.count || 0;
-    game.upgrades.quantum.cost = parsed.upgrades.quantum.cost || 50000;
-    
-    game.upgrades.singularity.count = parsed.upgrades.singularity.count || 0;
-    game.upgrades.singularity.cost = parsed.upgrades.singularity.cost || 100000;
-    
-    // Update displays
+    Object.keys(parsed.upgrades).forEach(type => {
+      if (game.upgrades[type]) {
+        game.upgrades[type].count = parsed.upgrades[type].count;
+        game.upgrades[type].cost = parsed.upgrades[type].cost;
+      }
+    });
+
+    // Update UI
     updateStats();
-    Object.keys(game.upgrades).forEach(type => updateUpgradeDisplay(type));
-    
-    // Update click me overlay based on loaded state
-    updateClickMeOverlay();
-  } catch (e) {
-    console.error('Failed to load save:', e);
+    Object.keys(game.upgrades).forEach(type => {
+      updateUpgradeDisplay(type);
+    });
   }
 }
 
@@ -1033,131 +1171,202 @@ function handleResize() {
   }
 }
 
-// Power Monitor
-let powerMonitor = null;
-let powerData = Array(600).fill(0); // Store 10 minutes of data (600 seconds)
+// Power Monitor Variables
+let powerData = new Array(600).fill(0); // Store 10 minutes of data (600 seconds)
 let powerDataIndex = 0;
 let lastPowerUpdate = 0;
 let animationFrameId = null;
+let currentTimeScale = 300; // Default to 5 minutes (300 seconds)
+let isCollectingData = true; // Flag to control data collection
 
-function initPowerMonitor() {
+// Function to collect power data
+function collectPowerData() {
+  if (!isCollectingData) return;
+  
+  const powerMeterFill = document.getElementById('power-meter-fill');
+  const currentPower = powerMeterFill ? parseFloat(powerMeterFill.style.height) || 0 : 0;
+  
+  const now = Date.now();
+  if (now - lastPowerUpdate >= 50) { // Update more frequently for smoother animation
+    powerData[powerDataIndex] = currentPower;
+    powerDataIndex = (powerDataIndex + 1) % 600;
+    lastPowerUpdate = now;
+  }
+}
+
+// Function to render power monitor
+function renderPowerMonitor() {
   const canvas = document.getElementById('powerMonitor');
   if (!canvas) return;
-  
+
+  const container = canvas.closest('.power-monitor');
+  if (!container) return;
+
+  const containerWidth = container.clientWidth - 30;
+  const containerHeight = 200;
+
+  canvas.width = containerWidth;
+  canvas.height = containerHeight;
+  canvas.style.width = '100%';
+  canvas.style.height = '200px';
+  canvas.style.display = 'block';
+
   const ctx = canvas.getContext('2d');
-  const width = canvas.width;
-  const height = canvas.height;
   
   function animate() {
     if (!document.getElementById('analyticsModal').classList.contains('show')) {
-      requestAnimationFrame(animate);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
       return;
     }
-    
-    // Semi-transparent background for trail effect
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.fillRect(0, 0, width, height);
-    
-    // Get current power level from power meter
-    const powerMeterFill = document.getElementById('power-meter-fill');
-    const powerPercentage = powerMeterFill ? 
-      parseFloat(powerMeterFill.style.height) || 0 : 0;
-    
-    // Update power data array every second
-    const now = Date.now();
-    if (now - lastPowerUpdate >= 1000) {
-      powerData[powerDataIndex] = powerPercentage;
-      powerDataIndex = (powerDataIndex + 1) % 600; // Wrap around after 10 minutes
-      lastPowerUpdate = now;
-    }
-    
-    // Draw grid with more lines for better readability
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+
+    // Clear canvas with semi-transparent background
+    ctx.fillStyle = 'rgba(44, 44, 44, 0.95)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw grid lines
+    ctx.strokeStyle = 'rgba(184, 134, 11, 0.2)';
     ctx.lineWidth = 1;
-    
-    // Vertical grid lines (every minute)
-    for (let x = 0; x < width; x += (width / 10)) {
+
+    // Vertical grid lines and time labels
+    const timeIntervals = currentTimeScale / 10;
+    for (let x = 0; x < canvas.width; x += canvas.width / 10) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
+      ctx.lineTo(x, canvas.height);
       ctx.stroke();
-      
-      // Add time labels (every minute)
-      const minutes = Math.floor((x / width) * 10);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+
+      // Add time labels
+      const seconds = Math.floor((x / canvas.width) * currentTimeScale);
+      ctx.fillStyle = 'rgba(184, 134, 11, 0.5)';
       ctx.font = '10px Arial';
       ctx.textAlign = 'center';
-      ctx.fillText(`${minutes}m`, x, height - 5);
+      if (seconds === 0) {
+        ctx.fillText('now', x + 20, canvas.height - 5);
+      } else {
+        ctx.fillText(`-${seconds}s`, x + 20, canvas.height - 5);
+      }
     }
-    
-    // Horizontal grid lines (every 20% power)
-    for (let y = 0; y <= height; y += (height / 5)) {
+
+    // Horizontal grid lines and power level labels
+    for (let y = 0; y < canvas.height; y += canvas.height / 4) {
       ctx.beginPath();
       ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
+      ctx.lineTo(canvas.width, y);
       ctx.stroke();
-      
+
       // Add power level labels
-      const powerLevel = 100 - Math.floor((y / height) * 100);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      const powerLevel = 100 - Math.floor((y / canvas.height) * 100);
+      ctx.fillStyle = 'rgba(184, 134, 11, 0.5)';
       ctx.font = '10px Arial';
       ctx.textAlign = 'left';
-      ctx.fillText(`${powerLevel}%`, 5, y + 4);
+      ctx.fillText(`${powerLevel}%`, 5, y + 12);
     }
+
+    // Get current power level from power meter
+    const powerMeterFill = document.getElementById('power-meter-fill');
+    const currentPower = powerMeterFill ? parseFloat(powerMeterFill.style.height) || 0 : 0;
     
-    // Draw power line with gradient effect
+    // Draw power line
     ctx.beginPath();
-    const gradient = ctx.createLinearGradient(0, 0, width, 0);
-    const hue = 120 * (1 - powerPercentage/100); // Green to Red
-    gradient.addColorStop(0, `hsl(${hue}, 100%, 50%)`);
-    gradient.addColorStop(1, `hsl(${hue + 20}, 100%, 50%)`);
-    ctx.strokeStyle = gradient;
-    ctx.lineWidth = 2;
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    // Calculate color based on power percentage (red for low, green for high)
+    const powerPercentage = currentPower / 100;
+    const red = Math.round(255 * (1 - powerPercentage));
+    const green = Math.round(255 * powerPercentage);
     
-    // Draw the line with smooth curves
+    const gradient = ctx.createLinearGradient(0, canvas.height, 0, 0);
+    gradient.addColorStop(0, `rgba(${red}, ${green}, 0, 1)`);
+    gradient.addColorStop(1, `rgba(${red}, ${green}, 0, 0.7)`);
+    
+    ctx.strokeStyle = gradient;
+    ctx.shadowColor = `rgba(${red}, ${green}, 0, 0.5)`;
+    ctx.shadowBlur = 5;
+
+    // Draw the line based on current time scale
     let firstPoint = true;
-    for (let i = 0; i < powerData.length; i++) {
-      const x = (i / powerData.length) * width;
-      const y = height - (powerData[i] / 100) * height;
+    const dataPoints = currentTimeScale;
+    const step = canvas.width / dataPoints;
+
+    for (let i = 0; i < dataPoints; i++) {
+      const dataIndex = ((powerDataIndex - i + 600) % 600);
+      const x = canvas.width - (i * step);
+      const y = canvas.height - (powerData[dataIndex] / 100 * canvas.height);
       
       if (firstPoint) {
         ctx.moveTo(x, y);
         firstPoint = false;
       } else {
-        // Use quadratic curves for smoother lines
-        const prevX = ((i - 1) / powerData.length) * width;
-        const prevY = height - (powerData[i - 1] / 100) * height;
-        const xc = (x + prevX) / 2;
-        const yc = (y + prevY) / 2;
-        ctx.quadraticCurveTo(prevX, prevY, xc, yc);
+        ctx.lineTo(x, y);
       }
     }
-    
     ctx.stroke();
-    ctx.shadowBlur = 0;
+
+    // Update stats display
+    const currentPowerDisplay = document.getElementById('current-power');
+    const peakPowerDisplay = document.getElementById('peak-power');
     
-    // Calculate min and max power levels
-    const minPower = Math.min(...powerData);
-    const maxPower = Math.max(...powerData);
+    if (currentPowerDisplay) {
+      currentPowerDisplay.textContent = currentPower.toFixed(1) + '%';
+      currentPowerDisplay.style.color = `rgb(${red}, ${green}, 0)`;
+    }
     
-    // Add power level indicators
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-    ctx.font = '12px Arial';
-    ctx.textAlign = 'right';
-    ctx.fillText(`Current: ${powerPercentage.toFixed(1)}%`, width - 10, 20);
-    ctx.fillText(`Peak: ${maxPower.toFixed(1)}%`, width - 10, 40);
-    ctx.fillText(`Low: ${minPower.toFixed(1)}%`, width - 10, 60);
-    
-    // Add time range indicator
-    ctx.textAlign = 'left';
-    ctx.fillText('Last 10 minutes', 10, 20);
-    
-    requestAnimationFrame(animate);
+    if (peakPowerDisplay) {
+      const peakPower = Math.max(...powerData);
+      peakPowerDisplay.textContent = peakPower.toFixed(1) + '%';
+      peakPowerDisplay.style.color = '#4CAF50';
+    }
+
+    animationFrameId = requestAnimationFrame(animate);
   }
-  
+
+  // Start animation
   animate();
+}
+
+function initPowerMonitor() {
+  const container = document.querySelector('.power-monitor');
+  if (!container) return;
+
+  // Check if time scale controls already exist
+  let timeScaleControls = container.querySelector('.time-scale-controls');
+  if (!timeScaleControls) {
+    timeScaleControls = document.createElement('div');
+    timeScaleControls.className = 'time-scale-controls';
+    timeScaleControls.innerHTML = `
+      <button class="time-scale-btn active" data-seconds="300">5m</button>
+      <button class="time-scale-btn" data-seconds="600">10m</button>
+      <button class="time-scale-btn" data-seconds="1800">30m</button>
+      <button class="time-scale-btn" data-seconds="3600">1h</button>
+    `;
+    container.insertBefore(timeScaleControls, container.firstChild);
+
+    // Add event listeners to time scale buttons
+    timeScaleControls.querySelectorAll('.time-scale-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const seconds = parseInt(e.target.dataset.seconds);
+        currentTimeScale = seconds;
+        
+        // Update active button
+        timeScaleControls.querySelectorAll('.time-scale-btn').forEach(b => {
+          b.classList.remove('active');
+        });
+        e.target.classList.add('active');
+      });
+    });
+  }
+
+  // Start data collection
+  isCollectingData = true;
+  setInterval(collectPowerData, 50); // Collect data every 50ms
+
+  // Initialize renderer
+  renderPowerMonitor();
 }
 
 function updateAnalytics() {
@@ -1166,6 +1375,10 @@ function updateAnalytics() {
   document.getElementById('total-gold-spent').textContent = formatNumber(game.stats.totalGoldSpent || 0);
   document.getElementById('net-worth').textContent = formatNumber(game.stats.coinCount || 0);
   document.getElementById('gold-rush-count').textContent = game.stats.goldRushCount || 0;
+  
+  // Update prestige stats
+  document.getElementById('analytics-prestige-level').textContent = game.stats.prestigeLevel || 0;
+  document.getElementById('analytics-prestige-multiplier').textContent = `${(game.stats.prestigeMultiplier || 1).toFixed(1)}x`;
   
   // Calculate current CPS from both manual clicks and auto-clickers
   const currentCPS = calculateActualCPS();
@@ -1311,7 +1524,23 @@ function showPrestigeAnimation() {
 // Add updateClickMeOverlay function
 function updateClickMeOverlay() {
   if (game.elements.instructionOverlay) {
-    game.elements.instructionOverlay.style.display = game.stats.coinCount > 0 ? 'none' : 'flex';
+    if (game.stats.coinCount > 0) {
+      game.elements.instructionOverlay.style.display = 'none';
+      // Clear any existing timeout when hiding
+      if (game.instructionOverlayTimeout) {
+        clearTimeout(game.instructionOverlayTimeout);
+        game.instructionOverlayTimeout = null;
+      }
+    } else {
+      game.elements.instructionOverlay.style.display = 'flex';
+      // Set a 10-second timeout to auto-dismiss
+      if (!game.instructionOverlayTimeout) {
+        game.instructionOverlayTimeout = setTimeout(() => {
+          game.elements.instructionOverlay.style.display = 'none';
+          game.instructionOverlayTimeout = null;
+        }, 10000);
+      }
+    }
   }
 }
 
@@ -1378,7 +1607,4 @@ function createFallingMoney(x, y, multiplier = 1) {
       keyframeStyle.remove();
     }, duration * 1000);
   }
-}
-
-// Initialize the game when DOM is loaded
-document.addEventListener('DOMContentLoaded', initGame); 
+} 
