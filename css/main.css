@@ -576,12 +576,7 @@ body::after {
 /* Ensure tooltips remain interactive and maintain appearance when button is disabled */
 .upgrade-btn:disabled .upgrade-info-icon,
 .upgrade-btn:disabled .upgrade-info-panel {
-  opacity: 1;
-  pointer-events: auto;
-  cursor: pointer;
-  position: fixed;
-  transform: translate(-50%, -50%);
-  z-index: 100000;
+  display: none;
 }
 
 .upgrade-btn:disabled .upgrade-info-icon {
@@ -1734,4 +1729,35 @@ body.gold-rush-active {
 .time-scale-btn.active {
   background: var(--gold-light);
   color: var(--bg-primary);
+}
+
+/* XP Bar Styles */
+.xp-bar-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.xp-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 100%;
+  animation: rainbowGradient 3s linear infinite;
+  transition: width 0.3s ease-out;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes rainbowGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 } 

@@ -148,7 +148,7 @@ function initializePowerMeter() {
   tooltip.className = 'power-meter-tooltip';
   tooltip.innerHTML = `
     <strong>Power Multiplier</strong><br>
-    Click faster to increase your power level!<br><br>
+    Click faster to increase your power level! (Max 20 CPS)<br><br>
     Power multiplies ALL click values:<br>
     • Regular clicks<br>
     • Shift-clicks (10x)<br>
@@ -242,44 +242,7 @@ function gameLoop() {
 // Event Listeners
 function setupEventListeners() {
   // Gold bar click
-  game.elements.goldBar.addEventListener('click', (e) => {
-    const now = performance.now();
-    const timeSinceLastClick = now - game.stats.lastManualClickTime;
-    
-    // Check if shift is pressed and if player has the upgrade
-    const isShiftClick = e.shiftKey && game.stats.hasShiftClick;
-    const baseClickAmount = isShiftClick ? 2 : 1; // Changed from 200000/100000 to 2/1
-    const multiplier = game.stats.goldRushActive ? 5 : 1;
-    
-    // Apply both power and prestige multipliers
-    const clickValue = baseClickAmount * multiplier * game.stats.currentPowerMultiplier * game.stats.prestigeMultiplier;
-    
-    // Add gold based on all multipliers
-    game.stats.coinCount += clickValue;
-    game.stats.totalGoldEarned += clickValue;
-    
-    // Update click stats
-    game.stats.totalClicks += baseClickAmount;
-    game.stats.manualClicks += baseClickAmount;
-    game.stats.lastManualClickTime = now;
-    game.stats.lastClicks.push({
-      time: now,
-      amount: 1, // Always count as 1 for power meter
-      isManual: true,
-      upgradeType: 'manual'
-    });
-    
-    // Update gold rush progress
-    if (!game.stats.goldRushActive) {
-      game.stats.clicksSinceLastGoldRush += baseClickAmount;
-    }
-    
-    // Update displays
-    updateStats();
-    
-    // Save game
-    saveGame();
-  });
+  game.elements.goldBar.addEventListener('click', handleClick);
   
   game.elements.goldBar.addEventListener('mousedown', startHoldClick);
   game.elements.goldBar.addEventListener('mouseup', stopHoldClick);
@@ -496,13 +459,23 @@ function setupEventListeners() {
 // Click Handling
 function handleClick(e) {
   const now = Date.now();
-  // Prevent multiple clicks from hold-to-click
-  if (now - game.stats.lastManualClickTime < 200) return;
+  
+  // Rate limiting: Check clicks in the last second
+  game.stats.lastClicks = game.stats.lastClicks.filter(click => now - click.time <= 1000);
+  const recentClicks = game.stats.lastClicks.filter(click => click.isManual).length;
+  
+  // Enforce 30 clicks per second limit
+  if (recentClicks >= 30) {
+    return; // Ignore click if rate limit exceeded
+  }
+  
+  // Prevent multiple clicks from hold-to-click (reduced from 200ms to 33ms to match 30 CPS)
+  if (now - game.stats.lastManualClickTime < 33) return;
   game.stats.lastManualClickTime = now;
   
   // Check if shift is pressed and if player has the upgrade
   const isShiftClick = e.shiftKey && game.stats.hasShiftClick;
-  const baseClickAmount = isShiftClick ? 2 : 1; // Changed from 200000/100000 to 2/1
+  const baseClickAmount = isShiftClick ? 2 : 1;
   const multiplier = game.stats.goldRushActive ? 5 : 1;
   // Apply both power and prestige multipliers
   const clickValue = baseClickAmount * multiplier * game.stats.currentPowerMultiplier * game.stats.prestigeMultiplier;
@@ -528,8 +501,7 @@ function handleClick(e) {
   spawnClickFeedback(clickValue, e.clientX, e.clientY);
   
   // Create falling money effect from top of screen
-  // Generate fewer coins (reduced by 50%)
-  const numberOfCoins = Math.ceil(multiplier * 1.5); // Reduced from multiplier * 3
+  const numberOfCoins = Math.ceil(multiplier * 1.5);
   for (let i = 0; i < numberOfCoins; i++) {
     createFallingMoney(e.clientX, e.clientY);
   }
@@ -879,6 +851,9 @@ function updateStats() {
   // Update power meter
   updatePowerMeter(calculateActualCPS());
   
+  // Update XP bar
+  updateXPBar();
+  
   // Update analytics if modal is open
   if (document.getElementById('analyticsModal').classList.contains('show')) {
     updateAnalytics();
@@ -902,8 +877,8 @@ function updatePowerMeter(cps) {
       return total + click.amount;
     }, 0);
   
-  // Calculate height percentage based on total CPS (max CPS is 10)
-  const maxCPS = 10;
+  // Calculate height percentage based on total CPS (max CPS is 20)
+  const maxCPS = 20;
   const percentage = Math.min((recentClicks / maxCPS) * 100, 100);
   
   // Calculate power multiplier based on percentage (1x to 2x)
@@ -1023,10 +998,14 @@ function setupTooltips() {
       <button class="info-panel-close">&times;</button>
       <div class="info-title">${upgrade.name}</div>
       <div class="info-stats">
-        <div>Base Production: ${upgrade.cps} CPS</div>
-        <div>Cost Increase: ${Math.round((upgrade.costMultiplier - 1) * 100)}% per purchase</div>
+        ${type === 'shiftClick' 
+          ? `<div>Hold Shift while clicking to double your click power</div>
+             <div>One-time purchase - permanently active</div>`
+          : `<div>Base Production: ${upgrade.cps} CPS</div>
+             <div>Cost Increase: ${Math.round((upgrade.costMultiplier - 1) * 100)}% per purchase</div>`
+        }
       </div>
-      <div class="info-tip">Shift-click to buy max</div>
+      <div class="info-tip">${type === 'shiftClick' ? 'Click to purchase' : 'Shift-click to buy max'}</div>
     `;
     
     // Add click handler for info icon
@@ -1503,6 +1482,12 @@ function prestige() {
     
     // Show prestige animation
     showPrestigeAnimation();
+    
+    // Reset XP bar
+    const xpBarFill = document.getElementById('xp-bar-fill');
+    if (xpBarFill) {
+      xpBarFill.style.width = '0%';
+    }
   }
 }
 
@@ -1606,5 +1591,15 @@ function createFallingMoney(x, y, multiplier = 1) {
       money.remove();
       keyframeStyle.remove();
     }, duration * 1000);
+  }
+}
+
+// Add XP bar update function
+function updateXPBar() {
+  const cost = calculatePrestigeCost();
+  const progress = (game.stats.coinCount / cost) * 100;
+  const xpBarFill = document.getElementById('xp-bar-fill');
+  if (xpBarFill) {
+    xpBarFill.style.width = `${Math.min(progress, 100)}%`;
   }
 } 
