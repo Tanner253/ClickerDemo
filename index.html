@@ -12,6 +12,8 @@
   
   <!-- Game CSS -->
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/lemon.css">
+  <link rel="stylesheet" href="css/about.css">
   <style>
     * {
       -webkit-tap-highlight-color: transparent;
@@ -43,6 +45,7 @@
 
     <!-- Hamburger Menu Button -->
     <button class="hamburger-btn" id="hamburger-btn">
+      <span class="upgrade-badge" id="upgrade-badge">0</span>
       <div class="hamburger-line"></div>
       <div class="hamburger-line"></div>
       <div class="hamburger-line"></div>
@@ -58,104 +61,123 @@
         <button class="close-btn" id="close-upgrades">&times;</button>
       </div>
     <div class="right-panel">
-      <button id="buy-shift-click" class="upgrade-btn">
-        <div class="info-icon-container">
-          <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="shiftClick"></i>
-        </div>
-        <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Shift Click">
-        <div class="upgrade-cost">Cost: <span id="shift-click-cost">1,500,000</span></div>
-        <div class="upgrade-title">Shift Click Power</div>
-        <div class="upgrade-cps"><strong>+ 2x</strong> Click Power</div>
-        <div class="upgrade-owned">Owned: <span id="shift-click-count">0</span></div>
-      </button>
-      
+      <!-- Click Upgrades Section -->
+      <div class="upgrade-section">
+        <h3 class="upgrade-section-header">Click Upgrades</h3>
+        <button id="buy-click-upgrade" class="upgrade-btn">
+          <div class="info-icon-container">
+            <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="clickUpgrade"></i>
+          </div>
+          <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Click Power">
+          <div class="upgrade-cost">Cost: <span id="click-upgrade-cost">1,000,000</span></div>
+          <div class="upgrade-title">Click Power</div>
+          <div class="upgrade-cps"><strong>+ 0.1</strong> Click Power</div>
+          <div class="upgrade-owned">Owned: <span id="click-upgrade-count">0</span></div>
+        </button>
+        
+        <button id="buy-shift-click" class="upgrade-btn">
+          <div class="info-icon-container">
+            <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="shiftClick"></i>
+          </div>
+          <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Shift Click">
+          <div class="upgrade-cost">Cost: <span id="shift-click-cost">1,500,000</span></div>
+          <div class="upgrade-title">Shift Click Power</div>
+          <div class="upgrade-cps"><strong>+ 2x</strong> Click Power</div>
+          <div class="upgrade-owned">Owned: <span id="shift-click-count">0</span></div>
+        </button>
+      </div>
+
       <hr class="upgrade-separator">
-      
-      <button id="buy-auto" class="upgrade-btn">
-        <div class="info-icon-container">
-          <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="auto"></i>
-        </div>
-        <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Auto Clicker">
-        <div class="upgrade-cost">Cost: <span id="auto-cost">10</span></div>
-        <div class="upgrade-title">Auto Clicker</div>
-        <div class="upgrade-cps"><strong>+ 0.1</strong> CPS</div>
-        <div class="upgrade-owned">Owned: <span id="auto-count">0</span></div>
-      </button>
-      
-      <button id="buy-pickaxe" class="upgrade-btn">
-        <div class="info-icon-container">
-          <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="pickaxe"></i>
-        </div>
-        <img src="https://cdn-icons-png.flaticon.com/512/3185/3185927.png" alt="Pickaxe">
-        <div class="upgrade-cost">Cost: <span id="pickaxe-cost">50</span></div>
-        <div class="upgrade-title">Pickaxe</div>
-        <div class="upgrade-cps"><strong>+ 0.5</strong> CPS</div>
-        <div class="upgrade-owned">Owned: <span id="pickaxe-count">0</span></div>
-      </button>
-      
-      <button id="buy-miner" class="upgrade-btn">
-        <img src="https://cdn-icons-png.flaticon.com/512/3185/3185927.png" alt="Miner">
-        <div class="upgrade-cost">Cost: <span id="miner-cost">100</span></div>
-        <div class="upgrade-title">Miner</div>
-        <div class="upgrade-cps"><strong>+ 1</strong> CPS</div>
-        <div class="upgrade-owned">Owned: <span id="miner-count">0</span></div>
-      </button>
-      
-      <button id="buy-excavator" class="upgrade-btn">
-        <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Excavator">
-        <div class="upgrade-cost">Cost: <span id="excavator-cost">500</span></div>
-        <div class="upgrade-title">Excavator</div>
-        <div class="upgrade-cps"><strong>+ 5</strong> CPS</div>
-        <div class="upgrade-owned">Owned: <span id="excavator-count">0</span></div>
-      </button>
-      
-      <button id="buy-machine" class="upgrade-btn">
-        <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Machine">
-        <div class="upgrade-cost">Cost: <span id="machine-cost">1,000</span></div>
-        <div class="upgrade-title">Machining</div>
-        <div class="upgrade-cps"><strong>+ 10</strong> CPS</div>
-        <div class="upgrade-owned">Owned: <span id="machine-count">0</span></div>
-      </button>
-      
-      <button id="buy-drill" class="upgrade-btn">
-        <img src="https://cdn-icons-png.flaticon.com/512/2933/2933556.png" alt="Drill">
-        <div class="upgrade-cost">Cost: <span id="drill-cost">5,000</span></div>
-        <div class="upgrade-title">Drill</div>
-        <div class="upgrade-cps"><strong>+ 50</strong> CPS</div>
-        <div class="upgrade-owned">Owned: <span id="drill-count">0</span></div>
-      </button>
-      
-      <button id="buy-refinery" class="upgrade-btn">
-        <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Refinery">
-        <div class="upgrade-cost">Cost: <span id="refinery-cost">10,000</span></div>
-        <div class="upgrade-title">Refinery</div>
-        <div class="upgrade-cps"><strong>+ 100</strong> CPS</div>
-        <div class="upgrade-owned">Owned: <span id="refinery-count">0</span></div>
-      </button>
-      
-      <button id="buy-lab" class="upgrade-btn">
-        <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Lab">
-        <div class="upgrade-cost">Cost: <span id="lab-cost">20,000</span></div>
-        <div class="upgrade-title">Gold Lab</div>
-        <div class="upgrade-cps"><strong>+ 200</strong> CPS</div>
-        <div class="upgrade-owned">Owned: <span id="lab-count">0</span></div>
-      </button>
-      
-      <button id="buy-quantum" class="upgrade-btn">
-        <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Quantum">
-        <div class="upgrade-cost">Cost: <span id="quantum-cost">50,000</span></div>
-        <div class="upgrade-title">Quantum Miner</div>
-        <div class="upgrade-cps"><strong>+ 500</strong> CPS</div>
-        <div class="upgrade-owned">Owned: <span id="quantum-count">0</span></div>
-      </button>
-      
-      <button id="buy-singularity" class="upgrade-btn">
-        <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Singularity">
-        <div class="upgrade-cost">Cost: <span id="singularity-cost">100,000</span></div>
-        <div class="upgrade-title">Singularity</div>
-        <div class="upgrade-cps"><strong>+ 1000</strong> CPS</div>
-        <div class="upgrade-owned">Owned: <span id="singularity-count">0</span></div>
-      </button>
+
+      <!-- Auto Clickers Section -->
+      <div class="upgrade-section">
+        <h3 class="upgrade-section-header">Auto Clickers</h3>
+        <button id="buy-auto" class="upgrade-btn">
+          <div class="info-icon-container">
+            <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="auto"></i>
+          </div>
+          <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Auto Clicker">
+          <div class="upgrade-cost">Cost: <span id="auto-cost">10</span></div>
+          <div class="upgrade-title">Auto Clicker</div>
+          <div class="upgrade-cps"><strong>+ 0.1</strong> CPS</div>
+          <div class="upgrade-owned">Owned: <span id="auto-count">0</span></div>
+        </button>
+        
+        <button id="buy-pickaxe" class="upgrade-btn">
+          <div class="info-icon-container">
+            <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="pickaxe"></i>
+          </div>
+          <img src="https://cdn-icons-png.flaticon.com/512/3013/3013853.png" alt="Pickaxe">
+          <div class="upgrade-cost">Cost: <span id="pickaxe-cost">50</span></div>
+          <div class="upgrade-title">Pickaxe</div>
+          <div class="upgrade-cps"><strong>+ 0.5</strong> CPS</div>
+          <div class="upgrade-owned">Owned: <span id="pickaxe-count">0</span></div>
+        </button>
+        
+        <button id="buy-miner" class="upgrade-btn">
+          <img src="https://cdn-icons-png.flaticon.com/512/3185/3185927.png" alt="Miner">
+          <div class="upgrade-cost">Cost: <span id="miner-cost">100</span></div>
+          <div class="upgrade-title">Miner</div>
+          <div class="upgrade-cps"><strong>+ 1</strong> CPS</div>
+          <div class="upgrade-owned">Owned: <span id="miner-count">0</span></div>
+        </button>
+        
+        <button id="buy-excavator" class="upgrade-btn">
+          <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Excavator">
+          <div class="upgrade-cost">Cost: <span id="excavator-cost">500</span></div>
+          <div class="upgrade-title">Excavator</div>
+          <div class="upgrade-cps"><strong>+ 5</strong> CPS</div>
+          <div class="upgrade-owned">Owned: <span id="excavator-count">0</span></div>
+        </button>
+        
+        <button id="buy-machine" class="upgrade-btn">
+          <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Machine">
+          <div class="upgrade-cost">Cost: <span id="machine-cost">1,000</span></div>
+          <div class="upgrade-title">Machining</div>
+          <div class="upgrade-cps"><strong>+ 10</strong> CPS</div>
+          <div class="upgrade-owned">Owned: <span id="machine-count">0</span></div>
+        </button>
+        
+        <button id="buy-drill" class="upgrade-btn">
+          <img src="https://cdn-icons-png.flaticon.com/512/2933/2933556.png" alt="Drill">
+          <div class="upgrade-cost">Cost: <span id="drill-cost">5,000</span></div>
+          <div class="upgrade-title">Drill</div>
+          <div class="upgrade-cps"><strong>+ 50</strong> CPS</div>
+          <div class="upgrade-owned">Owned: <span id="drill-count">0</span></div>
+        </button>
+        
+        <button id="buy-refinery" class="upgrade-btn">
+          <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Refinery">
+          <div class="upgrade-cost">Cost: <span id="refinery-cost">10,000</span></div>
+          <div class="upgrade-title">Refinery</div>
+          <div class="upgrade-cps"><strong>+ 100</strong> CPS</div>
+          <div class="upgrade-owned">Owned: <span id="refinery-count">0</span></div>
+        </button>
+        
+        <button id="buy-lab" class="upgrade-btn">
+          <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Lab">
+          <div class="upgrade-cost">Cost: <span id="lab-cost">20,000</span></div>
+          <div class="upgrade-title">Gold Lab</div>
+          <div class="upgrade-cps"><strong>+ 200</strong> CPS</div>
+          <div class="upgrade-owned">Owned: <span id="lab-count">0</span></div>
+        </button>
+        
+        <button id="buy-quantum" class="upgrade-btn">
+          <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Quantum">
+          <div class="upgrade-cost">Cost: <span id="quantum-cost">50,000</span></div>
+          <div class="upgrade-title">Quantum Miner</div>
+          <div class="upgrade-cps"><strong>+ 500</strong> CPS</div>
+          <div class="upgrade-owned">Owned: <span id="quantum-count">0</span></div>
+        </button>
+        
+        <button id="buy-singularity" class="upgrade-btn">
+          <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Singularity">
+          <div class="upgrade-cost">Cost: <span id="singularity-cost">100,000</span></div>
+          <div class="upgrade-title">Singularity</div>
+          <div class="upgrade-cps"><strong>+ 1000</strong> CPS</div>
+          <div class="upgrade-owned">Owned: <span id="singularity-count">0</span></div>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -165,11 +187,11 @@
         <div id="gold-bar" class="gold-bar">
           <img src="assets/gold.png" alt="Gold Bar">
         </div>
-            <!-- Instruction Overlay -->
-    <div class="instruction-overlay" id="instruction-overlay">
-      <div class="click-me-text">Click Me!</div>
-      <div class="mouse-pointer">👆</div>
-    </div>
+        <!-- Instruction Overlay -->
+        <div class="instruction-overlay" id="instruction-overlay">
+          <div class="click-me-text">Click Me!</div>
+          <div class="mouse-pointer">👆</div>
+        </div>
         <div class="stats-container">
           <div class="stat stat-gold">
             <strong>Gold Bars:</strong> <span id="coin-count">0</span>
@@ -187,10 +209,12 @@
           <button id="prestige-btn" class="prestige-btn" disabled>
             <i class="fas fa-sync-alt"></i>
           </button>
+          <button id="about-nav-btn" class="about-nav-btn">
+            <i class="fas fa-user"></i>
+          </button>
         </div>
+      </div>
     </div>
-  </div>
-
 
   </div>
 
@@ -229,7 +253,13 @@
                 • Triggers at increasing click intervals (starts at 100, then 110, etc.)<br>
                 • Multiplies all earnings by 5x for 5 seconds<br>
                 • Progress bar at top shows progress to next Gold Rush<br>
-                • Both manual and Auto Clicker clicks count towards Gold Rush
+                • Both manual and Auto Clicker clicks count towards Gold Rush<br>
+                <br>
+                Special Events:<br>
+                • Watch for falling lemons!<br>
+                • Click a lemon before it hits the ground to catch it<br>
+                • Each caught lemon doubles your power level for 30 seconds<br>
+                • Multiple lemons stack their duration
               </p>
             </div>
           </div>
@@ -335,6 +365,10 @@
                     <label>Gain Multiplier</label>
                     <span id="analytics-prestige-multiplier">1.0x</span>
                   </div>
+                  <div class="stat-item">
+                    <label>Lemons Caught</label>
+                    <span id="lemons-caught">0</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -419,16 +453,55 @@
     </div>
   </div>
 
+  <!-- About Section -->
+  <div class="about-section" id="about-section">
+    <div class="pokemon-card">
+      <button class="close-about" id="close-about">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="card-header">About Me</div>
+      <div class="card-image">
+        <img src="./assets/pfp.webp" alt="Profile Picture">
+      </div>
+      <div class="card-content">
+        <p>Hello! My name is Tanner and I am the creator of Gold Bar Clicker. Thanks for playing! This is a prototype for a game I am working on where players can earn real money. Check out the <a href="https://github.com/Tanner253/ClickerDemo" target="_blank">documentation</a> for more details.</p>
+       <p>I am recently laid off after 3 years with a company, I am looking for new roles! please email me at percivaltanner@gmail.com to connect! I made this game in 3 days.</p> 
+        <div class="card-stats">
+          <div class="stat-item">
+            <strong>Role:</strong><br>Full Stack Software Engineer
+          </div>
+          <div class="stat-item">
+            <strong>Experience:</strong><br>8 Years
+          </div>
+          <div class="stat-item">
+            <strong>Version:</strong><br>1.0.0
+          </div>
+          <div class="stat-item">
+            <strong>Created:</strong><br>2024
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   
   <!-- Game Scripts -->
   <script src="js/main.js"></script>
+  <script src="js/lemon.js"></script>
+  <script src="js/about.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Initialize the game
       if (typeof initGame === 'function') {
         initGame();
+      }
+      // Initialize the lemon system
+      if (typeof initLemonSystem === 'function') {
+        initLemonSystem();
       }
     });
   </script>
