@@ -111,13 +111,20 @@
 }
 
 .stat-item {
-    background: rgba(255, 255, 255, 0.8);
+    background: black;
     padding: 5px;
     border-radius: 5px;
     text-align: center;
     font-size: 0.9em;
 }
-
+.stat-item-about-me {
+    background: black;  
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 0.9em;
+}
 .close-about {
     position: absolute;
     top: 10px;
