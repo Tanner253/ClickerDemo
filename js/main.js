@@ -148,7 +148,7 @@ function initializePowerMeter() {
   tooltip.className = 'power-meter-tooltip';
   tooltip.innerHTML = `
     <strong>Power Multiplier</strong><br>
-    Click faster to increase your power level! (Max 20 CPS)<br><br>
+    Click faster to increase your power level!<br><br>
     Power multiplies ALL click values:<br>
     • Regular clicks<br>
     • Shift-clicks (10x)<br>
@@ -242,7 +242,44 @@ function gameLoop() {
 // Event Listeners
 function setupEventListeners() {
   // Gold bar click
-  game.elements.goldBar.addEventListener('click', handleClick);
+  game.elements.goldBar.addEventListener('click', (e) => {
+    const now = performance.now();
+    const timeSinceLastClick = now - game.stats.lastManualClickTime;
+    
+    // Check if shift is pressed and if player has the upgrade
+    const isShiftClick = e.shiftKey && game.stats.hasShiftClick;
+    const baseClickAmount = isShiftClick ? 2 : 1; // Changed from 200000/100000 to 2/1
+    const multiplier = game.stats.goldRushActive ? 5 : 1;
+    
+    // Apply both power and prestige multipliers
+    const clickValue = baseClickAmount * multiplier * game.stats.currentPowerMultiplier * game.stats.prestigeMultiplier;
+    
+    // Add gold based on all multipliers
+    game.stats.coinCount += clickValue;
+    game.stats.totalGoldEarned += clickValue;
+    
+    // Update click stats
+    game.stats.totalClicks += baseClickAmount;
+    game.stats.manualClicks += baseClickAmount;
+    game.stats.lastManualClickTime = now;
+    game.stats.lastClicks.push({
+      time: now,
+      amount: 1, // Always count as 1 for power meter
+      isManual: true,
+      upgradeType: 'manual'
+    });
+    
+    // Update gold rush progress
+    if (!game.stats.goldRushActive) {
+      game.stats.clicksSinceLastGoldRush += baseClickAmount;
+    }
+    
+    // Update displays
+    updateStats();
+    
+    // Save game
+    saveGame();
+  });
   
   game.elements.goldBar.addEventListener('mousedown', startHoldClick);
   game.elements.goldBar.addEventListener('mouseup', stopHoldClick);
@@ -459,23 +496,13 @@ function setupEventListeners() {
 // Click Handling
 function handleClick(e) {
   const now = Date.now();
-  
-  // Rate limiting: Check clicks in the last second
-  game.stats.lastClicks = game.stats.lastClicks.filter(click => now - click.time <= 1000);
-  const recentClicks = game.stats.lastClicks.filter(click => click.isManual).length;
-  
-  // Enforce 30 clicks per second limit
-  if (recentClicks >= 30) {
-    return; // Ignore click if rate limit exceeded
-  }
-  
-  // Prevent multiple clicks from hold-to-click (reduced from 200ms to 33ms to match 30 CPS)
-  if (now - game.stats.lastManualClickTime < 33) return;
+  // Prevent multiple clicks from hold-to-click
+  if (now - game.stats.lastManualClickTime < 200) return;
   game.stats.lastManualClickTime = now;
   
   // Check if shift is pressed and if player has the upgrade
   const isShiftClick = e.shiftKey && game.stats.hasShiftClick;
-  const baseClickAmount = isShiftClick ? 2 : 1;
+  const baseClickAmount = isShiftClick ? 2 : 1; // Changed from 200000/100000 to 2/1
   const multiplier = game.stats.goldRushActive ? 5 : 1;
   // Apply both power and prestige multipliers
   const clickValue = baseClickAmount * multiplier * game.stats.currentPowerMultiplier * game.stats.prestigeMultiplier;
@@ -500,11 +527,8 @@ function handleClick(e) {
   
   spawnClickFeedback(clickValue, e.clientX, e.clientY);
   
-  // Create falling money effect from top of screen
-  const numberOfCoins = Math.ceil(multiplier * 1.5);
-  for (let i = 0; i < numberOfCoins; i++) {
-    createFallingMoney(e.clientX, e.clientY);
-  }
+  // Create single falling money effect
+  createFallingMoney(e.clientX, e.clientY);
   
   updateStats();
   
@@ -710,10 +734,11 @@ function startGoldRush() {
   createConfetti();
   createGoldRushBanner();
   
-  // Create falling money from top of screen during Gold Rush (reduced by 50%)
-  for (let i = 0; i < 2; i++) { // Reduced from 5 to 2
+  // Create a few falling money images during Gold Rush
+  const moneyCount = 3;
+  for (let i = 0; i < moneyCount; i++) {
     const x = Math.random() * window.innerWidth;
-    createFallingMoney(x, 0, 5);
+    createFallingMoney(x, 0);
   }
   
   // Add screen shake effect
@@ -963,6 +988,12 @@ function updateUpgradeButtons() {
     
     // Update button disabled state
     element.btn.disabled = !canAfford;
+    
+    // Hide/show info icon based on disabled state
+    const infoIcon = element.btn.querySelector('.upgrade-info-icon');
+    if (infoIcon) {
+      infoIcon.style.display = canAfford ? 'flex' : 'none';
+    }
     
     // Update cost display
     if (element.cost) {
@@ -1536,62 +1567,59 @@ function createFallingMoney(x, y, multiplier = 1) {
     'assets/money.png',
     'assets/money-bags.png'
   ];
-  const count = Math.ceil(multiplier * 1.5); // Reduced from multiplier * 3
   
-  for (let i = 0; i < count; i++) {
-    const money = document.createElement('img');
-    money.className = 'falling-money';
-    money.src = moneyImages[Math.floor(Math.random() * moneyImages.length)];
-    
-    // Random position across the entire viewport width if starting from top (y=0)
-    // Otherwise, use the provided x position with some randomness
-    const randomX = y === 0 ? Math.random() * window.innerWidth : x + (Math.random() * 100 - 50);
-    money.style.left = `${randomX}px`;
-    money.style.top = y === 0 ? '-50px' : `${y - 50}px`; // Start slightly above if from top
-    
-    // Random rotation and animation duration
-    const duration = Math.random() * 1.5 + 1.5; // 1.5-3 seconds
-    
-    // Random size (slightly larger for better visibility)
-    const size = Math.random() * 30 + 25; // 25-55px
-    money.style.width = `${size}px`;
-    money.style.height = `${size}px`;
-    
-    // Random initial rotation and fall path
-    const rotation = Math.random() * 360;
-    const horizontalMovement = Math.random() * 200 - 100; // -100px to +100px horizontal movement
-    
-    // Create keyframe animation for this specific element
-    const keyframeStyle = document.createElement('style');
-    const animationName = `fall${Date.now()}${i}`;
-    keyframeStyle.textContent = `
-      @keyframes ${animationName} {
-        0% {
-          transform: translateX(0) translateY(0) rotate(${rotation}deg);
-          opacity: 1;
-        }
-        20% {
-          opacity: 1;
-        }
-        100% {
-          transform: translateX(${horizontalMovement}px) translateY(${window.innerHeight + 100}px) rotate(${rotation + 720}deg);
-          opacity: 0;
-        }
+  // Create single money element with random image
+  const money = document.createElement('img');
+  money.className = 'falling-money';
+  money.src = moneyImages[Math.floor(Math.random() * moneyImages.length)];
+  
+  // Random position with slight offset from click position
+  const randomX = y === 0 ? Math.random() * window.innerWidth : x + (Math.random() * 40 - 20);
+  money.style.left = `${randomX}px`;
+  money.style.top = y === 0 ? '-50px' : `${y - 50}px`;
+  
+  // Random rotation and animation duration
+  const duration = Math.random() * 1.5 + 1.5; // 1.5-3 seconds
+  
+  // Random size (slightly larger for better visibility)
+  const size = Math.random() * 30 + 25; // 25-55px
+  money.style.width = `${size}px`;
+  money.style.height = `${size}px`;
+  
+  // Random initial rotation and fall path
+  const rotation = Math.random() * 360;
+  const horizontalMovement = Math.random() * 200 - 100; // -100px to +100px horizontal movement
+  
+  // Create keyframe animation for this specific element
+  const keyframeStyle = document.createElement('style');
+  const animationName = `fall${Date.now()}`;
+  keyframeStyle.textContent = `
+    @keyframes ${animationName} {
+      0% {
+        transform: translateX(0) translateY(0) rotate(${rotation}deg);
+        opacity: 1;
       }
-    `;
-    document.head.appendChild(keyframeStyle);
-    
-    // Apply the unique animation
-    money.style.animation = `${animationName} ${duration}s ease-in forwards`;
-    
-    document.body.appendChild(money);
-    
-    // Cleanup after animation
-    setTimeout(() => {
-      money.remove();
-      keyframeStyle.remove();
-    }, duration * 1000);
-  }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(${horizontalMovement}px) translateY(${window.innerHeight + 100}px) rotate(${rotation + 720}deg);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(keyframeStyle);
+  
+  // Apply the unique animation
+  money.style.animation = `${animationName} ${duration}s ease-in forwards`;
+  
+  document.body.appendChild(money);
+  
+  // Clean up the animation style and element after animation completes
+  setTimeout(() => {
+    document.head.removeChild(keyframeStyle);
+    document.body.removeChild(money);
+  }, duration * 1000);
 }
 
 // Add XP bar update function
