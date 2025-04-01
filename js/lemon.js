@@ -40,6 +40,9 @@ function createLemon() {
 function catchLemon(lemon) {
     if (lemon.classList.contains('caught')) return;
     
+    // Play lemon pop sound
+    soundManager.playSound('lemonPop');
+    
     lemon.classList.add('caught');
     lemonsCaught++;
     
@@ -108,51 +111,46 @@ function startLemonSpawner() {
 
 // Initialize lemon system
 function initLemonSystem() {
-    // Wait for main game functions to be defined
-    const checkFunctions = setInterval(() => {
-        if (typeof window.updatePowerMeter === 'function' && typeof window.handleClick === 'function') {
-            clearInterval(checkFunctions);
+    // Start the lemon system immediately
+    createPowerBoostIndicator();
+    startLemonSpawner();
+    
+    // Override updatePowerMeter if it exists
+    if (typeof window.updatePowerMeter === 'function') {
+        const originalUpdatePowerMeter = window.updatePowerMeter;
+        window.updatePowerMeter = function(cps) {
+            originalUpdatePowerMeter(cps);
             
-            // Store original functions
-            const originalUpdatePowerMeter = window.updatePowerMeter;
-            const originalHandleClick = window.handleClick;
-            
-            // Override updatePowerMeter
-            window.updatePowerMeter = function(cps) {
-                originalUpdatePowerMeter(cps);
+            const powerMeterFill = document.getElementById('power-meter-fill');
+            if (powerMeterFill) {
+                const currentHeight = parseFloat(powerMeterFill.style.height) || 0;
+                const newHeight = Math.min(currentHeight * lemonPowerMultiplier, 100);
+                powerMeterFill.style.height = `${newHeight}%`;
                 
-                const powerMeterFill = document.getElementById('power-meter-fill');
-                if (powerMeterFill) {
-                    const currentHeight = parseFloat(powerMeterFill.style.height) || 0;
-                    const newHeight = Math.min(currentHeight * lemonPowerMultiplier, 100);
-                    powerMeterFill.style.height = `${newHeight}%`;
-                    
-                    const multiplierDisplay = document.getElementById('current-multiplier');
-                    if (multiplierDisplay) {
-                        const baseMultiplier = parseFloat(multiplierDisplay.textContent) || 1;
-                        multiplierDisplay.textContent = (baseMultiplier * lemonPowerMultiplier).toFixed(2);
-                    }
-                    
-                    const currentPowerDisplay = document.getElementById('current-power');
-                    if (currentPowerDisplay) {
-                        currentPowerDisplay.textContent = `${newHeight.toFixed(1)}%`;
-                    }
+                const multiplierDisplay = document.getElementById('current-multiplier');
+                if (multiplierDisplay) {
+                    const baseMultiplier = parseFloat(multiplierDisplay.textContent) || 1;
+                    multiplierDisplay.textContent = (baseMultiplier * lemonPowerMultiplier).toFixed(2);
                 }
-            };
-            
-            // Override handleClick
-            window.handleClick = function(e) {
-                const originalMultiplier = game.stats.currentPowerMultiplier;
-                game.stats.currentPowerMultiplier *= lemonPowerMultiplier;
-                originalHandleClick(e);
-                game.stats.currentPowerMultiplier = originalMultiplier;
-            };
-            
-            // Start the lemon system
-            createPowerBoostIndicator();
-            startLemonSpawner();
-        }
-    }, 100);
+                
+                const currentPowerDisplay = document.getElementById('current-power');
+                if (currentPowerDisplay) {
+                    currentPowerDisplay.textContent = `${newHeight.toFixed(1)}%`;
+                }
+            }
+        };
+    }
+    
+    // Override handleClick if it exists
+    if (typeof window.handleClick === 'function') {
+        const originalHandleClick = window.handleClick;
+        window.handleClick = function(e) {
+            const originalMultiplier = game.stats.currentPowerMultiplier;
+            game.stats.currentPowerMultiplier *= lemonPowerMultiplier;
+            originalHandleClick(e);
+            game.stats.currentPowerMultiplier = originalMultiplier;
+        };
+    }
 }
 
 // Export functions for use in main.js

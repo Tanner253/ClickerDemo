@@ -347,7 +347,7 @@ body::after {
 
   .power-meter {
     width: 30px;
-    height: 200px;
+    height: 400px;
   }
 
   .power-meter-label {
@@ -379,7 +379,7 @@ body::after {
 
   .power-meter {
     width: 25px;
-    height: 160px;
+    height: 320px;
   }
 
   .power-meter-label {
@@ -1869,4 +1869,2982 @@ body.gold-rush-active {
   text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
   border-bottom: 1px solid rgba(255, 215, 0, 0.2);
   padding-bottom: 5px;
+}
+
+/* Volume Controls */
+.volume-controls {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid var(--gold-light);
+}
+
+.volume-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.volume-btn {
+    background: none;
+    border: none;
+    color: var(--gold-light);
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
+    transition: all 0.2s ease;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.volume-btn:hover {
+    background: rgba(255, 215, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.volume-percentage {
+    color: var(--gold-light);
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.volume-labels {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-light);
+    font-size: 0.9em;
+    margin-top: 10px;
+}
+
+#volume-slider {
+    width: 100%;
+    height: 5px;
+    -webkit-appearance: none;
+    background: #444;
+    border-radius: 5px;
+    outline: none;
+    margin: 10px 0;
+    position: relative;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--gold-light);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid #000;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    margin-top: -6.5px; /* Centers the thumb on the track: (18px - 5px) / 2 = 6.5px */
+}
+
+#volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+#volume-slider::-webkit-slider-runnable-track {
+    height: 5px;
+    background: linear-gradient(to right, var(--gold-light) var(--value, 50%), #444 var(--value, 50%));
+    border-radius: 5px;
+    border: none;
+}
+
+/* Add Firefox-specific styles */
+#volume-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--gold-light);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid #000;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+#volume-slider::-moz-range-track {
+    height: 5px;
+    background: linear-gradient(to right, var(--gold-light) var(--value, 50%), #444 var(--value, 50%));
+    border-radius: 5px;
+    border: none;
+}
+
+#volume-slider::-moz-range-progress {
+    background: var(--gold-light);
+    height: 5px;
+    border-radius: 5px;
+}
+
+#volume-value,
+#music-volume-value {
+    color: var(--gold-light);
+    font-weight: bold;
+}
+
+/* RGB Animation for Purchasable Click Power Upgrades */
+.upgrade-btn.purchasable {
+  position: relative;
+  overflow: hidden;
+  pointer-events: auto;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn.purchasable {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.upgrade-btn.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbText {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+/* Special RGB effect for click power upgrade */
+.upgrade-btn#buy-click-upgrade.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-title,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cost,
+.upgrade-btn#buy-click-upgrade.purchasable .upgrade-cps {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable img {
+  filter: brightness(1.2) saturate(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn#buy-click-upgrade.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Special RGB effect for shift click upgrade */
+.upgrade-btn#buy-shift-click.purchasable {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+  border: 2px solid transparent;
+}
+
+.upgrade-btn#buy-shift-click.purchasable::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #ff0000, #ff8800, #ffff00, 
+    #00ff00, #00ffff, #0000ff, 
+    #8800ff, #ff0088, #ff0000
+  );
+  background-size: 400% 400%;
+  z-index: -1;
+  border-radius: 12px;
+  animation: rgbBorder 3s linear infinite;
+  opacity: 0.7;
+}
+
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes rgbImage {
+  0% { filter: brightness(1.2) saturate(1.5) hue-rotate(0deg); }
+  25% { filter: brightness(1.2) saturate(1.5) hue-rotate(90deg); }
+  50% { filter: brightness(1.2) saturate(1.5) hue-rotate(180deg); }
+  75% { filter: brightness(1.2) saturate(1.5) hue-rotate(270deg); }
+  100% { filter: brightness(1.2) saturate(1.5) hue-rotate(360deg); }
 } 
