@@ -474,6 +474,7 @@ body::after {
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(10px);
   border: 2px solid var(--gold-light);
+  border-radius: 15px; /* Add border radius */
   z-index: 999;
   transition: right 0.3s ease;
   overflow-y: auto;
@@ -3846,10 +3847,24 @@ body.gold-rush-active {
   opacity: 0.7;
 }
 
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+.upgrade-btn#buy-shift-click.purchasable .upgrade-title,
+.upgrade-btn#buy-shift-click.purchasable .upgrade-cost {
+  color: white;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
 }
 
+.upgrade-btn#buy-shift-click.purchasable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes rgbBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbBackground {
 @keyframes rgbImage {
   0% { filter: brightness(1.2) saturate(1.5) hue-rotate(0deg); }
   25% { filter: brightness(1.2) saturate(1.5) hue-rotate(90deg); }
