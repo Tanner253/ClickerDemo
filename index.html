@@ -79,7 +79,7 @@
           <div class="info-icon-container">
             <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="shiftClick"></i>
           </div>
-          <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Shift Click">
+          <img src="https://cdn-icons-png.flaticon.com/512/130/130906.png" alt="Shift Click">
           <div class="upgrade-cost">Cost: <span id="shift-click-cost">1,500,000</span></div>
           <div class="upgrade-title">Shift Click Power</div>
           <div class="upgrade-cps"><strong>+ 2x</strong> Click Power</div>
@@ -96,7 +96,7 @@
           <div class="info-icon-container">
             <i class="fas fa-info-circle upgrade-info-icon" data-upgrade="auto"></i>
           </div>
-          <img src="https://cdn-icons-png.flaticon.com/512/104/104739.png" alt="Auto Clicker">
+          <img src="https://cdn-icons-png.flaticon.com/512/1169/1169491.png" alt="Auto Clicker">
           <div class="upgrade-cost">Cost: <span id="auto-cost">10</span></div>
           <div class="upgrade-title">Auto Clicker</div>
           <div class="upgrade-cps"><strong>+ 0.1</strong> CPS</div>
@@ -131,7 +131,7 @@
         </button>
         
         <button id="buy-machine" class="upgrade-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" alt="Machine">
+          <img src="https://cdn-icons-png.flaticon.com/512/1087/1087840.png" alt="Machine">
           <div class="upgrade-cost">Cost: <span id="machine-cost">1,000</span></div>
           <div class="upgrade-title">Machining</div>
           <div class="upgrade-cps"><strong>+ 10</strong> CPS</div>
@@ -155,7 +155,7 @@
         </button>
         
         <button id="buy-lab" class="upgrade-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Lab">
+          <img src="https://cdn-icons-png.flaticon.com/512/4226/4226577.png" alt="Lab">
           <div class="upgrade-cost">Cost: <span id="lab-cost">20,000</span></div>
           <div class="upgrade-title">Gold Lab</div>
           <div class="upgrade-cps"><strong>+ 200</strong> CPS</div>
@@ -163,7 +163,7 @@
         </button>
         
         <button id="buy-quantum" class="upgrade-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Quantum">
+          <img src="https://cdn-icons-png.flaticon.com/512/1166/1166316.png" alt="Quantum">
           <div class="upgrade-cost">Cost: <span id="quantum-cost">50,000</span></div>
           <div class="upgrade-title">Quantum Miner</div>
           <div class="upgrade-cps"><strong>+ 500</strong> CPS</div>
@@ -171,7 +171,7 @@
         </button>
         
         <button id="buy-singularity" class="upgrade-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/3050/3050122.png" alt="Singularity">
+          <img src="https://cdn-icons-png.flaticon.com/512/4144/4144516.png" alt="Singularity">
           <div class="upgrade-cost">Cost: <span id="singularity-cost">100,000</span></div>
           <div class="upgrade-title">Singularity</div>
           <div class="upgrade-cps"><strong>+ 1000</strong> CPS</div>
@@ -227,11 +227,6 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="settings-section">
-            <h6>Player Data</h6>
-            <button id="resetGameBtn" class="btn btn-danger">Reset Game Progress</button>
-          </div>
-          
           <!-- How to Play Section -->
           <div class="settings-section">
             <h6><i class="fas fa-question-circle"></i> How to Play</h6>
@@ -264,7 +259,7 @@
             </div>
           </div>
 
-          <!-- Prestige Rules Section -->
+          <!-- Prestige System Section -->
           <div class="settings-section">
             <h6><i class="fas fa-sync-alt"></i> Prestige System</h6>
             <div class="how-to-play-content">
@@ -278,6 +273,12 @@
                 • Next prestige cost: <span id="settings-prestige-cost">1,000,000</span>
               </p>
             </div>
+          </div>
+
+          <!-- Player Data Section (Reset) -->
+          <div class="settings-section">
+            <h6>Player Data</h6>
+            <button id="resetGameBtn" class="btn btn-danger">Reset Game Progress</button>
           </div>
         </div>
         <div class="modal-footer">
@@ -464,7 +465,7 @@
       </a>
       <div class="card-header">About Me</div>
       <div class="card-image">
-        <img src="./assets/pfp.webp" alt="Profile Picture">
+        <img src="./assets/pfp.webp" alt="Profile Picture" id="profile-image">
       </div>
       <div class="card-content">
         <p>Hello! My name is Tanner and I am the creator of Gold Bar Clicker. Thanks for playing! This is a prototype for a game I am working on where players can earn real money. Check out the <a href="https://github.com/Tanner253/ClickerDemo" target="_blank">documentation</a> for more details.</p>
@@ -487,6 +488,11 @@
     </div>
   </div>
 
+  <!-- Fullscreen Image View -->
+  <div class="fullscreen-image" id="fullscreen-image">
+    <img src="./assets/pfp.webp" alt="Profile Picture">
+  </div>
+
   </div>
 
   <!-- Bootstrap JS -->
@@ -496,6 +502,7 @@
   <script src="js/main.js"></script>
   <script src="js/lemon.js"></script>
   <script src="js/about.js"></script>
+  <script src="js/sound.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Initialize the game

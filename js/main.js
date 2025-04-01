@@ -1,3 +1,19 @@
+// Define initial upgrade state for robust loading
+const INITIAL_UPGRADES = {
+  clickUpgrade: { count: 0, cost: 10, costMultiplier: 1.5, name: "Click Power" },
+  shiftClick: { count: 0, cost: 1500000, cps: 0, costMultiplier: 1, name: "Shift Click Power" },
+  auto: { count: 0, cost: 10, cps: 0.1, costMultiplier: 1.3, name: "Auto Clicker" },
+  pickaxe: { count: 0, cost: 50, cps: 0.5, costMultiplier: 1.35, name: "Pickaxe" },
+  miner: { count: 0, cost: 100, cps: 1, costMultiplier: 1.4, name: "Miner" },
+  excavator: { count: 0, cost: 500, cps: 5, costMultiplier: 1.45, name: "Excavator" },
+  machine: { count: 0, cost: 1000, cps: 10, costMultiplier: 1.5, name: "Machining" },
+  drill: { count: 0, cost: 5000, cps: 50, costMultiplier: 1.6, name: "Drill" },
+  refinery: { count: 0, cost: 10000, cps: 100, costMultiplier: 1.65, name: "Refinery" },
+  lab: { count: 0, cost: 20000, cps: 200, costMultiplier: 1.7, name: "Gold Lab" },
+  quantum: { count: 0, cost: 50000, cps: 500, costMultiplier: 1.75, name: "Quantum Miner" },
+  singularity: { count: 0, cost: 100000, cps: 1000, costMultiplier: 1.8, name: "Singularity" }
+};
+
 // Game State
 const game = {
   stats: {
@@ -23,25 +39,13 @@ const game = {
     hasShiftClick: false,
     clickUpgradeLevel: 0
   },
-  upgrades: {
-    clickUpgrade: { count: 0, cost: 125000, costMultiplier: 1.5, name: "Click Power" },
-    shiftClick: { count: 0, cost: 1500000, cps: 0, costMultiplier: 1, name: "Shift Click Power" },
-    auto: { count: 0, cost: 10, cps: 0.1, costMultiplier: 1.3, name: "Auto Clicker" },
-    pickaxe: { count: 0, cost: 50, cps: 0.5, costMultiplier: 1.35, name: "Pickaxe" },
-    miner: { count: 0, cost: 100, cps: 1, costMultiplier: 1.4, name: "Miner" },
-    excavator: { count: 0, cost: 500, cps: 5, costMultiplier: 1.45, name: "Excavator" },
-    machine: { count: 0, cost: 1000, cps: 10, costMultiplier: 1.5, name: "Machining" },
-    drill: { count: 0, cost: 5000, cps: 50, costMultiplier: 1.6, name: "Drill" },
-    refinery: { count: 0, cost: 10000, cps: 100, costMultiplier: 1.65, name: "Refinery" },
-    lab: { count: 0, cost: 20000, cps: 200, costMultiplier: 1.7, name: "Gold Lab" },
-    quantum: { count: 0, cost: 50000, cps: 500, costMultiplier: 1.75, name: "Quantum Miner" },
-    singularity: { count: 0, cost: 100000, cps: 1000, costMultiplier: 1.8, name: "Singularity" }
-  },
+  upgrades: JSON.parse(JSON.stringify(INITIAL_UPGRADES)), // Deep copy initial state
   elements: {},
   intervals: {},
   goldRushTimeout: null,
   holdClickInterval: null,
-  instructionOverlayTimeout: null
+  instructionOverlayTimeout: null,
+  musicStarted: false // Flag to track if music has started
 };
 
 // Initialize upgrade production tracking
@@ -158,7 +162,7 @@ function initializePowerMeter() {
     Click faster to increase your power level!<br><br>
     Power multiplies ALL click values:<br>
     • Regular clicks<br>
-    • Shift-clicks (10x)<br>
+    • Shift-clicks (2x)<br>
     • Gold Rush bonus (5x)<br><br>
     <em>Current: <span id="current-multiplier">1.00</span>x</em>
   `;
@@ -181,6 +185,16 @@ function updateSessionDuration() {
   
   sessionDurationElement.textContent = 
     `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Add this function before initGame
+function handleFirstInteraction() {
+  if (!game.musicStarted) {
+    console.log("First user interaction detected, starting music.");
+    soundManager.startMusic();
+    game.musicStarted = true;
+    // Listeners with { once: true } automatically remove themselves, no need to manually remove.
+  }
 }
 
 // Initialize Game
@@ -234,6 +248,17 @@ function initGame() {
   
   // Initial click me overlay state
   updateClickMeOverlay();
+  
+  // Start background music ONLY after first user interaction
+  // soundManager.startMusic(); // <-- REMOVED FROM HERE
+  document.addEventListener('click', handleFirstInteraction, { once: true });
+  document.addEventListener('keydown', handleFirstInteraction, { once: true });
+  document.addEventListener('touchstart', handleFirstInteraction, { once: true }); // For mobile interaction
+  
+  // Initialize lemon system
+  if (typeof initLemonSystem === 'function') {
+    initLemonSystem();
+  }
 }
 
 // Main game loop (for visual updates only)
@@ -246,81 +271,63 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-// Event Listeners
-function setupEventListeners() {
-  // Gold bar click
-  game.elements.goldBar.addEventListener('click', (e) => {
-    const now = performance.now();
-    const timeSinceLastClick = now - game.stats.lastManualClickTime;
-    
-    // Check if shift is pressed and if player has the upgrade
-    const isShiftClick = e.shiftKey && game.stats.hasShiftClick;
-    const baseClickAmount = isShiftClick ? 2 : 1;
-    const clickUpgradeBonus = game.stats.clickUpgradeLevel * 0.1;
-    const multiplier = game.stats.goldRushActive ? 5 : 1;
-    
-    // Apply both power and prestige multipliers
-    const clickValue = (baseClickAmount + clickUpgradeBonus) * multiplier * game.stats.currentPowerMultiplier * game.stats.prestigeMultiplier;
-    
-    // Add gold based on all multipliers
-    game.stats.coinCount += clickValue;
-    game.stats.totalGoldEarned += clickValue;
-    
-    // Update click stats
-    game.stats.totalClicks += baseClickAmount;
-    game.stats.manualClicks += baseClickAmount;
-    game.stats.lastManualClickTime = now;
-    game.stats.lastClicks.push({
-      time: now,
-      amount: 1, // Always count as 1 for power meter
-      isManual: true,
-      upgradeType: 'manual'
-    });
-    
-    // Update gold rush progress
-    if (!game.stats.goldRushActive) {
-      game.stats.clicksSinceLastGoldRush += baseClickAmount;
-    }
-    
-    // Update displays
-    updateStats();
-    
-    // Save game
-    saveGame();
+// Add updateMobileNavActive function before setupEventListeners
+function updateMobileNavActive(activeId) {
+  // Get all mobile nav items
+  const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+  
+  // Remove active class from all items
+  mobileNavItems.forEach(item => {
+    item.classList.remove('active');
   });
   
+  // Add active class to the clicked item
+  const activeItem = document.getElementById(activeId);
+  if (activeItem) {
+    activeItem.classList.add('active');
+  }
+}
+
+// Event Listeners
+function setupEventListeners() {
+  // Gold bar click - only use mousedown
+  game.elements.goldBar.addEventListener('mousedown', handleClick);
+  
+  // Ensure these hold click listeners are present
   game.elements.goldBar.addEventListener('mousedown', startHoldClick);
   game.elements.goldBar.addEventListener('mouseup', stopHoldClick);
   game.elements.goldBar.addEventListener('mouseleave', stopHoldClick);
 
-  // Upgrade purchases
-  game.elements.clickUpgrade.btn.addEventListener('click', () => buyUpgrade('clickUpgrade'));
-  game.elements.shiftClick.btn.addEventListener('click', () => buyUpgrade('shiftClick'));
-  game.elements.auto.btn.addEventListener('click', () => buyUpgrade('auto'));
-  game.elements.pickaxe.btn.addEventListener('click', () => buyUpgrade('pickaxe'));
-  game.elements.miner.btn.addEventListener('click', () => buyUpgrade('miner'));
-  game.elements.excavator.btn.addEventListener('click', () => buyUpgrade('excavator'));
-  game.elements.machine.btn.addEventListener('click', () => buyUpgrade('machine'));
-  game.elements.drill.btn.addEventListener('click', () => buyUpgrade('drill'));
-  game.elements.refinery.btn.addEventListener('click', () => buyUpgrade('refinery'));
-  game.elements.lab.btn.addEventListener('click', () => buyUpgrade('lab'));
-  game.elements.quantum.btn.addEventListener('click', () => buyUpgrade('quantum'));
-  game.elements.singularity.btn.addEventListener('click', () => buyUpgrade('singularity'));
+  // Upgrade purchases - Combined single and shift-click logic
+  const upgradeTypes = ['clickUpgrade', 'shiftClick', 'auto', 'pickaxe', 'miner', 'excavator', 'machine', 'drill', 'refinery', 'lab', 'quantum', 'singularity'];
   
-  // Shift-click for bulk purchases
-  game.elements.clickUpgrade.btn.addEventListener('click', (e) => e.shiftKey && buyMax('clickUpgrade'));
-  game.elements.shiftClick.btn.addEventListener('click', (e) => e.shiftKey && buyMax('shiftClick'));
-  game.elements.auto.btn.addEventListener('click', (e) => e.shiftKey && buyMax('auto'));
-  game.elements.pickaxe.btn.addEventListener('click', (e) => e.shiftKey && buyMax('pickaxe'));
-  game.elements.miner.btn.addEventListener('click', (e) => e.shiftKey && buyMax('miner'));
-  game.elements.excavator.btn.addEventListener('click', (e) => e.shiftKey && buyMax('excavator'));
-  game.elements.machine.btn.addEventListener('click', (e) => e.shiftKey && buyMax('machine'));
-  game.elements.drill.btn.addEventListener('click', (e) => e.shiftKey && buyMax('drill'));
-  game.elements.refinery.btn.addEventListener('click', (e) => e.shiftKey && buyMax('refinery'));
-  game.elements.lab.btn.addEventListener('click', (e) => e.shiftKey && buyMax('lab'));
-  game.elements.quantum.btn.addEventListener('click', (e) => e.shiftKey && buyMax('quantum'));
-  game.elements.singularity.btn.addEventListener('click', (e) => e.shiftKey && buyMax('singularity'));
-  
+  upgradeTypes.forEach(type => {
+    if (game.elements[type] && game.elements[type].btn) {
+      game.elements[type].btn.addEventListener('click', (e) => {
+        if (e.shiftKey) {
+          // Handle shift-click for bulk purchase (or special action for shiftClick power)
+          if (type === 'shiftClick') {
+            // Shift-clicking the shiftClick power itself doesn't do bulk buy
+            buyUpgrade(type); 
+          } else if (type === 'clickUpgrade') {
+            // Shift-clicking click power might have a different bulk logic if needed,
+            // but for now let's assume it uses standard buyMax or similar concept.
+            // If buyMax needs adjustment for clickUpgrade, handle here.
+            // For now, let's assume buyMax works or needs a dedicated function.
+            // Calling buyMax for clickUpgrade might need verification based on its logic.
+            // Let's stick to the original intent for now:
+            buyMax(type); // Assuming buyMax handles clickUpgrade appropriately or needs specific logic
+          } else {
+            buyMax(type);
+          }
+        } else {
+          // Handle single click purchase
+          buyUpgrade(type);
+        }
+      });
+    }
+  });
+
   // Tooltips for upgrades
   setupTooltips();
 
@@ -346,11 +353,16 @@ function setupEventListeners() {
     e.stopPropagation();
   });
 
-  // Settings button click handler
-  document.getElementById('settings-btn').addEventListener('click', () => {
-    const settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
-    settingsModal.show();
-  });
+  // Settings button
+  const settingsBtn = document.getElementById('settings-btn');
+  if (settingsBtn) {
+    settingsBtn.addEventListener('click', () => {
+      soundManager.playSound('click');
+      const settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
+      settingsModal.show();
+      updateMobileNavActive('mobile-settings');
+    });
+  }
 
   // Reset game button click handler
   document.getElementById('resetGameBtn').addEventListener('click', () => {
@@ -388,18 +400,7 @@ function setupEventListeners() {
     };
 
     // Reset upgrades to initial values
-    game.upgrades = {
-      auto: { count: 0, cost: 10, cps: 0.1, costMultiplier: 1.3, name: "Auto Clicker" },
-      pickaxe: { count: 0, cost: 50, cps: 0.5, costMultiplier: 1.35, name: "Pickaxe" },
-      miner: { count: 0, cost: 100, cps: 1, costMultiplier: 1.4, name: "Miner" },
-      excavator: { count: 0, cost: 500, cps: 5, costMultiplier: 1.45, name: "Excavator" },
-      machine: { count: 0, cost: 1000, cps: 10, costMultiplier: 1.5, name: "Machining" },
-      drill: { count: 0, cost: 5000, cps: 50, costMultiplier: 1.6, name: "Drill" },
-      refinery: { count: 0, cost: 10000, cps: 100, costMultiplier: 1.65, name: "Refinery" },
-      lab: { count: 0, cost: 20000, cps: 200, costMultiplier: 1.7, name: "Gold Lab" },
-      quantum: { count: 0, cost: 50000, cps: 500, costMultiplier: 1.75, name: "Quantum Miner" },
-      singularity: { count: 0, cost: 100000, cps: 1000, costMultiplier: 1.8, name: "Singularity" }
-    };
+    game.upgrades = JSON.parse(JSON.stringify(INITIAL_UPGRADES));
 
     // Initialize upgrade production tracking
     Object.keys(game.upgrades).forEach(type => {
@@ -436,19 +437,25 @@ function setupEventListeners() {
     document.body.style.paddingRight = '';
   });
 
-  // Analytics button click handler
-  document.getElementById('analytics-btn').addEventListener('click', () => {
-    const analyticsModal = new bootstrap.Modal(document.getElementById('analyticsModal'));
-    analyticsModal.show();
-    
-    // Initialize power monitor after modal is shown
-    analyticsModal._element.addEventListener('shown.bs.modal', function () {
-      setTimeout(() => {
-        initPowerMonitor();
-        updateAnalytics();
-      }, 100);
+  // Analytics button
+  const analyticsBtn = document.getElementById('analytics-btn');
+  if (analyticsBtn) {
+    analyticsBtn.addEventListener('click', () => {
+      soundManager.playSound('click');
+      const analyticsModal = new bootstrap.Modal(document.getElementById('analyticsModal'));
+      analyticsModal.show();
+      
+      // Initialize power monitor after modal is shown
+      analyticsModal._element.addEventListener('shown.bs.modal', function () {
+        setTimeout(() => {
+          initPowerMonitor();
+          updateAnalytics();
+        }, 100);
+      });
+      
+      updateMobileNavActive('mobile-analytics');
     });
-  });
+  }
 
   // Mobile Analytics button click handler
   if (game.elements.mobileAnalytics) {
@@ -489,7 +496,12 @@ function setupEventListeners() {
     prestigeBtn.appendChild(tooltip);
     
     // Add click handler
-    prestigeBtn.addEventListener('click', prestige);
+    prestigeBtn.addEventListener('click', () => {
+      if (!prestigeBtn.disabled) {
+        soundManager.playSound('click');
+      }
+      prestige();
+    });
     
     // Update tooltip periodically
     setInterval(() => {
@@ -502,22 +514,37 @@ function setupEventListeners() {
       prestigeBtn.disabled = game.stats.coinCount < cost;
     }, 100);
   }
+
+  // About nav button
+  const aboutNavBtn = document.getElementById('about-nav-btn');
+  if (aboutNavBtn) {
+    aboutNavBtn.addEventListener('click', () => {
+      soundManager.playSound('click');
+      const aboutSection = document.getElementById('about-section');
+      aboutSection.classList.add('active');
+      // Start about music
+      if (typeof soundManager !== 'undefined') {
+        soundManager.startAboutMusic();
+      }
+      updateMobileNavActive('mobile-about');
+    });
+  }
 }
 
 // Click Handling
 function handleClick(e) {
   const now = Date.now();
-  // Prevent multiple clicks from hold-to-click
-  if (now - game.stats.lastManualClickTime < 200) return;
+  // Prevent multiple clicks from hold-to-click with a much shorter delay (25ms = 40 CPS max)
+  if (now - game.stats.lastManualClickTime < 25) return;
   game.stats.lastManualClickTime = now;
   
   // Check if shift is pressed and if player has the upgrade
   const isShiftClick = e.shiftKey && game.stats.hasShiftClick;
-  const baseClickAmount = isShiftClick ? 2 : 1;
+  const baseClickAmount = 1; // Always start with base of 1
   const clickUpgradeBonus = game.stats.clickUpgradeLevel * 0.1;
   const multiplier = game.stats.goldRushActive ? 5 : 1;
-  // Apply both power and prestige multipliers
-  const clickValue = (baseClickAmount + clickUpgradeBonus) * multiplier * game.stats.currentPowerMultiplier * game.stats.prestigeMultiplier;
+  // Apply all multipliers first, then double if shift click is active
+  const clickValue = (baseClickAmount + clickUpgradeBonus) * multiplier * game.stats.currentPowerMultiplier * game.stats.prestigeMultiplier * (isShiftClick ? 2 : 1);
   
   game.stats.totalClicks += baseClickAmount;
   game.stats.manualClicks += baseClickAmount;
@@ -556,6 +583,9 @@ function handleClick(e) {
   
   // Update click me overlay
   updateClickMeOverlay();
+  
+  // Play click sound
+  soundManager.playSound('click');
 }
 
 // Hold-to-click functionality
@@ -661,14 +691,18 @@ function buyUpgrade(type) {
   const upgrade = game.upgrades[type];
   if (!upgrade) return;
 
+  // Play upgrade sound
+  soundManager.playSound('upgrade');
+
   // Special handling for click upgrade
   if (type === 'clickUpgrade') {
-    if (game.stats.coinCount >= upgrade.cost) {
-      game.stats.coinCount -= upgrade.cost;
-      game.stats.totalGoldSpent += upgrade.cost;
+    const currentCost = calculateClickUpgradeCost(upgrade.count);
+    if (game.stats.coinCount >= currentCost) {
+      game.stats.coinCount -= currentCost;
+      game.stats.totalGoldSpent += currentCost;
       game.stats.clickUpgradeLevel++;
       upgrade.count++;
-      upgrade.cost = Math.floor(upgrade.cost * upgrade.costMultiplier);
+      upgrade.cost = calculateClickUpgradeCost(upgrade.count);
       updateStats();
       updateUpgradeDisplay(type);
       showUpgradeFeedback(type, 1);
@@ -698,7 +732,8 @@ function buyUpgrade(type) {
     game.stats.coinCount -= upgrade.cost;
     game.stats.totalGoldSpent += upgrade.cost;
     upgrade.count++;
-    upgrade.cost = Math.floor(upgrade.cost * upgrade.costMultiplier);
+    // Ensure cost doesn't drop below 1
+    upgrade.cost = Math.max(1, Math.floor(upgrade.cost * upgrade.costMultiplier)); 
     updateStats();
     updateUpgradeDisplay(type);
     showUpgradeFeedback(type, 1);
@@ -712,17 +747,21 @@ function buyMax(type) {
   let affordable = 0;
   let currentCost = upgrade.cost;
   let totalCost = 0;
-  
-  while (totalCost + currentCost <= game.stats.coinCount) {
+  let costAfterPurchase = currentCost; // Track the cost of the *next* item
+
+  while (totalCost + currentCost <= game.stats.coinCount && currentCost >= 1) { // Also check cost >= 1 to prevent infinite loops if cost became 0 somehow
     totalCost += currentCost;
-    currentCost = Math.floor(currentCost * upgrade.costMultiplier);
+    // Ensure next cost doesn't drop below 1
+    currentCost = Math.max(1, Math.floor(currentCost * upgrade.costMultiplier)); 
+    costAfterPurchase = currentCost; // Store the cost for the next potential purchase
     affordable++;
   }
   
   if (affordable > 0) {
     game.stats.coinCount -= totalCost;
     upgrade.count += affordable;
-    upgrade.cost = currentCost;
+    // Set the cost to the cost of the *next* item to be purchased
+    upgrade.cost = costAfterPurchase; 
     
     updateUpgradeDisplay(type);
     updateStats();
@@ -751,6 +790,9 @@ function updateGoldRushProgress() {
 }
 
 function startGoldRush() {
+  // Play gold rush sound
+  soundManager.playSound('goldRush');
+  
   game.stats.goldRushCount++;
   game.stats.goldRushActive = true;
   game.goldRushTimeout = Date.now() + 5000; // 5 seconds from now
@@ -930,8 +972,8 @@ function updatePowerMeter(cps) {
       return total + click.amount;
     }, 0);
   
-  // Calculate height percentage based on total CPS (max CPS is 20)
-  const maxCPS = 20;
+  // Calculate height percentage based on total CPS (max CPS is 40)
+  const maxCPS = 40;
   const percentage = Math.min((recentClicks / maxCPS) * 100, 100);
   
   // Calculate power multiplier based on percentage (1x to 2x)
@@ -986,6 +1028,16 @@ function formatNumber(num) {
   return num.toFixed(1);
 }
 
+// Add this function before updateUpgradeDisplay
+function calculateClickUpgradeCost(count) {
+  let baseCost = 10;
+  let cost = baseCost;
+  for (let i = 0; i < count; i++) {
+    cost = Math.floor(cost * 1.5);
+  }
+  return cost;
+}
+
 function updateUpgradeDisplay(type) {
   const upgrade = game.upgrades[type];
   const element = game.elements[type];
@@ -996,6 +1048,30 @@ function updateUpgradeDisplay(type) {
     if (game.stats.hasShiftClick) {
       element.count.textContent = '1';
       element.btn.classList.add('shift-click-purchased');
+      element.btn.classList.remove('purchasable');
+      element.btn.disabled = true;
+    } else if (game.stats.coinCount >= upgrade.cost) {
+      element.btn.classList.add('purchasable');
+      element.btn.classList.remove('shift-click-purchased');
+      element.btn.disabled = false;
+    } else {
+      element.btn.classList.remove('purchasable', 'shift-click-purchased');
+      element.btn.disabled = true;
+    }
+    return;
+  }
+
+  // Special handling for click upgrade
+  if (type === 'clickUpgrade') {
+    element.count.textContent = upgrade.count;
+    const currentCost = calculateClickUpgradeCost(upgrade.count);
+    upgrade.cost = currentCost; // Update the stored cost
+    element.cost.textContent = formatNumber(currentCost);
+    if (game.stats.coinCount >= currentCost) {
+      element.btn.classList.add('purchasable');
+      element.btn.disabled = false;
+    } else {
+      element.btn.classList.remove('purchasable');
       element.btn.disabled = true;
     }
     return;
@@ -1155,7 +1231,8 @@ function saveGame() {
     if (upgrade) {
       saveData.upgrades[type] = {
         count: upgrade.count || 0,
-        cost: upgrade.cost || 0
+        cost: upgrade.cost || (type === 'clickUpgrade' ? 10 : 0),
+        costMultiplier: upgrade.costMultiplier
       };
     }
   });
@@ -1166,24 +1243,54 @@ function saveGame() {
 function loadGame() {
   const savedGame = localStorage.getItem('goldBarClickerSave');
   if (savedGame) {
-    const parsed = JSON.parse(savedGame);
-    
-    // Load stats
-    Object.assign(game.stats, parsed.stats);
-    
-    // Load upgrades
-    Object.keys(parsed.upgrades).forEach(type => {
-      if (game.upgrades[type]) {
-        game.upgrades[type].count = parsed.upgrades[type].count;
-        game.upgrades[type].cost = parsed.upgrades[type].cost;
+    try {
+      const parsed = JSON.parse(savedGame);
+      
+      // Load stats safely
+      if (parsed.stats) {
+        Object.keys(game.stats).forEach(key => {
+          if (parsed.stats[key] !== undefined) {
+            game.stats[key] = parsed.stats[key];
+          }
+        });
       }
-    });
+      
+      // Load upgrades safely, falling back to initial values if saved data is invalid
+      if (parsed.upgrades) {
+        Object.keys(INITIAL_UPGRADES).forEach(type => {
+          const savedUpgrade = parsed.upgrades[type];
+          const initialUpgrade = INITIAL_UPGRADES[type];
+          
+          if (game.upgrades[type]) { // Ensure the upgrade type still exists in the current code
+            // Load count: must be a non-negative number
+            game.upgrades[type].count = (savedUpgrade && typeof savedUpgrade.count === 'number' && savedUpgrade.count >= 0) 
+                                        ? savedUpgrade.count 
+                                        : initialUpgrade.count;
+                                        
+            // Load cost: must be a positive number (greater than 0)
+            game.upgrades[type].cost = (savedUpgrade && typeof savedUpgrade.cost === 'number' && savedUpgrade.cost > 0) 
+                                       ? savedUpgrade.cost 
+                                       : initialUpgrade.cost;
+                                       
+            // Load costMultiplier: must be a positive number
+            game.upgrades[type].costMultiplier = (savedUpgrade && typeof savedUpgrade.costMultiplier === 'number' && savedUpgrade.costMultiplier > 0) 
+                                                 ? savedUpgrade.costMultiplier 
+                                                 : initialUpgrade.costMultiplier;
+          }
+        });
+      }
 
-    // Update UI
-    updateStats();
-    Object.keys(game.upgrades).forEach(type => {
-      updateUpgradeDisplay(type);
-    });
+      // Update UI after loading potentially corrected values
+      updateStats();
+      Object.keys(game.upgrades).forEach(type => {
+        updateUpgradeDisplay(type);
+      });
+
+    } catch (error) {
+      console.error("Error loading saved game:", error);
+      // Optional: Reset to default state or clear corrupted save
+      // localStorage.removeItem('goldBarClickerSave'); 
+    }
   }
 }
 
@@ -1521,7 +1628,8 @@ function prestige() {
     // Save prestige stats before reset
     const prestigeStats = {
       prestigeLevel: game.stats.prestigeLevel,
-      prestigeMultiplier: game.stats.prestigeMultiplier
+      prestigeMultiplier: game.stats.prestigeMultiplier,
+      clickUpgradeLevel: 0
     };
     
     // Reset all other stats
@@ -1542,7 +1650,8 @@ function prestige() {
       totalGoldSpent: 0,
       goldRushCount: 0,
       peakPower: 0,
-      upgradeProduction: {}
+      upgradeProduction: {},
+      currentPowerMultiplier: 1
     };
     
     // Reset upgrades and scale their costs with prestige
@@ -1551,6 +1660,7 @@ function prestige() {
       upgrade.count = 0;
       // Reset to base cost and then scale with prestige
       const baseCost = {
+        clickUpgrade: 10,
         shiftClick: 1500000,
         auto: 10,
         pickaxe: 50,
@@ -1562,7 +1672,8 @@ function prestige() {
         lab: 20000,
         quantum: 50000,
         singularity: 100000
-      }[type];
+      }[type] || upgrade.cost;
+      
       upgrade.cost = Math.floor(baseCost * game.stats.prestigeMultiplier);
     });
     
@@ -1580,12 +1691,6 @@ function prestige() {
     
     // Show prestige animation
     showPrestigeAnimation();
-    
-    // Reset XP bar
-    const xpBarFill = document.getElementById('xp-bar-fill');
-    if (xpBarFill) {
-      xpBarFill.style.width = '0%';
-    }
   }
 }
 
