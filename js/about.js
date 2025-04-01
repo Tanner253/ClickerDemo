@@ -5,30 +5,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileImage = document.getElementById('profile-image');
     const fullscreenImage = document.getElementById('fullscreen-image');
 
-    // Image peek effect
-    cardImage.addEventListener('mousemove', function(e) {
-        const rect = cardImage.getBoundingClientRect();
-        const x = e.clientX - rect.left; // Mouse X relative to card
-        const y = e.clientY - rect.top;  // Mouse Y relative to card
-        
-        // Calculate position percentages (-20 to 20 range for subtle movement)
-        const xPercent = ((x / rect.width) * 40 - 20).toFixed(2);
-        const yPercent = ((y / rect.height) * 40 - 20).toFixed(2);
-        
-        // Apply the transformation
-        profileImage.style.objectPosition = `${50 + xPercent}% ${50 + yPercent}%`;
-    });
-
-    // Reset image position when mouse leaves
-    cardImage.addEventListener('mouseleave', function() {
-        profileImage.style.objectPosition = 'center center';
-    });
-
     // Close about section
     closeAboutBtn.addEventListener('click', function() {
         aboutSection.classList.remove('active');
         fullscreenImage.classList.remove('active');
-        profileImage.style.objectPosition = 'center center'; // Reset position
         // Resume game when about section is closed
         if (typeof resumeGame === 'function') {
             resumeGame();
@@ -44,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target === aboutSection) {
             aboutSection.classList.remove('active');
             fullscreenImage.classList.remove('active');
-            profileImage.style.objectPosition = 'center center'; // Reset position
             // Resume game when about section is closed
             if (typeof resumeGame === 'function') {
                 resumeGame();
@@ -59,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle image click for fullscreen
     cardImage.addEventListener('click', function() {
         fullscreenImage.classList.add('active');
-        profileImage.style.objectPosition = 'center center'; // Reset position
+        // profileImage.style.objectPosition = 'center center'; // Reset position - No longer needed
     });
 
     // Close fullscreen image when clicking outside
