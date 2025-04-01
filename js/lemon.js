@@ -145,9 +145,16 @@ function initLemonSystem() {
     if (typeof window.handleClick === 'function') {
         const originalHandleClick = window.handleClick;
         window.handleClick = function(e) {
+            // Store original multiplier
             const originalMultiplier = game.stats.currentPowerMultiplier;
+            
+            // Apply lemon multiplier to the final calculation
             game.stats.currentPowerMultiplier *= lemonPowerMultiplier;
+            
+            // Call original handleClick
             originalHandleClick(e);
+            
+            // Restore original multiplier
             game.stats.currentPowerMultiplier = originalMultiplier;
         };
     }
