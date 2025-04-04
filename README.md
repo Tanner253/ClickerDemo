@@ -1,4 +1,13 @@
 # ClickerDemo
+
+[![MCP](https://img.shields.io/badge/MCP-Active-success)](https://github.com/yourusername/ClickerDemo)
+[![Unity](https://img.shields.io/badge/Unity-2022.3%2B-blue)](https://unity.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-Active-success)](https://nodejs.org/)
+[![GitHub Stars](https://img.shields.io/github/stars/yourusername/ClickerDemo)](https://github.com/yourusername/ClickerDemo/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/yourusername/ClickerDemo)](https://github.com/yourusername/ClickerDemo/network/members)
+[![License](https://img.shields.io/badge/License-MIT-red)](https://github.com/yourusername/ClickerDemo/blob/main/LICENSE)
+[![Last Commit](https://img.shields.io/badge/last%20commit-today-brightgreen)](https://github.com/yourusername/ClickerDemo/commits/main)
+
 working on something....
 
 
@@ -24,8 +33,8 @@ working on something....
 
 - Exponential idle clicker progression.
 - Meme coin (**GoldBux – GBX**) earned by playing, watching ads, and engaging.
-- Ad revenue and IAPs fund the meme coin’s liquidity pool.
-- Free-to-play users _“earn to play”_ by simply engaging.
+- Ad revenue and IAPs fund the meme coin's liquidity pool.
+- Free-to-play users _"earn to play"_ by simply engaging.
 - Players can **stake GBX for in-game boosts**, or **sell it** on the open market.
 - Dev profits come from surplus ad/IAP revenue vs. coin distribution — forming a **symbiotic loop**.
 
