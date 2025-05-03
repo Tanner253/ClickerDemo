@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/badge/License-MIT-red)](https://github.com/yourusername/ClickerDemo/blob/main/LICENSE)
 [![Last Commit](https://img.shields.io/badge/last%20commit-today-brightgreen)](https://github.com/yourusername/ClickerDemo/commits/main)
 
-working on something....
+working on something.... 90% done.. loading...
 
 
 ![Concept Diagram](assets/Documentation/ConceptIdea.jpg)
