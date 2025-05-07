@@ -40,7 +40,7 @@ working on something.... 90% done.. loading... 80% of profits returned to users
 
 ---
 
-## ⚡️ Key Mechanic: Global Boost System
+##⚡️ Key Mechanic: Global Boost System
 
 - **Green day (GBX up):** Everyone gets a Clicks-Per-Second (CPS) boost, scaled by % growth.
 - **Stakers get extra boost.**
