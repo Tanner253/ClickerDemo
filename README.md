@@ -21,7 +21,6 @@ working on something.... 90% done.. loading... 80% of profits returned to users
 
 - This game is tied to the chart through chart %Gain or %loss. I will use an api to check the status of the chart in real-time, and use this % gain or loss as a multiplier for everyone in-game to increase or decrease click rates (prestige rates -> meme coin distribution) giving every player the incentive to hold their coins and not sell. If the chart is going super green then we can afford to distribute more coins, if it goes red then everyone's click rates will be nerfed, slowing down the mining speed, generating more ad reevenue per player due to longer play time, pumping the chart with liquidity faster... It Will Work.
 
-# 🪙 Gold Rush Tycoon
 
 
 
